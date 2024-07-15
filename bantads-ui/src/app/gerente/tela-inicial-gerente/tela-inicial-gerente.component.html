@@ -1,0 +1,32 @@
+<div class="container" style="padding-top: 15px">
+  <h1 class="bantads-blue">Solicitações de Conta</h1>
+  <table class="table table-bordered table-hover">
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>CPF</th>
+        <th>Salário</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let cliente of clientes">
+        <td>{{ cliente.nome | caixaAlta }}</td>
+        <td>{{ cliente.cpf | cpf }}</td>
+        <td>{{ cliente.salario | currency:'BRL' }}</td>
+        <td class="text-center">
+          <button class="btn btn-success btn-sm mx-3" (click)="aprovarCliente(cliente)" >Aprovar</button>
+          <button class="btn btn-danger btn-sm" (click)="toggleRejeicao(cliente)" >Rejeitar</button>
+          <div *ngIf="cliente.limite === 0" class="mt-3">
+            <input type="text" #motivo="ngModel" ngModel placeholder="Motivo de rejeição" class="form-control mb-3" required>
+            <div *ngIf="motivo.errors && (motivo!.dirty || motivo!.touched)" class="alert alert-danger">
+              <div [hidden]="!motivo.errors['required']">Motivo obrigatório.</div>
+            </div>
+            <button [disabled]="motivo.errors" class="btn btn-primary btn-sm" (click)="rejeitarCliente(cliente)">Confirmar</button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <p *ngIf="clientes.length === 0">Nenhum solicitação encontrada.</p>
+</div>

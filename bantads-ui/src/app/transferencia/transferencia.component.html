@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transferência</title>
+</head>
+<body>
+    <section   style="align-items: center;">
+        <section class="top-section">
+            <h1 class="title">Transferência</h1>
+            <fieldset class="saldo">
+                <h2>Saldo: </h2> 
+
+                @if (this.isVisible) {
+                    <h4>R${{this.saldo}}</h4>
+
+                } @else {
+                    <h4>********</h4>
+                }
+                  
+
+
+                <div><small (click)="hideSaldo()">Esconder</small></div>
+            </fieldset>
+            <small>Limite: R$1000,00</small>
+        </section>
+
+        <form [formGroup]="form" (ngSubmit)="submit()">
+    
+            <section class="input">
+                <h4>Informe a conta de destino: </h4>
+                <input formControlName="conta" type="text" placeholder="0000.000.000-00" mask="0000.0000.000-00" required [ngClass]="{'is-invalid': submitted && f['conta'].errors}" >
+            </section>
+
+            <section class="msg">
+                @if (submitted && f['conta'].errors) {
+                    @if (f['conta'].errors['required']) {
+                        <p class="error">*Digite o número da conta</p>
+                    } @else {
+                        <p class="error">*Formato inválido</p>
+                    }   
+                }
+            </section>
+        
+
+            <section class="input">
+                <h4>Informe o valor desejado: </h4>
+                <input formControlName="valor" type="text" placeholder="R$0,00" mask="separator.2" [decimalMarker]="','"  inputmode="numeric" prefix="R$" min="0" [thousandSeparator]="'.'"
+                    [decimalMarker]="','" autocomplete="off" required class="money" [ngClass]="{'is-invalid': submitted && f['valor'].errors}"  required >
+            </section>
+
+
+            <section class="msg">
+                @if (submitted && f['valor'].errors) {
+                    @if (f['valor'].errors['required']) {
+                        <p class="error">*Digite o valor da transferencia</p>
+                    }
+        
+                } 
+        
+            </section>
+            <button class="button">Enviar</button>
+        </form>
+       
+       
+        
+    </section>
+</body>
+</html>

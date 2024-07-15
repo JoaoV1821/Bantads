@@ -1,0 +1,33 @@
+<section class="extrato">
+    <h2>Consulta de Extrato</h2>
+  
+    <div class="filtros">
+      <label>Data de Início: <input type="date" [(ngModel)]="dataInicio"></label>
+      <label>Data de Fim: <input type="date" [(ngModel)]="dataFim"></label>
+      <button (click)="filtrarTransacoes()">Filtrar</button>
+    </div>
+  
+    <div class="saldo">
+      <span>Saldo: {{ calcularSaldo() | currency:'BRL':'symbol':'1.2-2' }}</span>
+    </div>
+  
+    <table class="historico">
+      <thead>
+        <tr>
+          <th>Data/hora</th>
+          <th>Operação</th>
+          <th>Origem/Destino</th>
+          <th>Valor</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let transacao of extrato" [ngClass]="getClassForOperacao(transacao)">
+          <td>{{ transacao.dataHora }}</td>
+          <td>{{ transacao.operacao }}</td>
+          <td>{{ transacao.origemDestino }}</td>
+          <td>{{ transacao.valor | currency:'BRL':'symbol':'1.2-2' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+  

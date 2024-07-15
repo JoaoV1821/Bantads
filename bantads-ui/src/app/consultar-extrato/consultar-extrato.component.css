@@ -1,0 +1,123 @@
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+
+}
+
+header {
+    background-color: #14213D;
+    color: #fff;
+    padding: 20px 0;
+}
+
+header h1 {
+    text-align: center;
+}
+
+nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+}
+
+nav li {
+    margin: 0 10px;
+}
+
+nav a {
+    color: #fff;
+    text-decoration: none;
+}
+
+main {
+    padding: 20px;
+}
+
+.extrato {
+    border: 1px solid #ccc;
+    padding: 20px;
+}
+
+.extrato h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.saldo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border: 2px solid #14213D;
+    padding: 10px;
+    border-radius: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin-top: 20px;
+}
+
+
+.saldo span:first-child {
+    font-weight: bold;
+    font-size: 24px;
+
+}
+
+.saldo span:last-child {
+    font-size: 24px;
+    text-align: left;
+}
+
+.esconder {
+    cursor: pointer;
+    background-color: #14213D;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.limite {
+    margin-bottom: 20px;
+}
+
+.historico {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.historico th {
+    background-color: #ddd;
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #14213D;
+}
+
+.historico tr {
+    border-bottom: 1px solid #14213D;
+    text-align: center;
+}
+
+.historico td {
+    padding: 10px;
+    border-right: 1px solid #14213D;
+}
+
+
+h2 {
+    color: #14213D;
+    text-align: center;
+    font-weight: bold;
+}
+
+.historico td:nth-child(5):not(:empty):not(:nth-child(5):contains("-")) {
+    color: red;
+}
+
+.valor-negativo {
+    color: red;
+  }
+  

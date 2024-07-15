@@ -1,0 +1,1 @@
+export * from './consultar-todos.component';

@@ -1,0 +1,54 @@
+
+<body class="d-flex align-items-center flex-column" style="padding: 6%;">
+  
+    <form [formGroup]='form' (ngSubmit)="submit()" class="d-flex align-items-center flex-column" style="height: 50%; width: 60%;" >
+        <h1>Login</h1>
+        <h1 class="h3 mb-3 font-weight-normal"> </h1>
+
+        <div class="mb-3" style="width: 40%;">
+            <label for="inputEmail" class="sr-only">Email </label>
+            <input type="email" formControlName="email" id="inputEmail" class="form-control" #email placeholder="Digite seu email" required autofocus name="email" ngModel [ngClass]="{'is-invalid': submitted && f['email'].errors}">
+
+            @if (submitted && f['email'].errors) {
+                @if (f['email'].errors['required']) {
+                    <p class="error">*Digite seu email</p>
+                }
+
+                @if (f['email'].invalid && !f['email'].errors['required']) {
+                    @if (f['email'].errors) {
+                        <p class="error">*Email inválido</p>
+                    }
+                }
+            }
+
+        </div>
+
+        <div class="mb-3" style="width: 40%;">
+            <label for="">Senha</label>
+            <div class="d-flex position-relative">
+                <input formControlName="password" [type]="showPassword ? 'text' : 'password'" type="password" id="inputSenha" class="form-control" placeholder="Digite sua senha" required name="password" #password  ngModel  [ngClass]="{'is-invalid': submitted && f['password'].errors}">
+                
+                <i alt="show" class="far fa-eye eye-show position-absolute"
+                    style="right: 35px; top: 50%; transform: translateY(-50%); cursor: pointer;"
+                    (click)="showPassword = !showPassword"
+                    [class.hide]="showPassword"><img src="../../../assets/icons8-invisible-24.png" alt=""></i>
+                
+                <i alt="hide" class="far fa-eye-slash eye-hide position-absolute"
+                    style="right: 35px; top: 50%; transform: translateY(-50%); cursor: pointer;"
+                    (click)="showPassword = !showPassword"
+                    [class.hide]="!showPassword"><img src="../../../assets/icons8-eye-24.png" alt=""></i>
+            </div>
+
+            @if (submitted && f['password'].errors) {
+                
+                @if (f['password'].errors['required']) {
+                    <p class="error">*Digite sua senha</p>
+                }
+            }
+
+
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Entrar</button>
+    </form>
+</body>

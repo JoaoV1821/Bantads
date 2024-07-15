@@ -1,0 +1,132 @@
+<div class="container text-center">
+  <h1 class="bantads-blue" style="padding-top: 15px">Consultar Cliente</h1>
+  <div class="row justify-content-center" style="padding-top: 15px">
+    <div class="col-4">
+      <div class="input-group">
+        <input
+          class="form-control border-2"
+          placeholder="CPF"
+          mask="000.000.000-00"
+          #cpf="ngModel"
+          ngModel
+          required
+          minlength="11"
+        />
+        <button
+          class="btn btn-secondary"
+          type="button"
+          [disabled]="cpf.errors"
+          (click)="buscarCliente(cpf.value)"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-search"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"
+            />
+          </svg>
+        </button>
+      </div>
+      <div
+        *ngIf="cpf.errors && (cpf!.dirty || cpf!.touched)"
+        class="alert alert-danger"
+      >
+        <div [hidden]="!cpf.errors['required']">CPF obrigatório.</div>
+        <div [hidden]="!cpf.errors['minlength']">
+          CPF deve conter no mínimo 11 caracteres.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="this.pesquisado">
+    <div *ngIf="this.cliente != undefined">
+      <div class="row justify-content-center" style="padding-top: 5px">
+        <div
+          class="card mt-3 mb-3 mx-3"
+          style="
+            width: 250px;
+            border-radius: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(to top, #14213d, #314a89);
+            color: #ffffff;
+          "
+        >
+          <div class="card-body" style="padding: 20px">
+            <div class="card-title">
+              <h5 style="font-weight: bold">Conta</h5>
+            </div>
+            <hr />
+            <div class="text-start">
+              <p>N° da conta: 00001</p>
+              <p>Data da criação: 31/12/1969</p>
+              <p>Limite: {{ cliente.limite }}</p>
+              <p>Gerente: {{ cliente.gerente?.nome }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="card mt-3 mb-3 mx-3"
+          style="
+            width: 250px;
+            border-radius: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(to top, #14213d, #314a89);
+            color: #ffffff;
+          "
+        >
+          <div class="card-body" style="padding: 20px">
+            <div class="card-title">
+              <h5 style="font-weight: bold">Cliente</h5>
+            </div>
+            <hr />
+            <div class="text-start">
+              <p>Nome: {{ cliente.nome }}</p>
+              <p>Email: {{ cliente.email }}</p>
+              <p>CPF: {{ cliente.cpf | cpf }}</p>
+              <p>Telefone: {{ cliente.telefone | telefone }}</p>
+              <p>Salário: {{ cliente.salario | currency : "BRL" }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="card mt-3 mb-3 mx-3"
+          style="
+            width: 250px;
+            border-radius: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(to top, #14213d, #314a89);
+            color: #ffffff;
+          "
+        >
+          <div class="card-body" style="padding: 20px">
+            <div class="card-title">
+              <h5 style="font-weight: bold">Endereço</h5>
+            </div>
+            <hr />
+            <div class="text-start">
+              <p>Rua: {{ cliente.endereco?.logradouro }}</p>
+              <p *ngIf="this.cliente.endereco?.numero">
+                Número: {{ cliente.endereco?.numero }}
+              </p>
+              <p *ngIf="this.cliente.endereco?.complemento">
+                Complemento: {{ cliente.endereco?.complemento }}
+              </p>
+              <p>CEP: {{ cliente.endereco?.cep }}</p>
+              <p>Cidade: {{ cliente.endereco?.cidade }}</p>
+              <p>Estado: {{ cliente.endereco?.estado }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p *ngIf="this.cliente == undefined" style="color:red">CPF não encontrado</p>
+  </div>
+</div>

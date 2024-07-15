@@ -1,0 +1,1 @@
+export * from './consultar-top3.component';

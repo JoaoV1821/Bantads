@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saque</title>
+</head>
+<body>
+    <main>
+        <section class="top-section">
+            <h1 class="title">Saque</h1>
+            <fieldset class="saldo">
+                <h2>Saldo: </h2> 
+                @if (this.isVisible) {
+                    <h4 class="saldoAmount">R${{this.saldo}}</h4>  
+                } @else {
+                    <h4 class="saldoAmount">********</h4>
+                }
+                
+                <div ><small (click)='hideSaldo()'>Esconder</small></div>
+            </fieldset>
+                <small>Limite: R${{this.saldo}}</small>
+        </section>
+        
+
+        <form class="middle-section" [formGroup]="form" (ngSubmit)="submit()">
+            <h4>Informe o valor que deseja sacar:</h4>
+            <fieldset class="input">
+                <input formControlName="valorSaque"  type="text"  placeholder="R$0,00" mask="separator.2" [decimalMarker]="','"  inputmode="numeric" prefix="R$" min="0" [thousandSeparator]="'.'"
+                [decimalMarker]="','" autocomplete="off" class="money form-control"  id="valorSaque" [ngClass]="{'is-invalid': submitted && f['valorSaque'].errors}"  required >
+            </fieldset>
+
+            @if (submitted && f['valorSaque'].errors) {
+                @if (f['valorSaque'].errors['required']) {
+                    <p class="error">*Digite o valor do Saque</p>
+                    
+                }
+
+            } 
+
+          
+            <button class="button" >Confirmar</button>
+        </form>
+
+    </main>
+</body>
+</html>

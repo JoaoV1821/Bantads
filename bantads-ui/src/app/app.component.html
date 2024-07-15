@@ -1,0 +1,58 @@
+<nav class="navbar navbar-dark bg-dark navbar-expand-lg"> 
+    <div class="container-fluid">
+      <a href="#"><img src="../assets/logo.png" style="width: 136px; height: 80px;"/></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#" [routerLink]="['/home']" >Home</a>
+          </li>
+          <!--          <li class="nav-item">
+            <a class="nav-link" href="#">Link</a>
+          </li> 
+          -->
+
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Administrador
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#" [routerLink]="['/administrador']">ADM: Tela Inicial</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#" [routerLink]="['/administrador/clientes']">ADM: Clientes</a></li>
+              <li><a class="dropdown-item" href="#" [routerLink]="['/administrador/gerentes']">ADM: Gerentes</a></li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Gerente
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#" [routerLink]="['/gerente']">GER: Tela Inicial</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#" [routerLink]="['/gerente/consultar']">GER: Consultar</a></li>
+              <li><a class="dropdown-item" href="#" [routerLink]="['/gerente/consultar-todos']">GER: Consultar Todos</a></li>
+              <li><a class="dropdown-item" href="#" [routerLink]="['/gerente/consultar-top3']">GER: Consultar Top 3</a></li>
+            </ul>
+          </li>
+          <!--
+          <li class="nav-item">
+            <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+          </li>
+          
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/consultar-extrato">Consultar extrato</a>
+          </li>
+          -->
+        </ul>
+        <form class="d-flex" role="search">
+          <input class="form-control me-2" type="search" placeholder="Pesquisa" aria-label="Search">
+          <button class="btn btn-outline-success" type="submit">Pesquisa</button>
+        </form>
+      </div>
+    </div>
+  </nav>
+
+<router-outlet></router-outlet>

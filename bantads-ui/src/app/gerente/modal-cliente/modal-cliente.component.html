@@ -1,0 +1,55 @@
+<div class="modal-header text-center container">
+  <h4 class="modal-title bantads-blue" id="modal-basic-title">Dados</h4>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="activeModal.close()"
+  ></button>
+</div>
+<div class="modal-body text-center">
+  <h5 class="modal-title bantads-blue" style="padding-bottom: 10px">Cliente</h5>
+  <div class="alignment">
+    <p><b>Nome:</b> {{ cliente.nome }}</p>
+    <p><b>CPF:</b> {{ cliente.cpf | cpf }}</p>
+    <p><b>E-mail:</b> {{ cliente.email }}</p>
+    <p><b>Telefone:</b> {{ cliente.telefone | telefone }}</p>
+    <p><b>Salario:</b> R$ {{ cliente.salario }}</p>
+    <p><b>Saldo:</b> R$ {{ cliente.saldo }}</p>
+  </div>
+  <hr />
+
+  <h5 class="modal-title bantads-blue" style="padding-bottom: 10px">
+    Endereço
+  </h5>
+  <div class="alignment">
+    <p><b>CEP:</b> {{ cliente.endereco?.cep }}</p>
+    <p><b>Logradouro:</b> {{ cliente.endereco?.logradouro }}</p>
+    <p *ngIf="cliente.endereco?.numero">
+        <b>Número:</b> {{ cliente.endereco?.numero }}
+    </p>
+    <p><b>Cidade:</b> {{ cliente.endereco?.cidade }}</p>
+    <p><b>Estado:</b> {{ cliente.endereco?.estado }}</p>
+    <p *ngIf="cliente.endereco?.complemento">
+        <b>Complemento:</b> {{ cliente.endereco?.complemento }}
+    </p>
+  </div>
+
+  <hr />
+  <h5 class="modal-title bantads-blue" style="padding-bottom: 10px">Gerente</h5>
+  <div class="alignment">
+    <p><b>Nome</b>: {{ cliente.gerente?.nome }}</p>
+    <p><b>CPF:</b> {{ cliente.gerente?.cpf | cpf }}</p>
+    <p><b>E-mail:</b> {{ cliente.gerente?.email }}</p>
+    <p><b>Telefone:</b> {{ cliente.gerente?.telefone | telefone }}</p>
+  </div>
+</div>
+<div class="modal-footer">
+  <button
+    type="button"
+    class="btn btn-danger"
+    (click)="activeModal.close()"
+  >
+    Fechar
+  </button>
+</div>

@@ -1,0 +1,10 @@
+.bantads-blue{
+    color: #14213D;
+}
+
+.alignment {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}

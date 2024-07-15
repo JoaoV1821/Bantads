@@ -1,0 +1,76 @@
+<div class="container text-center">
+  <h1 class="bantads-blue" style="padding-top: 15px">Melhores Clientes</h1>
+  <div class="row justify-content-center" style="padding-top: 5px">
+    <div
+      class="card mt-3 mb-3 mx-3"
+      style="
+        width: 250px;
+        border-radius: 20px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        background: linear-gradient(to bottom, #FFD700, #FFA500);
+      "
+    >
+      <div class="card-body" style="padding: 20px">
+        <div class="card-title">
+          <h5 style="font-weight: bold;">1°</h5>
+        </div>
+        <hr />
+        <div class="text-start">
+          <p>CPF: {{ clientes[0].cpf | cpf }}</p>
+          <p>Nome: {{ clientes[0].nome }}</p>
+          <p>Cidade: {{ clientes[0].endereco?.cidade | caixaAlta }}</p>
+          <p>Estado: {{ clientes[0].endereco?.estado | caixaAlta }}</p>
+          <p style="font-weight: bold">Saldo: {{ clientes[0].saldo | currency:'BRL' }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="card mt-3 mb-3 mx-3"
+      style="
+        width: 250px;
+        border-radius: 20px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        background: linear-gradient(to bottom, #C0C0C0, #A9A9A9);
+      "
+    >
+      <div class="card-body" style="padding: 20px">
+        <div class="card-title">
+          <h5 style="font-weight: bold">2°</h5>
+        </div>
+        <hr />
+        <div class="text-start">
+          <p>CPF: {{ clientes[1].cpf | cpf }}</p>
+          <p>Nome: {{ clientes[1].nome }}</p>
+          <p>Cidade: {{ clientes[1].endereco?.cidade | caixaAlta }}</p>
+          <p>Estado: {{ clientes[1].endereco?.estado | caixaAlta }}</p>
+          <p style="font-weight: bold">Saldo: {{ clientes[1].saldo | currency:'BRL' }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="card mt-3 mb-3 mx-3"
+      style="
+        width: 250px;
+        border-radius: 20px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        background: linear-gradient(to bottom, #CD853F, #8B4513);
+      "
+    >
+      <div class="card-body" style="padding: 20px">
+        <div class="card-title">
+          <h5 style="font-weight: bold">3°</h5>
+        </div>
+        <hr />
+        <div class="text-start">
+          <p>CPF: {{ clientes[2].cpf | cpf }}</p>
+          <p>Nome: {{ clientes[2].nome }}</p>
+          <p>Cidade: {{ clientes[2].endereco?.cidade }}</p>
+          <p>Estado: {{ clientes[2].endereco?.estado | caixaAlta }}</p>
+          <p style="font-weight: bold">Saldo: {{ clientes[2].saldo | currency:'BRL' }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

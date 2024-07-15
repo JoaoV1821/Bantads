@@ -1,0 +1,72 @@
+
+.saldo {
+    border-color: black;
+    border: 1px solid #000;
+    margin-bottom: 5%;
+    margin-top: 5%;
+    border-radius:10px ;
+    width: 40%;
+    display: flex;
+    flex-direction: row;
+    align-items:center;
+    justify-content: space-around;
+    margin-bottom: 0;
+}
+
+.top-section {
+    margin-left: 35%;
+}
+
+.top-section > small {
+    font-weight: bold;
+    margin-left: 2%;
+}
+
+.input {
+    border-color: black;
+    border: 2px solid #000;
+    width:  20%;
+    height: 60%;
+    padding: 20px;
+    border-radius: 20px;
+}
+
+.title {
+    margin-left:  12%;
+    margin-top: 5%;
+}
+
+.middle-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-left: -2%;
+    margin-top: 3%;
+}
+
+
+.error {
+    color: red;
+  }
+
+
+.button {
+    margin-top: 2%;
+    width: 15%;
+    border-radius: 10px;
+    background-color: '#14213D';
+}
+
+.hidden {
+    display: none;
+}
+
+.money {
+    border: 0;
+
+}
+input:focus {
+    outline: none;
+  }
+  
+  

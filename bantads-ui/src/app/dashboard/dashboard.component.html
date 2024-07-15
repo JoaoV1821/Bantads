@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+</head>
+<body>
+    <main>
+        
+        <fieldset class="saldo">
+            <h2>Saldo: </h2> 
+            @if (this.isVisible) {
+                <h4 class="saldoAmount">R${{this.saldo}}</h4>  
+            } @else {
+                <h4 class="saldoAmount">********</h4>
+            }
+            <div ><small (click)='hideSaldo()'>Esconder</small></div>
+        </fieldset>
+    </main>
+
+    <section class="actions">
+        <div class="card">
+            <button class="button-image" onclick="window.location.href = '/saque' "><img src="../../assets/saque.png" alt=""></button>
+            <h2>Saque</h2>
+        </div>
+
+        <div class="card">
+            <button class="button-image" onclick="window.location.href = '/deposito' "><img src="../../assets/deposito.png" alt=""></button>
+            <h2>Depósito</h2>
+        </div>
+
+        <div class="card">
+            <button class="button-image"><img src="../../assets/transferencia.png" alt="" onclick="window.location.href = '/transferencia' "></button>
+            <h2>Transferência</h2>
+        </div>
+         
+        <div class="card">
+            <button class="button-image" onclick="window.location.href = '/extrato'" ><img src="../../assets/extrato.png" alt=""></button>
+            <h2>Extrato</h2>
+        </div>
+         
+    </section>
+
+</body>
+</html>

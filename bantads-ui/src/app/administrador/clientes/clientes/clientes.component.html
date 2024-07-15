@@ -1,0 +1,27 @@
+<div class="container" style="padding-top: 15px">
+    <h1 class="bantads-blue">Clientes</h1>
+    <table class="table table-bordered table-hover">
+      <thead>
+        <tr>
+          <th class="bantads-blue" scope="col">Nome</th>
+          <th class="bantads-blue" scope="col">CPF</th>
+          <th class="bantads-blue" scope="col">Limite</th>
+          <th class="bantads-blue" scope="col">Gerente</th>
+          <th class="bantads-blue" scope="col">Saldo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cliente of clientes">
+            <td>{{ cliente.nome }}</td>
+            <td>{{ cliente.cpf | cpf}}</td>
+            <td>{{ cliente.limite | currency:'BRL'}}</td>
+            <td>{{ cliente.gerente?.nome }}</td>
+            <td>{{ cliente.saldo | currency:'BRL'}}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div *ngIf="this.clientes.length == 0">
+      <p>Nenhum cliente encontrado.</p>
+    </div>
+  </div>
+  

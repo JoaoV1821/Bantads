@@ -1,0 +1,171 @@
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.logo {
+    flex-grow: 0; 
+}
+
+.buttons {
+    display: flex; 
+    flex-grow: 0;
+    margin-left: auto; 
+}
+
+header {
+    background-color: #14213D;
+    text-align: center;
+    font-weight: bold;
+    font-size: 50px;
+}
+
+footer {
+    background-color: #14213D;
+    text-align: center;
+    font-weight: bold;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.container-blue {
+    background-color: #14213D;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 20px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: center;
+}
+
+h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    flex-grow: 1;
+    text-align: center;
+    margin-left: 150px;
+}
+
+.btn {
+    border: 2px solid white;
+    border-color: white;
+    background-color: transparent;
+    color: white;
+    display: inline-block;
+    padding: 10px 20px;
+    color: #fff;
+    text-decoration: none;
+    cursor: pointer;
+    margin: 5px;
+}
+
+.btn.btn-secondary {
+    padding: 10px 20px;
+    background-color: transparent;
+    border-color: white;
+    color: #fff;
+}
+
+.hero {
+    background-image: url("../../assets/hero.jpg");
+    background-size: cover;
+    background-position: center;
+    padding: 100px 0;
+    text-align: center;
+    color: #fff;
+    height: 500px;
+    width: auto;
+}
+
+
+.beneficios {
+    padding: 50px 0;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+}
+
+.beneficios h2 {
+    font-size: 36px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: bold;
+    color: #14213D;
+}
+
+.beneficios p {
+    font-size: 16px;
+    margin-bottom: 30px;
+}
+
+.beneficios ul {
+    list-style: none;
+    padding: 16px;
+}
+
+.beneficios li img {
+    width: 50px;
+    margin-right: 20px;
+    vertical-align: middle;
+}
+
+
+.row img {
+    width: 50px;
+    margin-left: 20px;
+}
+
+.images-container {
+    margin-top: 20px;
+}
+
+.image-box {
+    display: inline-block;
+    text-align: center;
+    margin-right: 20px;
+}
+
+.image-box img {
+    width: 80px;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.block {
+    width: calc(33.33% - 20px);
+    padding: 20px;
+    background-color: #f0f0f0;
+    text-align: center;
+}
+
+.block h3 {
+    margin-top: 0;
+}
+
+.block img {
+    max-width: 100%;
+}
+
+.block p {
+    margin-top: 10px;
+}
+
+.container-footer {
+    background-color: #14213D;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 20px;
+    color: white;
+    align-items: center;
+    text-align: center;
+}
