@@ -1,5 +1,4 @@
-package com.dac.auth.model;
-import java.io.Serializable;
+package com.dac.auth.dto;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -12,16 +11,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class AuthModel implements Serializable {
+public class AuthDTO {
     @Id
     private String email;
     private String senha;
     private String tipo;
-
-    public AuthModel() {
-        super();
-        
-    }
-
-    
 }

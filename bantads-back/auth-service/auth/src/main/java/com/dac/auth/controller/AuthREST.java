@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dac.auth.model.AuthModel;
 import com.dac.auth.repository.AuthRepository;
+import com.dac.auth.dto.AuthDTO;
+import com.dac.auth.mapper.AuthMapper;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,7 +24,7 @@ public class AuthREST {
     AuthRepository authRepository;
 
     @PostMapping("/auth")
-    ResponseEntity<AuthModel> auth(@RequestBody AuthModel login) {
+    ResponseEntity<AuthDTO> auth(@RequestBody AuthModel login) {
 
         // Verificar no Mongo
         List<AuthModel> cursor = authRepository.findAll();
@@ -30,7 +32,7 @@ public class AuthREST {
         for (AuthModel i : cursor) {
 
             if (login.getEmail().equals(i.getEmail()) && login.getSenha().equals(i.getSenha())) {
-                AuthModel user = new AuthModel(i.getEmail(), i.getSenha(), i.getTipo());
+                AuthDTO user = AuthMapper.toDto(i);
                 return ResponseEntity.ok().body(user);
             }
         }
