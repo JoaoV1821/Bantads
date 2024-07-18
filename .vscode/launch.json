@@ -1,0 +1,17 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-GerenteApplication<gerente>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "ms.gerente.GerenteApplication",
+            "projectName": "gerente",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env",
+            "env": {
+                "SPRING_AMQP_DESERIALIZATION_TRUST_ALL": "true"
+            }
+        }
+    ]
+}
