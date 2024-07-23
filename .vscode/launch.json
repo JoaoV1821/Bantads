@@ -11,6 +11,20 @@
             "envFile": "${workspaceFolder}/.env",
             "env": {
                 "SPRING_AMQP_DESERIALIZATION_TRUST_ALL": "true"
+            },
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=63839 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=gerente"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-ContaApplication<conta>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "ms.conta.ContaApplication",
+            "projectName": "conta",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env",
+            "env": {
+                "SPRING_AMQP_DESERIALIZATION_TRUST_ALL": "true"
             }
         }
     ]

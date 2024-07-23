@@ -1,6 +1,7 @@
 package ms.conta.models;
 
-import org.springframework.format.annotation.DateTimeFormat;
+import java.sql.Date;
+
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,7 +19,7 @@ public class Conta {
     private Long id;
     private Double limite;
     private Double saldo;
-    private DateTimeFormat data; //Criação ou Rejeição
+    private Date data; //Criação ou Rejeição
     //CLIENTE
     private Long id_cliente;
     private String cpf_cliente;
