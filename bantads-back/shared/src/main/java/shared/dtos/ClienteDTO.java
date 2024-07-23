@@ -1,28 +1,27 @@
-package com.dac.user.models;
+package shared.dtos;
 
 import java.io.Serializable;
 
-
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class UserModel implements Serializable {
-    
-    @Id
+public class ClienteDTO implements Serializable{
     private String cpf;
     private String email;
     private String nome;
     private String telefone;
     private double salario;
-    private EnderecoModel endereco;
-    
+    //Endereço
+    private String tipo;
+    private String logradouro;
+    private int numero;
+    private String complemento;
+    private String cep;
+    private String cidade;
+    private String estado;
 }

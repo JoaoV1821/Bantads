@@ -1,4 +1,4 @@
-package ms.gerente.rabbit;
+package com.dac.user.rabbit;
 
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
@@ -8,10 +8,11 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.dac.user.util.Transformer;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
-import ms.gerente.util.Transformer;
+
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.MonoSink;
 import shared.GenericData;
@@ -46,7 +47,6 @@ public class Producer {
 
     //Async non-blocking request-response
     public Mono<GenericData<?>> sendRequest(Message<?> request){
-        System.out.println("Producer::sendRequest");
         String correlationId = request.getId();
 
         Mono<GenericData<?>> responseMono = Mono.<GenericData<?>>create(sink -> {
@@ -65,7 +65,7 @@ public class Producer {
     }
 
     //Handling response from sendRequest
-    @RabbitListener(queues = "gerente.response")
+    @RabbitListener(queues = "cliente.response")
     public void handleResponse(Message<?> message){
         String correlationId = message.getId();
         MonoSink<GenericData<?>> sink = monoSinkCache.getIfPresent(correlationId);

@@ -3,13 +3,14 @@ package com.dac.user.models;
 import java.io.Serializable;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
+@NoArgsConstructor
+
 public class EnderecoModel implements Serializable {
     private String tipo;
     private String logradouro;
@@ -19,7 +20,4 @@ public class EnderecoModel implements Serializable {
     private String cidade;
     private String estado;
 
-    EnderecoModel() {
-        super();
-    }
 }
