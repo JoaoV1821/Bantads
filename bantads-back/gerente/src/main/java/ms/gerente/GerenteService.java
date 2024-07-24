@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ms.gerente.util.Transformer;
+import shared.dtos.GerenteDTO;
 
 @Service
 public class GerenteService {

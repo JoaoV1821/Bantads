@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 
 public class ClienteDTO implements Serializable{
+    private Long id;
     private String cpf;
     private String email;
     private String nome;

@@ -40,6 +40,19 @@
             "env": {
                 "SPRING_AMQP_DESERIALIZATION_TRUST_ALL": "true"
             }
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-SagaApplication<saga>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "ms.saga.SagaApplication",
+            "projectName": "saga",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env",
+            "env": {
+                "SPRING_AMQP_DESERIALIZATION_TRUST_ALL": "true"
+            },
         }
     ]
 }
