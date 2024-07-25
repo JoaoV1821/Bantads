@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dac.auth.model.AuthModel;
 import com.dac.auth.repository.AuthRepository;
-import com.dac.auth.dto.AuthDTO;
+
+import shared.dtos.AuthDTO;
+
 import com.dac.auth.mapper.AuthMapper;
 
 import org.springframework.web.bind.annotation.PostMapping;

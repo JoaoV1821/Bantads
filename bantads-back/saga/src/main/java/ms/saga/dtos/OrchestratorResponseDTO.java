@@ -1,22 +1,20 @@
-package shared.dtos;
-
-import java.io.Serializable;
+package ms.saga.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ms.saga.dtos.enums.SagaStatus;
+
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-
-public class ClienteDTO implements Serializable{
-    private String id;
-    private String cpf;
-    private String email;
+public class OrchestratorResponseDTO {
     private String nome;
+    private String email;
+    private String cpf;
     private String telefone;
-    private double salario;
+    private Double salario;
     //Endereço
     private String logradouro;
     private String numero;
@@ -24,5 +22,7 @@ public class ClienteDTO implements Serializable{
     private String cep;
     private String cidade;
     private String uf;
-    private int estado;
+    
+    private SagaStatus status;
 }
+
