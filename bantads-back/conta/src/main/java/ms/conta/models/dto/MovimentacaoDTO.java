@@ -9,10 +9,10 @@ import ms.conta.models.enums.MovimentacaoEnum;
 @Data
 @AllArgsConstructor
 public class MovimentacaoDTO {
-    private Long id;
+    private String id;
     private DateTimeFormat data;
     private MovimentacaoEnum tipo;
-    private Long origem;
-    private Long destino;
+    private String origem;
+    private String destino;
     private Double valor;
 }

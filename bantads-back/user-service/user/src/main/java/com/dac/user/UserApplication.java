@@ -30,15 +30,15 @@ public class UserApplication {
 	@Bean
 	CommandLineRunner runner() {
 		return args -> {
-			userRepository.save(new UserModel("111", "cliente1@email.com", 
+			userRepository.save(new UserModel("1","111", "cliente1@email.com", 
 				"CLIENTE 1", "9999-2222", 3000.00, 
 				null));
 
-			userRepository.save(new UserModel("222", "cliente2@email.com",
+			userRepository.save(new UserModel("2","222", "cliente2@email.com",
 				"CLIENTE 1", "9999-2222", 3000.00, 
 				null));
 
-			userRepository.save(new UserModel("333", "cliente3@email.com",
+			userRepository.save(new UserModel("3","333", "cliente3@email.com",
 				"CLIENTE 1", "9999-2222", 3000.00, 
 				null));
 

@@ -54,5 +54,17 @@ public class UserServiceImpl implements UserService {
             throw new NoSuchElementException();
         }
     }
+
+    @Override
+    public Boolean deletarPorId(String id) {
+        if (!userRepository.existsById(id)) {
+            return false;
+        }
+        
+        userRepository.deleteById(id);
+        
+        return !userRepository.existsById(id);
+    }
+
     
 }

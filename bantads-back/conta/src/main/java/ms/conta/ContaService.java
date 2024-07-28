@@ -27,11 +27,61 @@ public class ContaService {
         .collect(Collectors.toList());
     }
 
-    public Optional<Conta> buscarPorId(Long id){
+    public Optional<Conta> buscarPorId(String id){
         return this.contaRepository.findById(id);
     }
 
-    public MovimentacaoDTO saque(Long origem, MovimentacaoDTO dto){
+    public Optional<Conta> buscarPorId_cliente(String id){
+        return this.contaRepository.findById_cliente(id);
+    }
+
+    public ContaDTO atualizar(ContaDTO conta){
+        Optional<Conta> old = this.buscarPorId(conta.getId());
+        System.out.println(old);
+        if(!old.isPresent()){
+            return null;
+        }
+        Conta atualizada = old.get();
+        atualizada.setEstado(conta.getEstado());
+        atualizada.setLimite(conta.getLimite());
+        atualizada.setId_gerente(conta.getId_gerente());
+        System.out.println("atualizada: " + atualizada);
+        System.out.println(this.contaRepository.findAll());
+        return Transformer.transform(this.contaRepository.save(atualizada), ContaDTO.class);
+    }
+
+    public ContaDTO atualizarPorId_cliente(ContaDTO conta){
+        Optional<Conta> old = this.buscarPorId_cliente(conta.getId_cliente());
+        System.out.println(old);
+        if(!old.isPresent()){
+            return null;
+        }
+        Conta atualizada = old.get();
+        atualizada.setEstado(conta.getEstado());
+        atualizada.setLimite(conta.getLimite());
+        atualizada.setId_gerente(conta.getId_gerente());
+        System.out.println("atualizada: " + atualizada);
+        System.out.println(this.contaRepository.findAll());
+        return Transformer.transform(this.contaRepository.save(atualizada), ContaDTO.class);
+    }
+
+    public ContaDTO salvar(ContaDTO conta){
+        if(conta == null) return null;
+        Conta salva = this.contaRepository.save(Transformer.transform(conta, Conta.class));
+        return Transformer.transform(salva, ContaDTO.class);
+    }
+
+    public Boolean deletarPorId(String id) {
+        if (!contaRepository.existsById(id)) {
+            return false;
+        }
+        
+        contaRepository.deleteById(id);
+        
+        return !contaRepository.existsById(id);
+    }
+
+    public MovimentacaoDTO saque(String origem, MovimentacaoDTO dto){
         Conta conta = this.buscarPorId(origem).orElseThrow(NoSuchElementException::new);
         if(dto.getValor() > conta.getSaldo()){
             throw new IllegalArgumentException("Sem fundos suficientes");
@@ -42,7 +92,7 @@ public class ContaService {
         return Transformer.transform(salvo, MovimentacaoDTO.class);
     }
 
-    public MovimentacaoDTO deposito(Long origem, MovimentacaoDTO dto){
+    public MovimentacaoDTO deposito(String origem, MovimentacaoDTO dto){
         Conta conta = this.buscarPorId(origem).orElseThrow(NoSuchElementException::new);
         conta.setSaldo(conta.getSaldo() + dto.getValor());
         this.contaRepository.save(conta);
@@ -50,7 +100,7 @@ public class ContaService {
         return Transformer.transform(salvo, MovimentacaoDTO.class);
     }
 
-    public MovimentacaoDTO transferencia(Long origem, MovimentacaoDTO dto){
+    public MovimentacaoDTO transferencia(String origem, MovimentacaoDTO dto){
         Conta contaOrigem = this.buscarPorId(origem).orElseThrow(NoSuchElementException::new);
         Conta contaDestino = this.buscarPorId(dto.getDestino()).orElseThrow(NoSuchElementException::new);
 

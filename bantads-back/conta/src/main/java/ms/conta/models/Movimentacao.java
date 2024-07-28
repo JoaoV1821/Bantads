@@ -17,11 +17,10 @@ import ms.conta.models.enums.MovimentacaoEnum;
 public class Movimentacao {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
     private Date data;
     private MovimentacaoEnum tipo;
-    private Long origem;
-    private Long destino;
+    private String origem;
+    private String destino;
     private Double valor;
 }

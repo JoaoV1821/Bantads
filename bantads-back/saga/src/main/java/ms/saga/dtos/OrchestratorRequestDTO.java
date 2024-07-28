@@ -21,5 +21,5 @@ public class OrchestratorRequestDTO {
     private String cidade;
     private String uf;
     
-    private int estado;
+    //private int estado;
 }

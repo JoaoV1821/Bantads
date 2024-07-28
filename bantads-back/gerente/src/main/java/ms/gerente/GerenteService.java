@@ -1,7 +1,6 @@
 package ms.gerente;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -29,8 +28,12 @@ public class GerenteService {
             .collect(Collectors.toList());
     }
 
-    public Optional<Gerente> buscarPorId(Long id){
-        return this.gerenteRepository.findById(id);
+    public GerenteDTO buscarPorId(String id){
+        Optional<Gerente> salvo =  this.gerenteRepository.findById(id);
+        if(salvo.isPresent()){
+            return Transformer.transform(salvo, GerenteDTO.class);
+        }
+        return null;
     }
 
     public GerenteDTO salvar(GerenteDTO dto) {
@@ -41,20 +44,25 @@ public class GerenteService {
         return Transformer.transform(savedGerente, GerenteDTO.class);
     }
 
-    public GerenteDTO atualizar(Long id, GerenteDTO dto) {
-        Gerente oldGerente = this.buscarPorId(id).orElseThrow(NoSuchElementException::new);
+    public GerenteDTO atualizar(String id, GerenteDTO dto) {
+        GerenteDTO oldGerente = this.buscarPorId(id);
+        if(oldGerente == null) return null;
+
         oldGerente.setEmail(dto.getEmail());
         oldGerente.setTelefone(dto.getTelefone());
-        return Transformer.transform(this.gerenteRepository.save(oldGerente), GerenteDTO.class);
+        Gerente salvo = this.gerenteRepository.save(Transformer.transform(oldGerente, Gerente.class));
+        return Transformer.transform(salvo, GerenteDTO.class);
     }
 
-    public void remover(Long id){
+    public Boolean remover(String id){
         //TODO RELACIONAR CONTAS
         
-        if(this.listar().size() <= 1){
-            throw new IllegalArgumentException("Não é permitido remover o último gerente");
-        }
+        if(this.listar().size() <= 1){ return false; }
+        if (!gerenteRepository.existsById(id)) { return false; }
+
         this.gerenteRepository.deleteById(id);
+        return !gerenteRepository.existsById(id);
+        
     }
     
 }

@@ -39,7 +39,8 @@
             "envFile": "${workspaceFolder}/.env",
             "env": {
                 "SPRING_AMQP_DESERIALIZATION_TRUST_ALL": "true"
-            }
+            },
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=63064 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=user"
         },
         {
             "type": "java",
@@ -48,6 +49,19 @@
             "cwd": "${workspaceFolder}",
             "mainClass": "ms.saga.SagaApplication",
             "projectName": "saga",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env",
+            "env": {
+                "SPRING_AMQP_DESERIALIZATION_TRUST_ALL": "true"
+            }
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-AuthApplication<auth>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.dac.auth.AuthApplication",
+            "projectName": "auth",
             "args": "",
             "envFile": "${workspaceFolder}/.env",
             "env": {

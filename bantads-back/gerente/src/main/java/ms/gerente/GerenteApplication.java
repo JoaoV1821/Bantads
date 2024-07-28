@@ -38,9 +38,10 @@ public class GerenteApplication implements CommandLineRunner{
 	@SuppressWarnings("unchecked")
 	@Override
 	public void run(String ...args) throws Exception{
-		repo.save(new Gerente(1L, "000", "gerente1@email.com", "9999-9999"));
-		repo.save(new Gerente(2L, "111", "gerente2@email.com", "9998-8888"));
-		repo.save(new Gerente(3L, "222", "gerente3@email.com", "9997-7777"));
+		repo.save(new Gerente("1", "000", "gerente1@email.com", "9999-9999"));
+		repo.save(new Gerente("2", "111", "gerente2@email.com", "9998-8888"));
+		repo.save(new Gerente("3", "222", "gerente3@email.com", "9997-7777"));
+		System.out.println(this.repo.findAll());
 
 		producer.sendMessage(new Message<>(
 				UUID.randomUUID().toString(), "testConnection", 
@@ -55,7 +56,7 @@ public class GerenteApplication implements CommandLineRunner{
 				clientes = data.getList();
                 return clientes;
             })
-            .subscribe();
+            .block();
 
 		Message<ContaDTO> msgConta = new Message<>(UUID.randomUUID().toString(), 
 			"listAll", null, "conta", "gerente.response");    
@@ -66,17 +67,23 @@ public class GerenteApplication implements CommandLineRunner{
 				contas = data.getList();
                 return contas;
             })
-            .subscribe();
+            .block();
 
 		gerentes = this.service.listar().stream().map(g -> Transformer.transform(g, GerenteDTO.class)).collect(Collectors.toList());
 
-		Map<Long, GerenteDTO> gerenteMap = gerentes.stream()
+		Map<String, GerenteDTO> gerenteMap = gerentes.stream()
 			.collect(Collectors.toMap(
 				GerenteDTO::getId,
 				gerente -> gerente
     		));
-
-		
+/* 
+		List<MergedObject> merged = contas.stream()
+		.map(a -> {
+			gerente = gerenteMap.get(a.getId_gerente)
+			return new MergedObject(set atributos<conta> set atributos<gerente>))
+			}
+		.collect(Collectors.toList());
+*/		
 		List<Pair<GerenteDTO, ContaDTO>> joined = contas.stream()
 			.map(a -> new Pair(gerenteMap.get(a.getId_gerente()), a))
 			.collect(Collectors.toList());

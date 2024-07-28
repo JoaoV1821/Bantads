@@ -1,9 +1,14 @@
 package ms.saga.autocadastro.steps;
 
+import java.util.UUID;
+
 import ms.saga.WorkflowStep;
 import ms.saga.WorkflowStepStatus;
 import ms.saga.rabbit.Producer;
+import ms.saga.util.Transformer;
 import reactor.core.publisher.Mono;
+import shared.GenericData;
+import shared.Message;
 import shared.dtos.ContaDTO;
 
 public class CreateAccountStep implements WorkflowStep{
@@ -25,19 +30,44 @@ public class CreateAccountStep implements WorkflowStep{
     @Override
     public Mono<Boolean> process(){
         
-        //request criar registro conta
-        //confirmar resposta
+        System.out.println("CreateAccountStep::Process");
 
-        return Mono.empty();
+        GenericData<ContaDTO> data = new GenericData<>();
+        data.setDto(contaDTO);
+
+        Message<ContaDTO> msg = new Message<ContaDTO>(UUID.randomUUID().toString(),
+        "saveAccount", data , "conta", "saga.response");
+
+        return producer.sendRequest(msg)
+            .map(response -> {
+                GenericData<ContaDTO> conta = Transformer.transform(response, GenericData.class);
+                System.out.println("conta" + conta);
+                return conta.getDto() != null;
+            })
+            .doOnNext(b -> this.stepStatus = b ? WorkflowStepStatus.COMPLETE : WorkflowStepStatus.FAILED)
+            .onErrorReturn(false);
     }
 
     @Override
     public Mono<Boolean> revert(){
 
-        //request apagar registro contas
-        //confirmar resposta
+        System.out.println("CreateAccountStep::Revert");
 
-        return Mono.empty();
+        GenericData<ContaDTO> data = new GenericData<>();
+        data.setDto(contaDTO);
+
+        Message<ContaDTO> msg = new Message<ContaDTO>(UUID.randomUUID().toString(),
+        "deleteAccount", data , "conta", "saga.response");
+
+        return producer.sendRequest(msg)
+            .map(response -> {
+                System.out.println("response" + response);
+                GenericData<ContaDTO> conta = Transformer.transform(response, GenericData.class);
+                System.out.println("conta" + conta);
+                return conta.getDto() != null;
+            })
+            .onErrorReturn(false);
+
     }
 
 }

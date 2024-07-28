@@ -31,19 +31,19 @@ public class ContaController {
     @Autowired ContaService contaService;
 
     @PostMapping("/saque/{id}")
-    public ResponseEntity<MovimentacaoDTO> saque(@PathVariable Long id, @RequestBody MovimentacaoDTO dto) {
+    public ResponseEntity<MovimentacaoDTO> saque(@PathVariable String id, @RequestBody MovimentacaoDTO dto) {
         MovimentacaoDTO salvo = this.contaService.saque(id, dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
     }
 
     @PostMapping("/deposito/{id}")
-    public ResponseEntity<MovimentacaoDTO> deposito(@PathVariable Long id, @RequestBody MovimentacaoDTO dto) {
+    public ResponseEntity<MovimentacaoDTO> deposito(@PathVariable String id, @RequestBody MovimentacaoDTO dto) {
         MovimentacaoDTO salvo = this.contaService.deposito(id, dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
     }
 
     @PostMapping("/transferencia/{id}")
-    public ResponseEntity<MovimentacaoDTO> transferencia(@PathVariable Long id, @RequestBody MovimentacaoDTO dto) {
+    public ResponseEntity<MovimentacaoDTO> transferencia(@PathVariable String id, @RequestBody MovimentacaoDTO dto) {
         MovimentacaoDTO salvo = this.contaService.transferencia(id, dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
     }

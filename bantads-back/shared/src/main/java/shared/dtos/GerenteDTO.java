@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GerenteDTO implements Serializable {
     
-    private Long id;
+    private String id;
     private String cpf;
     private String email;
     private String telefone;

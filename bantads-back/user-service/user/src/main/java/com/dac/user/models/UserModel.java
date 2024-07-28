@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
 public class UserModel implements Serializable {
     
     @Id
+    private String id;
     private String cpf;
     private String email;
     private String nome;

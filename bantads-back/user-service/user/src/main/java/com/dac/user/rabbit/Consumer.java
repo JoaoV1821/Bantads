@@ -3,12 +3,15 @@ package com.dac.user.rabbit;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.modelmapper.internal.bytebuddy.description.type.TypeDescription.Generic;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.dac.user.models.UserModel;
 import com.dac.user.repository.UserRepository;
+import com.dac.user.service.UserService;
 import com.dac.user.util.Transformer;
 
 import shared.GenericData;
@@ -20,16 +23,17 @@ public class Consumer {
     
     @Autowired Producer producer;
     @Autowired UserRepository repo;
+    @Autowired UserService service;
     @Autowired RabbitTemplate rabbitTemplate;
 
     @RabbitListener(queues = "cliente") 
     public void receiveMessage(Message<?> message){
         System.out.println("Received message on clienteApplication" + message);
         switch (message.getRequest()) {
-            case "listAll":
+            case "listAll":{
 
                 Message<ClienteDTO> response = new Message<>();
-
+    
                 List<ClienteDTO> list = 
                     this.repo.findAll().stream()
                     .map(c -> Transformer.transform(c, ClienteDTO.class))
@@ -38,6 +42,35 @@ public class Consumer {
                 if(list != null){
                     GenericData<ClienteDTO> data = new GenericData<>();
                     data.setList(list);
+                    response.setData(data);
+                }
+                else{
+                    response.setData(null);
+                    response.setRequest("error");
+                }
+    
+                response.setId(message.getId());
+                response.setTarget(message.getReplyTo());
+    
+                rabbitTemplate.convertAndSend(response.getTarget(), response, msg -> {
+                    msg.getMessageProperties().setCorrelationId(response.getId());
+                    return msg;
+                }); 
+                
+                break;
+            }
+
+            case "saveClient":{
+
+                Message<ClienteDTO> response = new Message<>();
+
+                //GenericData<ClienteDTO> novo = Transformer.transform(message.getData(), GenericData.class);
+                GenericData novo = message.getData();
+                UserModel salvo = this.service.create(Transformer.transform(novo.getDto(), UserModel.class));
+                
+                if(salvo != null){
+                    GenericData<ClienteDTO> data = new GenericData<>();
+                    data.setDto(Transformer.transform(salvo, ClienteDTO.class));
                     response.setData(data);
                 }
                 else{
@@ -53,10 +86,35 @@ public class Consumer {
                     msg.getMessageProperties().setCorrelationId(response.getId());
                     return msg;
                 }); 
-                
-
                 break;
-        
+            }
+            
+            case "deleteClient":{
+
+                Message<ClienteDTO> response = new Message<>();
+
+                //GenericData<ClienteDTO> novo = Transformer.transform(message.getData(), GenericData.class);
+                GenericData<ClienteDTO> cliente = (GenericData<ClienteDTO>) message.getData();
+                
+                if(this.service.deletarPorId(cliente.getDto().getId())){
+                    //seta o cliente como data para saber na saga se foi bem sucedido
+                    response.setData(cliente);
+                }
+                else{
+                    response.setData(null);
+                    response.setRequest("error");
+                }
+
+                response.setId(message.getId());
+                response.setTarget(message.getReplyTo());
+
+                
+                rabbitTemplate.convertAndSend(response.getTarget(), response, msg -> {
+                    msg.getMessageProperties().setCorrelationId(response.getId());
+                    return msg;
+                }); 
+                break;
+            }    
             default:
                 break;
         }

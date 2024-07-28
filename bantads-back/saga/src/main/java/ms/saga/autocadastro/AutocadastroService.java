@@ -1,5 +1,7 @@
 package ms.saga.autocadastro;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,9 +23,12 @@ import ms.saga.rabbit.Producer;
 import ms.saga.util.Transformer;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import shared.GenericData;
+import shared.Message;
 import shared.dtos.AuthDTO;
 import shared.dtos.ClienteDTO;
 import shared.dtos.ContaDTO;
+import shared.dtos.GerenteDTO;
 
 @Service
 public class AutocadastroService {
@@ -36,8 +41,9 @@ public class AutocadastroService {
         return Flux.fromStream(() -> autocadastWorkflow.getSteps().stream())
             .concatMap(WorkflowStep::process)
             .handle(((aBoolean, synchronousSink) -> {
-                if(aBoolean)
+                if(aBoolean){
                     synchronousSink.next(true);
+                }
                 else
                     synchronousSink.error(new WorkflowException("Autocadastro failed"));
             }))
@@ -47,6 +53,8 @@ public class AutocadastroService {
 
 
     public Mono<OrchestratorResponseDTO> revertAutocadastro(final Workflow workflow, final OrchestratorRequestDTO requestDTO){
+        //email de erro
+        System.out.println("revertAutocadastro::AutocadastroService");
         return Flux.fromStream(() -> workflow.getSteps().stream())
             .filter(wf -> wf.getStatus().equals(WorkflowStepStatus.COMPLETE))
             .concatMap(WorkflowStep::revert)
@@ -55,10 +63,22 @@ public class AutocadastroService {
     }
 
     private Workflow getAutocadastWorkflow(OrchestratorRequestDTO requestDTO){
+
+        Message msg = new Message<>(UUID.randomUUID().toString(),
+        "requestManagerForNewAccount", null , "gerente", "saga.response");
+        
+        Mono<GenericData<?>> gerenteResponse = producer.sendRequest(msg);
+ 
+        GerenteDTO gerenteDTO = gerenteResponse.map(response -> {
+            GenericData<GerenteDTO> gerente = Transformer.transform(response, GenericData.class);
+            System.out.println("gerente " + gerente);
+            return gerente.getDto();
+        }).block();
+
         WorkflowStep createClientStep = new CreateClientStep(producer, this.getClientRequestDTO(requestDTO));
         WorkflowStep createAuthStep = new CreateAuthStep(producer, this.getAuthRequestDTO(requestDTO));
         WorkflowStep createAccountStep = new CreateAccountStep(producer, this.getContaRequestDTO(requestDTO));
-        WorkflowStep associateManagerStep = new AssociateManagerStep(producer);
+        WorkflowStep associateManagerStep = new AssociateManagerStep(producer, this.getContaRequestDTO(requestDTO), gerenteDTO);
 
         return new AutocadastroWorkflow(
             List.of(createClientStep, createAuthStep, createAccountStep, associateManagerStep));
@@ -86,10 +106,11 @@ public class AutocadastroService {
         ContaDTO contaDTO = new ContaDTO();
         contaDTO.setId_cliente(uuid);
         Double salario = this.getClientRequestDTO(requestDTO).getSalario();
-        contaDTO.setLimite(salario > 2000 ? (Double) (salario / 2) : 0.00);
+        contaDTO.setLimite(salario > 2000.00 ? (Double) (salario / 2) : 0.00);
         contaDTO.setSaldo(0.00);
         contaDTO.setEstado(0);  
-        //contaDTO.setId();
+        contaDTO.setId(UUID.randomUUID().toString());
+        contaDTO.setData(Date.valueOf(LocalDate.now()));
         //contaDTO.setNumero_conta();
         //contaDTO.setId_gerente(); associateManagerStep faz o update
         return contaDTO;
@@ -106,7 +127,7 @@ public class AutocadastroService {
 
     private OrchestratorResponseDTO getResponseDTO(OrchestratorRequestDTO requestDTO, SagaStatus status){
         OrchestratorResponseDTO responseDTO = new OrchestratorResponseDTO();
-        Transformer.transform(requestDTO, OrchestratorResponseDTO.class);
+        responseDTO = Transformer.transform(requestDTO, OrchestratorResponseDTO.class);
         responseDTO.setStatus(status);
         return responseDTO;
     }
