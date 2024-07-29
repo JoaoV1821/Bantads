@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dac.auth.model.AuthModel;
 import com.dac.auth.repository.AuthRepository;
 import com.dac.auth.dto.AuthDTO;
-import com.dac.auth.mapper.AuthMapper;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
+import com.dac.auth.service.AuthService;
 
 @CrossOrigin
 @RestController
@@ -32,7 +32,7 @@ public class AuthREST {
         for (AuthModel i : cursor) {
 
             if (login.getEmail().equals(i.getEmail()) && login.getSenha().equals(i.getSenha())) {
-                AuthDTO user = AuthMapper.toDto(i);
+                AuthDTO user = AuthService.salvar(i);
                 return ResponseEntity.ok().body(user);
             }
         }
