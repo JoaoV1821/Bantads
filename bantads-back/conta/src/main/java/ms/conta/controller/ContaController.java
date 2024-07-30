@@ -1,4 +1,4 @@
-package ms.conta;
+package ms.conta.controller;
 
 
 import java.sql.Date;
@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
 import ms.conta.models.dto.MovimentacaoDTO;
+import ms.conta.service.ContaService;
 
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;

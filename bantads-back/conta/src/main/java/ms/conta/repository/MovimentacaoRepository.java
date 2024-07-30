@@ -1,4 +1,4 @@
-package ms.conta;
+package ms.conta.repository;
 
 import java.sql.Date;
 import java.util.List;

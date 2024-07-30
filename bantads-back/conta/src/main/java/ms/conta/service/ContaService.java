@@ -1,4 +1,4 @@
-package ms.conta;
+package ms.conta.service;
 
 import java.sql.Date;
 import java.util.List;
@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import ms.conta.models.Conta;
 import ms.conta.models.Movimentacao;
 import ms.conta.models.dto.MovimentacaoDTO;
+import ms.conta.repository.ContaRepository;
+import ms.conta.repository.MovimentacaoRepository;
 import ms.conta.util.Transformer;
 import shared.dtos.ContaDTO;
 

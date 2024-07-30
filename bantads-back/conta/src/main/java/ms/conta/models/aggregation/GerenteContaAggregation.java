@@ -1,4 +1,4 @@
-package ms.conta.models;
+package ms.conta.models.aggregation;
 
 public interface GerenteContaAggregation {
 

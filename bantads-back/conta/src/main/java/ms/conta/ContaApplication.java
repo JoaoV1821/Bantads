@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 
 import ms.conta.models.Conta;
 import ms.conta.rabbit.Producer;
+import ms.conta.repository.ContaRepository;
 import shared.Message;
 
 @SpringBootApplication

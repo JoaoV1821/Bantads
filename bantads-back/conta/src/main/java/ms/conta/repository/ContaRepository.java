@@ -1,4 +1,4 @@
-package ms.conta;
+package ms.conta.repository;
 
 import java.util.List;
 import java.util.Optional;
@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import ms.conta.models.Conta;
-import ms.conta.models.GerenteContaAggregation;
+import ms.conta.models.aggregation.GerenteContaAggregation;
 
 public interface ContaRepository extends JpaRepository<Conta, String>{
 
