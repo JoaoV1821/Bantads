@@ -12,7 +12,8 @@ import org.springframework.stereotype.Component;
 
 import ms.conta.models.aggregation.GerenteContaAggregation;
 import ms.conta.repository.ContaRepository;
-import ms.conta.service.ContaService;
+import ms.conta.service.CommandService;
+import ms.conta.service.QueryService;
 import ms.conta.util.Transformer;
 import shared.GenericData;
 import shared.Message;
@@ -22,7 +23,8 @@ import shared.dtos.ContaDTO;
 public class Consumer {
 
     @Autowired ContaRepository repo;
-    @Autowired  ContaService service;
+    @Autowired CommandService commandService;
+    @Autowired QueryService queryService;
     @Autowired RabbitTemplate rabbitTemplate;
     
     @RabbitListener(queues = "conta") 
@@ -56,9 +58,7 @@ public class Consumer {
 
     private Message<ContaDTO> handleListAll(Message<?> message) {
         Message<ContaDTO> response = new Message<>();
-        List<ContaDTO> list = repo.findAll().stream()
-            .map(c -> Transformer.transform(c, ContaDTO.class))
-            .collect(Collectors.toList());
+        List<ContaDTO> list = queryService.listar();
 
         if (list != null) {
             GenericData<ContaDTO> data = new GenericData<>();
@@ -74,7 +74,7 @@ public class Consumer {
     private Message<ContaDTO> handleUpdateAccount(Message<?> message) {
         Message<ContaDTO> response = new Message<>();
         GenericData<ContaDTO> novo = (GenericData<ContaDTO>) message.getData();
-        ContaDTO salvo = service.atualizarPorId_cliente(Transformer.transform(novo.getDto(), ContaDTO.class));
+        ContaDTO salvo = commandService.atualizarPorId_cliente(Transformer.transform(novo.getDto(), ContaDTO.class));
 
         if (salvo != null) {
             GenericData<ContaDTO> data = new GenericData<>();
@@ -90,7 +90,7 @@ public class Consumer {
     private Message<ContaDTO> handleSaveAccount(Message<?> message) {
         Message<ContaDTO> response = new Message<>();
         GenericData<?> novo = message.getData();
-        ContaDTO salvo = service.salvar(Transformer.transform(novo.getDto(), ContaDTO.class));
+        ContaDTO salvo = commandService.salvar(Transformer.transform(novo.getDto(), ContaDTO.class));
 
         if (salvo != null) {
             GenericData<ContaDTO> data = new GenericData<>();
@@ -105,10 +105,10 @@ public class Consumer {
 
     private Message<ContaDTO> handleDeleteAccount(Message<?> message) {
         Message<ContaDTO> response = new Message<>();
-        GenericData<ContaDTO> cliente = (GenericData<ContaDTO>) message.getData();
+        GenericData<ContaDTO> conta = (GenericData<ContaDTO>) message.getData();
 
-        if (service.deletarPorId(cliente.getDto().getId())) {
-            response.setData(cliente);
+        if (commandService.deletarPorId(conta.getDto().getId())) {
+            response.setData(conta);
         } else {
             response.setData(null);
             response.setRequest("error");
@@ -135,7 +135,8 @@ public class Consumer {
 
         Message<String> response = new Message<>();
         GenericData<String> data = new GenericData<>();
-        Optional<Map.Entry<String, Integer>> managerWithLeastAccounts = resultMerge.entrySet().stream().min(Map.Entry.comparingByValue());
+        Optional<Map.Entry<String, Integer>> managerWithLeastAccounts = resultMerge.entrySet().stream()
+            .min(Map.Entry.comparingByValue());
 
         if (managerWithLeastAccounts.isPresent()) {
             data.setDto(managerWithLeastAccounts.get().getKey());

@@ -42,6 +42,21 @@ public class RabbitConfig {
         .noargs();
     }
 
+    @Bean Queue queueQuery(){
+        return new Queue("query", false);
+    }
+
+    @Bean Exchange exchangeQuery(){
+        return new DirectExchange("exchange");
+    }
+
+    @Bean Binding bindingQuery(Queue queue, Exchange exchange){
+        return BindingBuilder.bind(queue)
+        .to(exchange)
+        .with("query")
+        .noargs();
+    }
+
     @Bean SimpleMessageConverter simpleMessageConverter() {
         SimpleMessageConverter converter = new SimpleMessageConverter();
         converter.setBeanClassLoader(getClass().getClassLoader());
