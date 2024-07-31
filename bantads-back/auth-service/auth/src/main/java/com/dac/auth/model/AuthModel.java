@@ -17,6 +17,8 @@ public class AuthModel implements Serializable {
     private String email;
     private String senha;
     private String tipo;
+    private boolean active;
+    private String salt;
 
     public AuthModel() {
         super();

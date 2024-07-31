@@ -17,7 +17,7 @@ public class EnderecoModel implements Serializable {
     private String complemento;
     private String cep;
     private String cidade;
-    private String estado;
+    private String uf;
 
     EnderecoModel() {
         super();

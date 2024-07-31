@@ -130,7 +130,7 @@ const authServiceProxy = httpProxy("http://localhost:8080/auth", {
             const objBody = JSON.parse(str);
             const email = objBody.email;
             const token = jwt.sign({email}, process.env.SECRET, {
-                expiresIn: 300
+                expiresIn: 30000
             });
             res.status(200);
             return {auth: true, token: token, data: objBody};

@@ -2,6 +2,7 @@ package com.dac.user.service.impl;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
@@ -19,13 +20,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserModel findByEmail(String email) {
-        return userRepository.findById(email).orElseThrow(NoSuchElementException::new);
+    public boolean findByEmail(String email) {
+        if(userRepository.existsByEmail(email)) {
+            return false;
+        };
+
+        return true;
+        
     }
 
     @Override
+    public Optional <UserModel> findByUUID(UUID uuid) {
+       Optional<UserModel> user = userRepository.findById(uuid);
+
+       return user;
+    }
+ 
+    @Override
     public UserModel create(UserModel user) {
-        if (userRepository.existsById(user.getCpf())) {
+        if (userRepository.existsByEmail(user.getEmail())) {
             throw new IllegalArgumentException("Já existe uma conta cadastrada neste email");
         }
 
@@ -34,14 +47,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void atualizar(String cpf, UserModel user) {
-        Optional<UserModel> userBd = userRepository.findById(cpf);
+    public void atualizar(UUID uuid, UserModel user) {
+        Optional<UserModel> userBd = userRepository.findById(uuid);
     
         
         if (userBd.isPresent()) {
            
             UserModel existingUser = userBd.get();
 
+            existingUser.setUuid(existingUser.getUuid());
+            existingUser.setCpf(existingUser.getCpf());
             existingUser.setNome(user.getNome());
             existingUser.setEmail(user.getEmail());
             existingUser.setEndereco(user.getEndereco());
@@ -53,6 +68,11 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new NoSuchElementException();
         }
+    }
+
+    @Override
+    public void delete(UUID uuid) {
+        userRepository.deleteById(uuid);    
     }
     
 }
