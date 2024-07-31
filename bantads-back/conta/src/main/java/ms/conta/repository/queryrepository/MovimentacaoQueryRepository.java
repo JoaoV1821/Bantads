@@ -1,4 +1,4 @@
-package ms.conta.repository;
+package ms.conta.repository.queryrepository;
 
 import java.sql.Date;
 import java.util.List;
@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import ms.conta.models.Movimentacao;
 
-public interface MovimentacaoRepository extends JpaRepository<Movimentacao, String>{
+public interface MovimentacaoQueryRepository extends JpaRepository<Movimentacao, String>{
     @Query(nativeQuery = true, value = "SELECT * FROM movimentacao WHERE :id = id AND :dataIni < data")
     List<Movimentacao> findByDataInicial(Long id, Date dataIni);
 

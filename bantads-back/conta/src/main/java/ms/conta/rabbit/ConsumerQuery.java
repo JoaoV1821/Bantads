@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ms.conta.models.dto.MovimentacaoDTO;
+import ms.conta.models.dto.QueryUpdateDTO;
 import ms.conta.service.QueryService;
 import ms.conta.util.Transformer;
 import shared.GenericData;
@@ -19,7 +20,9 @@ public class ConsumerQuery {
     
     @RabbitListener(queues = "query") 
     public void receiveMessage(Message<?> message) {
-        System.out.println("Received message on contaApplication::ConsumerQuery" + message);
+        System.out.println("**********************************");
+        System.out.println("CONSUMER QUERY");
+        System.out.println("Received message on contaApplication::ConsumerQuery " + message);
 
         switch (message.getRequest()) {
             case "updateAccount":
@@ -32,7 +35,6 @@ public class ConsumerQuery {
                 handleDeleteAccount(message);
                 break;
             case "saveMovement":
-                //! ATUALIZAR SALDOS
                 handleSaveMovement(message);
                 break;
             default:
@@ -41,9 +43,15 @@ public class ConsumerQuery {
     }
 
     private void handleSaveMovement(Message<?> message) {
-        GenericData<MovimentacaoDTO> movimentacao = (GenericData<MovimentacaoDTO>) message.getData();
+        GenericData<QueryUpdateDTO> movimentacao = (GenericData<QueryUpdateDTO>) message.getData();
+        if(movimentacao.getDto().getOrigem() != null)
+            queryService.atualizar(movimentacao.getDto().getOrigem());
+        
+        if(movimentacao.getDto().getDestino() != null)
+            queryService.atualizar(movimentacao.getDto().getDestino());
+
         queryService.salvar(Transformer.transform(
-            movimentacao.getDto(), MovimentacaoDTO.class));
+            movimentacao.getDto().getMovimentacao(), MovimentacaoDTO.class));
     }
 
     private void handleUpdateAccount(Message<?> message) {

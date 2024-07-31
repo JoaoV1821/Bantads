@@ -1,0 +1,22 @@
+CREATE TABLE IF NOT EXISTS Conta (
+    id VARCHAR(255) PRIMARY KEY,
+    limite DOUBLE,
+    saldo DOUBLE,
+    data DATE,
+    id_cliente VARCHAR(255),
+    id_gerente VARCHAR(255),
+    estado INT
+);
+
+CREATE TABLE IF NOT EXISTS Movimentacao (
+    id VARCHAR(255) PRIMARY KEY,
+    data DATE,
+    tipo VARCHAR(255),
+    origem VARCHAR(255),
+    destino VARCHAR(255),
+    valor DOUBLE
+);
+
+INSERT INTO Conta (id, limite, saldo, data, id_cliente, id_gerente, estado) VALUES ('1', 1000.0, 650.0, '2023-01-01', 'client1', 'manager1', 1);
+INSERT INTO Conta (id, limite, saldo, data, id_cliente, id_gerente, estado) VALUES ('2', 2000.0, 1500.0, '2023-01-02', 'client2', 'manager2', 1);
+INSERT INTO Conta (id, limite, saldo, data, id_cliente, id_gerente, estado) VALUES ('3', 3000.0, 2500.0, '2023-01-03', 'client3', 'manager3', 1);

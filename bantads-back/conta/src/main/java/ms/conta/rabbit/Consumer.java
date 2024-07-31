@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ms.conta.models.aggregation.GerenteContaAggregation;
-import ms.conta.repository.ContaRepository;
+import ms.conta.repository.queryrepository.QueryRepository;
 import ms.conta.service.CommandService;
 import ms.conta.service.QueryService;
 import ms.conta.util.Transformer;
@@ -22,14 +22,14 @@ import shared.dtos.ContaDTO;
 @Component
 public class Consumer {
 
-    @Autowired ContaRepository repo;
+    @Autowired QueryRepository repo;
     @Autowired CommandService commandService;
     @Autowired QueryService queryService;
     @Autowired RabbitTemplate rabbitTemplate;
     
     @RabbitListener(queues = "conta") 
     public void receiveMessage(Message<?> message) {
-        System.out.println("Received message on contaApplication" + message);
+        System.out.println("Received message on contaApplication " + message);
 
         Message<?> response = null;
 

@@ -11,29 +11,29 @@ import org.springframework.stereotype.Service;
 import ms.conta.models.Conta;
 import ms.conta.models.Movimentacao;
 import ms.conta.models.dto.MovimentacaoDTO;
-import ms.conta.repository.ContaRepository;
-import ms.conta.repository.MovimentacaoRepository;
+import ms.conta.repository.queryrepository.QueryRepository;
+import ms.conta.repository.queryrepository.MovimentacaoQueryRepository;
 import ms.conta.util.Transformer;
 import shared.dtos.ContaDTO;
 
 @Service
 public class QueryService {
     
-    @Autowired private ContaRepository contaRepository;
-    @Autowired private MovimentacaoRepository movimentacaoRepository;
+    @Autowired private QueryRepository queryRepository;
+    @Autowired private MovimentacaoQueryRepository movimentacaoRepository;
 
     public List<ContaDTO> listar(){
-        return this.contaRepository.findAll().stream()
+        return this.queryRepository.findAll().stream()
         .map(conta -> Transformer.transform(conta, ContaDTO.class))
         .collect(Collectors.toList());
     }
 
     public Optional<Conta> buscarPorId(String id){
-        return this.contaRepository.findById(id);
+        return this.queryRepository.findById(id);
     }
 
     public Optional<Conta> buscarPorId_cliente(String id){
-        return this.contaRepository.findById_cliente(id);
+        return this.queryRepository.findById_cliente(id);
     }
 
     public List<MovimentacaoDTO> extrato(Long id, Date dataInicial, Date dataFinal){
@@ -60,25 +60,25 @@ public class QueryService {
             .collect(Collectors.toList());
     }
 
-    //CUD UPDATE CONTA
+    //COMMAND -> QUERY CONTA
     public void salvar(ContaDTO conta){
-        contaRepository.save(Transformer.transform(conta, Conta.class));
+        queryRepository.save(Transformer.transform(conta, Conta.class));
     }
     public void atualizar(ContaDTO conta){
-        contaRepository.save(Transformer.transform(conta, Conta.class));
+        queryRepository.save(Transformer.transform(conta, Conta.class));
     }
     public void deletar(ContaDTO conta){
-        contaRepository.deleteById(conta.getId());
+        queryRepository.deleteById(conta.getId());
     }
 
-    //CUD UPDATE MOVIMENTACAO
+    //COMMAND -> QUERY MOVIMENTACAO
     public void salvar(MovimentacaoDTO movimentacao){
-        contaRepository.save(Transformer.transform(movimentacao, Conta.class));
+        movimentacaoRepository.save(Transformer.transform(movimentacao, Movimentacao.class));
     }
     public void atualizar(MovimentacaoDTO movimentacao){
-        contaRepository.save(Transformer.transform(movimentacao, Conta.class));
+        movimentacaoRepository.save(Transformer.transform(movimentacao, Movimentacao.class));
     }
     public void deletar(MovimentacaoDTO movimentacao){
-        contaRepository.deleteById(movimentacao.getId());
+        movimentacaoRepository.deleteById(movimentacao.getId());
     }
 }

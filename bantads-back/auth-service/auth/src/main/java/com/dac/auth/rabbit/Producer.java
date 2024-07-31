@@ -41,8 +41,7 @@ public class Producer {
 
     //Simple RabbitMQ docs implementation
     public void sendMessage(Message<?> message) { 
-        rabbitTemplate.convertAndSend( 
-            "exchange", message.getTarget(), message); 
+        rabbitTemplate.convertAndSend(message.getTarget(), message);
     } 
 
     //Async non-blocking request-response

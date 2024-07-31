@@ -2,7 +2,6 @@ package ms.conta;
 
 import java.sql.Date;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,7 @@ import org.springframework.context.annotation.Bean;
 
 import ms.conta.models.Conta;
 import ms.conta.rabbit.Producer;
-import ms.conta.repository.ContaRepository;
+import ms.conta.repository.commandrepository.CommandRepository;
 import shared.Message;
 
 @SpringBootApplication
@@ -23,7 +22,8 @@ public class ContaApplication {
 		SpringApplication.run(ContaApplication.class, args);
 	}
 
-	@Autowired ContaRepository contaRepository;
+	/* 
+	@Autowired CommandRepository contaRepository;
 	@Autowired Producer producer;
 
 	@Bean
@@ -43,4 +43,5 @@ public class ContaApplication {
 		};
 		
 	}
+	*/
 }

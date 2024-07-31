@@ -12,9 +12,10 @@ import org.springframework.stereotype.Service;
 import ms.conta.models.Conta;
 import ms.conta.models.Movimentacao;
 import ms.conta.models.dto.MovimentacaoDTO;
+import ms.conta.models.dto.QueryUpdateDTO;
 import ms.conta.rabbit.Producer;
-import ms.conta.repository.ContaRepository;
-import ms.conta.repository.MovimentacaoRepository;
+import ms.conta.repository.commandrepository.CommandRepository;
+import ms.conta.repository.commandrepository.MovimentacaoCommandRepository;
 import ms.conta.util.Transformer;
 import shared.GenericData;
 import shared.Message;
@@ -25,8 +26,9 @@ public class CommandService {
     
     @Autowired private Producer producer;
     @Autowired private QueryService queryService;
-    @Autowired private ContaRepository contaRepository;
-    @Autowired private MovimentacaoRepository movimentacaoRepository;
+
+    @Autowired private CommandRepository contaRepository;
+    @Autowired private MovimentacaoCommandRepository movimentacaoRepository;
 
     public ContaDTO atualizar(ContaDTO conta){
         Optional<Conta> old = queryService.buscarPorId(conta.getId());
@@ -92,7 +94,11 @@ public class CommandService {
         Movimentacao salvo = this.movimentacaoRepository.save(Transformer.transform(dto, Movimentacao.class));
         
         MovimentacaoDTO movimentacaoDTO = Transformer.transform(salvo, MovimentacaoDTO.class);
-        queryUpdate(movimentacaoDTO, "saveMovement");
+        
+        var contaDTO = Transformer.transform(conta, ContaDTO.class);
+        QueryUpdateDTO queryUpdateDTO = new QueryUpdateDTO(contaDTO, null, movimentacaoDTO);
+
+        queryUpdate(queryUpdateDTO, "saveMovement");
 
         return movimentacaoDTO;
     }
@@ -104,7 +110,11 @@ public class CommandService {
         Movimentacao salvo = this.movimentacaoRepository.save(Transformer.transform(dto, Movimentacao.class));
         
         MovimentacaoDTO movimentacaoDTO = Transformer.transform(salvo, MovimentacaoDTO.class);
-        queryUpdate(movimentacaoDTO, "saveMovement");
+        
+        var contaDTO = Transformer.transform(conta, ContaDTO.class);
+        QueryUpdateDTO queryUpdateDTO = new QueryUpdateDTO(contaDTO, null, movimentacaoDTO);
+
+        queryUpdate(queryUpdateDTO, "saveMovement");
 
         return movimentacaoDTO;
     }
@@ -125,8 +135,13 @@ public class CommandService {
         Movimentacao salvo = this.movimentacaoRepository.save(Transformer.transform(dto, Movimentacao.class));
         
         MovimentacaoDTO movimentacaoDTO = Transformer.transform(salvo, MovimentacaoDTO.class);
-        queryUpdate(movimentacaoDTO, "saveMovement");
+        
+        var contaOrigemDTO = Transformer.transform(contaOrigem, ContaDTO.class);
+        var contaDestinoDTO = Transformer.transform(contaDestino, ContaDTO.class);
+        QueryUpdateDTO queryUpdateDTO = new QueryUpdateDTO(contaOrigemDTO, contaDestinoDTO, movimentacaoDTO);
 
+        queryUpdate(queryUpdateDTO, "saveMovement");
+        
         return movimentacaoDTO;
     }
 
@@ -143,4 +158,5 @@ public class CommandService {
             request, data , "query", null);
         producer.sendMessage(msg);
     }
+
 }

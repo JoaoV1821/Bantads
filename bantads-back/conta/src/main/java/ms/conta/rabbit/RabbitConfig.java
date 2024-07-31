@@ -47,7 +47,7 @@ public class RabbitConfig {
     }
 
     @Bean Exchange exchangeQuery(){
-        return new DirectExchange("exchange");
+        return new DirectExchange("exchange.query");
     }
 
     @Bean Binding bindingQuery(Queue queue, Exchange exchange){
