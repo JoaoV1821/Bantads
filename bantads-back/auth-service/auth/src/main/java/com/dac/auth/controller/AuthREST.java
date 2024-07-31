@@ -3,6 +3,9 @@ package com.dac.auth.controller;
 import java.util.List;
 import java.util.Optional;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import com.dac.auth.utils.EmailUtils;
 import com.dac.auth.utils.HashingUtils;
 import com.dac.auth.utils.SaltGenerator;
 import com.dac.auth.utils.Transformer;
@@ -36,8 +40,7 @@ public class AuthREST {
     @Autowired
     AuthService authService;
 
-
-    @PostMapping("/auth")
+    @PostMapping("/autenticar")
     ResponseEntity<AuthDTO> auth(@RequestBody LoginModel login) {
 
        Optional<AuthModel> authBd = authRepository.findById(login.getEmail());
@@ -58,22 +61,24 @@ public class AuthREST {
 
        return ResponseEntity.status(500).build();
 
-        // TODO: enviar email
     }
 
-
     @PostMapping("/registrar")
-    public ResponseEntity<Object> register(@RequestBody AuthModel login) {
+    public ResponseEntity<Object> register(@RequestBody AuthModel login ) throws AddressException, MessagingException {
 
         if (!authService.existsByemail(login.getEmail())) {
 
+            String password = HashingUtils.gerarSenha(6);
             String salt = SaltGenerator.generateSalt();
-            String hashPassword = HashingUtils.hashPassword(login.getSenha(), salt);
+            String hashPassword = HashingUtils.hashPassword(password, salt);
+            String msg = "Sua senha: " + "".concat(password);
 
             login.setSenha(hashPassword);
             login.setSalt(salt);
 
             authService.salvar(login);
+            EmailUtils.enviarEmail(msg, "Nova conta JV teste", login.getEmail());
+    
             return  ResponseEntity.status(201).build();
 
         } else if (authService.existsByemail(login.getEmail())) {
@@ -83,8 +88,8 @@ public class AuthREST {
         return ResponseEntity.status(500).build();
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<Object> delete(@RequestBody String email) {
+    @DeleteMapping("/{email}")
+    public ResponseEntity<Object> delete(@PathVariable String email) {
 
         if (authService.deletarPorId(email)) {
             return  ResponseEntity.status(200).build();
@@ -96,7 +101,7 @@ public class AuthREST {
         return ResponseEntity.status(500).build();
     }
 
-    @PutMapping("/atualizar")
+    @PutMapping("/{email}")
     public ResponseEntity<Object> atualizar(@PathVariable String email, @RequestBody AuthModel login) {
        Optional<AuthModel> authbd =  authRepository.findById(email);
 
