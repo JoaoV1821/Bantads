@@ -4,6 +4,6 @@ import lombok.Getter;
 
 @Getter
 public class LoginModel {
-    public String email;
+    String email;
     String senha;
 }

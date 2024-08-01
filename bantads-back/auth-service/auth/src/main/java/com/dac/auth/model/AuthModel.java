@@ -14,6 +14,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class AuthModel implements Serializable {
     @Id
+    private String uuid;
     private String email;
     private String senha;
     private String tipo;

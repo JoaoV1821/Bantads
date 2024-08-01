@@ -45,8 +45,9 @@ public class Consumer {
     private Message<AuthDTO> handleSaveAuth(Message<?> message) {
         Message<AuthDTO> response = new Message<>();
         GenericData<AuthDTO> novo = (GenericData<AuthDTO>) message.getData();
-        AuthDTO salvo = service.salvar(Transformer.transform(novo.getDto(),AuthModel.class));
-        
+        com.dac.auth.dto.AuthDTO salvoDTO = service.salvar(Transformer.transform(novo.getDto(),AuthModel.class));
+        AuthDTO salvo = Transformer.transform(salvoDTO, AuthDTO.class);
+
         if (salvo != null) {
             GenericData<AuthDTO> data = new GenericData<>();
             data.setDto(Transformer.transform(salvo, AuthDTO.class));

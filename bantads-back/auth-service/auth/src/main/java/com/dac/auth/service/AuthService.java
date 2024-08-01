@@ -1,6 +1,7 @@
 package com.dac.auth.service;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,9 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.dac.auth.utils.HashingUtils;
 import com.dac.auth.utils.Transformer;
-
-import shared.dtos.AuthDTO;
-
+import com.dac.auth.dto.AuthDTO;
 import com.dac.auth.model.AuthModel;
 import com.dac.auth.repository.AuthRepository;
 
@@ -22,19 +21,29 @@ public class AuthService {
 
 
     public AuthDTO salvar(AuthModel auth){
-        if(repo.existsByEmail(auth.getEmail())) return null;
+        
+        auth.setUuid(UUID.randomUUID().toString());
         AuthModel salvo = this.repo.save(auth);
         return Transformer.transform(salvo, AuthDTO.class);
 
     }
 
-
-    public Boolean deletarPorEmail(String email) {
-        if (!repo.existsByEmail(email)) {
+    public Boolean deletarPorId(String email) {
+        if (!repo.findById(email).isEmpty()) {
             return false;
         }
         
-        repo.deleteByEmail(email);
+        repo.deleteById(email);
+        
+        return !repo.existsByEmail(email);
+    }
+
+    public Boolean deletarPorEmail(String email) {
+        if (!repo.findById(email).isEmpty()) {
+            return false;
+        }
+        
+        repo.deleteById(email);
         
         return !repo.existsByEmail(email);
     }
@@ -49,7 +58,7 @@ public class AuthService {
 
 
     public void atualizar(String email, AuthModel auth) {
-        Optional<AuthModel> authBd = repo.findById(email);
+        Optional<AuthModel> authBd = repo.findByEmail(email);
     
         
         if (authBd.isPresent()) {
@@ -58,7 +67,8 @@ public class AuthService {
             
             existingAuth.setEmail(auth.getEmail());
             existingAuth.setSenha(HashingUtils.hashPassword(auth.getSenha(), authBd.get().getSalt()));
-         
+            existingAuth.setActive(auth.isActive());
+    
             repo.save(existingAuth);
             
         } else {
