@@ -2,7 +2,6 @@ package com.dac.user.service.impl;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
@@ -30,7 +29,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional <UserModel> findByUUID(UUID uuid) {
+    public Optional <UserModel> findByUUID(String uuid) {
        Optional<UserModel> user = userRepository.findById(uuid);
 
        return user;
@@ -47,7 +46,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void atualizar(UUID uuid, UserModel user) {
+    public void atualizar(String uuid, UserModel user) {
         Optional<UserModel> userBd = userRepository.findById(uuid);
     
         
@@ -55,8 +54,7 @@ public class UserServiceImpl implements UserService {
            
             UserModel existingUser = userBd.get();
 
-            existingUser.setUuid(existingUser.getUuid());
-            existingUser.setCpf(existingUser.getCpf());
+            existingUser.setUuid(uuid);
             existingUser.setNome(user.getNome());
             existingUser.setEmail(user.getEmail());
             existingUser.setEndereco(user.getEndereco());
@@ -71,7 +69,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void delete(UUID uuid) {
+    public void delete(String uuid) {
         userRepository.deleteById(uuid);    
     }
     

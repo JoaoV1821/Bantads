@@ -5,16 +5,14 @@ import java.net.URI;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.bind.annotation.*;
-import java.util.UUID;
+
 import java.util.Optional;
+import java.util.UUID;
+
 import com.dac.user.dto.UserDTO;
 import com.dac.user.models.UserModel;
 import com.dac.user.service.UserService;
 import com.dac.user.utils.Transformer;
-
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PathVariable;
 
 
 @CrossOrigin
@@ -28,8 +26,8 @@ public class UserController {
     }
 
 
-    @GetMapping("/{uuid}")
-    public ResponseEntity<UserDTO> findById(@PathVariable UUID uuid) {
+    @GetMapping("/find/{uuid}")
+    public ResponseEntity<UserDTO> findById(@PathVariable String uuid) {
         Optional<UserModel> user = userService.findByUUID(uuid);
 
         if (!user.isEmpty()) {
@@ -46,11 +44,14 @@ public class UserController {
     }
 
 
-    @PostMapping
+    @PostMapping("/registrar")
     public ResponseEntity<UserModel> create(@RequestBody UserModel user) {
 
         if (userService.findByEmail(user.getEmail())) {
+            user.setUuid(UUID.randomUUID().toString());
             UserModel userCreated = userService.create(user);
+
+            user.setUuid(UUID.randomUUID().toString());
 
             URI location = ServletUriComponentsBuilder.fromCurrentRequest()
             .path("/{uuid}")
@@ -66,8 +67,8 @@ public class UserController {
         return ResponseEntity.status(500).build();
     }
 
-    @PutMapping("/atualizar")
-    public ResponseEntity<UserModel> atualizar(@PathVariable UUID uuid, @RequestBody UserModel user) {
+    @PutMapping("/update/{uuid}")
+    public ResponseEntity<UserModel> atualizar(@PathVariable String uuid, @RequestBody UserModel user) {
         Optional<UserModel> bd = userService.findByUUID(uuid);
 
         if (!bd.isEmpty()) {
@@ -83,8 +84,8 @@ public class UserController {
     } 
 
 
-    @DeleteMapping("/{uuid}")
-    public ResponseEntity<UserModel> deletar(@PathVariable UUID uuid) {
+    @DeleteMapping("/delete/{uuid}")
+    public ResponseEntity<UserModel> deletar(@PathVariable String uuid) {
         Optional<UserModel> bd = userService.findByUUID(uuid);
 
         if (!bd.isEmpty()) {
