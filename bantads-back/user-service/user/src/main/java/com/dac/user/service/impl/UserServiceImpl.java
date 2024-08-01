@@ -3,7 +3,6 @@ package com.dac.user.service.impl;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.antlr.v4.runtime.misc.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,9 +36,9 @@ public class UserServiceImpl implements UserService {
         return userRepository.existsByEmail(email);
     }
 
-    @Override
-    public Optional <UserModel> findById(String id) {
-       Optional<UserModel> user = userRepository.findById(id);
+ 
+    public Optional <UserModel> findByUUID(String uuid) {
+       Optional<UserModel> user = userRepository.findById(uuid);
 
        return user;
     }
@@ -59,16 +58,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void atualizar(String id, UserModel user) {
-        Optional<UserModel> userBd = userRepository.findById(id);
-    
-        
+
+    public void atualizar(String uuid, UserModel user) {
+        Optional<UserModel> userBd = userRepository.findById(uuid);
+            
         if (userBd.isPresent()) {
            
             UserModel existingUser = userBd.get();
 
-            existingUser.setId(existingUser.getId());
-            //existingUser.setCpf(existingUser.getCpf());
+            existingUser.setUuid(uuid);
             existingUser.setNome(user.getNome());
             existingUser.setEmail(user.getEmail());
             existingUser.setEndereco(user.getEndereco());
@@ -82,21 +80,6 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    @Override
-    public void delete(String id) {
-        userRepository.deleteById(id);    
-    }
-
-    @Override
-    public Boolean deletarPorId(String id) {
-        if (!userRepository.existsById(id)) {
-            return false;
-        }
-        
-        userRepository.deleteById(id);
-        
-        return !userRepository.existsById(id);
-    }
 
     public Pair<ClienteDTO, ContaDTO> clienteComConta(String id){
         if(!userRepository.existsById(id)) return null;
@@ -119,6 +102,12 @@ public class UserServiceImpl implements UserService {
         
         return new Pair<ClienteDTO, ContaDTO>(cliente, conta);
 
+   
     }
+  
+  @Override
+   public void delete(String uuid) {
+        userRepository.deleteById(uuid);    
+
     
 }

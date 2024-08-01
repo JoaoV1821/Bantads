@@ -7,7 +7,8 @@ import com.dac.user.models.UserModel;
 
 
 @Repository
-public interface UserRepository extends JpaRepository<UserModel, String>{
+
+public interface UserRepository extends CrudRepository< UserModel, String>{
     boolean existsByEmail(String email);
     boolean existsByCpf(String cpf);
     UserModel findByEmail(String email);
