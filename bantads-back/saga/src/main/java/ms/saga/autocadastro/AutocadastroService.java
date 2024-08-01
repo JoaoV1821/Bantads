@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+import javax.mail.MessagingException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,7 @@ import ms.saga.dtos.OrchestratorRequestDTO;
 import ms.saga.dtos.OrchestratorResponseDTO;
 import ms.saga.dtos.enums.SagaStatus;
 import ms.saga.rabbit.Producer;
+import ms.saga.util.Email;
 import ms.saga.util.Transformer;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -53,8 +56,20 @@ public class AutocadastroService {
 
 
     public Mono<OrchestratorResponseDTO> revertAutocadastro(final Workflow workflow, final OrchestratorRequestDTO requestDTO){
-        //email de erro
+        
         System.out.println("revertAutocadastro::AutocadastroService");
+
+        String msg = "Devido a falhas internas, seu processo de cadastro não pode ser concluído. " 
+        + "Contate o suporte para mais informações.";
+        String assunto = "BANTADS - Cadastro não concluído";
+        String email = requestDTO.getEmail();
+
+        try {
+            Email.enviarEmail(msg, assunto, email);
+        } catch (MessagingException e) {
+            System.err.println("Failed to send email: " + e.getMessage());
+        }
+
         return Flux.fromStream(() -> workflow.getSteps().stream())
             .filter(wf -> wf.getStatus().equals(WorkflowStepStatus.COMPLETE))
             .concatMap(WorkflowStep::revert)

@@ -10,6 +10,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import ms.conta.models.Conta;
 import ms.conta.models.aggregation.GerenteContaAggregation;
 import ms.conta.repository.queryrepository.QueryRepository;
 import ms.conta.service.CommandService;
@@ -17,6 +18,7 @@ import ms.conta.service.QueryService;
 import ms.conta.util.Transformer;
 import shared.GenericData;
 import shared.Message;
+import shared.dtos.ClienteDTO;
 import shared.dtos.ContaDTO;
 
 @Component
@@ -49,10 +51,12 @@ public class Consumer {
             case "requestManagerWithLeastAccounts":
                 response = handleRequestManagerWithLeastAccounts(message);
                 break;
+            case "requestAccount":
+                response = handleRequestAccount(message);
+                break;    
             default:
                 return;
         }
-
         sendResponse(message, response);
     }
 
@@ -148,6 +152,23 @@ public class Consumer {
         return response;
     }
 
+    private Message<ContaDTO> handleRequestAccount(Message<?> message) {
+        Message<ContaDTO> response = new Message<>();
+        GenericData<ClienteDTO> cliente = (GenericData<ClienteDTO>) message.getData();
+
+        Optional<Conta> buscado = queryService.buscarPorId_cliente(cliente.getDto().getId());
+        if(buscado.isPresent()){
+            GenericData<ContaDTO> data = new GenericData<>();
+            data.setDto(Transformer.transform(buscado.get(), ContaDTO.class));
+            response.setData(data);
+        } else {
+            response.setData(null);
+            response.setRequest("error");
+        }
+
+        return response;
+    }
+
     private void sendResponse(Message<?> request, Message<?> response) {
         response.setId(request.getId());
         response.setTarget(request.getReplyTo());
@@ -156,5 +177,6 @@ public class Consumer {
             msg.getMessageProperties().setCorrelationId(response.getId());
             return msg;
         });
+        System.out.println(response);
     }
 }

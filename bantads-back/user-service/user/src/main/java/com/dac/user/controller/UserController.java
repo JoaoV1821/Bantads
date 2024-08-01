@@ -2,25 +2,32 @@ package com.dac.user.controller;
 
 import java.net.URI;
 
+import org.antlr.v4.runtime.misc.Pair;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
+import java.util.Map;
 import java.util.Optional;
 import com.dac.user.dto.UserDTO;
 import com.dac.user.models.UserModel;
 import com.dac.user.service.UserService;
+import com.dac.user.service.impl.UserServiceImpl;
 import com.dac.user.utils.Transformer;
 
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PathVariable;
+import shared.dtos.ClienteDTO;
+import shared.dtos.ContaDTO;
+
 
 
 @CrossOrigin
 @RestController
 @RequestMapping("/cliente")
 public class UserController {
+
+    @Autowired UserServiceImpl service;
+
     private final UserService userService;
 
     public UserController(UserService userService) {
@@ -97,5 +104,17 @@ public class UserController {
 
         return ResponseEntity.status(500).build();
     }
+
+    @GetMapping("/tela-inicial/{id}")
+    public ResponseEntity<Pair<ClienteDTO, ContaDTO>> telaInicial(@PathVariable String id) {
+        Pair<ClienteDTO, ContaDTO> pair = this.service.clienteComConta(id);
+        
+        if(pair != null){
+            return ResponseEntity.ok(pair);
+        }
+
+        return pair != null ? ResponseEntity.ok(pair) : ResponseEntity.notFound().build();
+    }
+    
 
 }
