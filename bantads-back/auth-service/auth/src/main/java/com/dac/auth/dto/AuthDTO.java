@@ -11,6 +11,7 @@ import lombok.Setter;
 @Document
 @Getter
 @Setter
+@Data
 public class AuthDTO {
 
     private String email;
