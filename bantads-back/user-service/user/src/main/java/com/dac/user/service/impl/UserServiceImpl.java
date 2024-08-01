@@ -20,12 +20,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean findByEmail(String email) {
-        if(userRepository.existsByEmail(email)) {
-            return false;
-        };
-
-        return true;
-        
+        return userRepository.existsByEmail(email);
     }
 
     @Override
@@ -38,7 +33,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserModel create(UserModel user) {
         if (userRepository.existsByEmail(user.getEmail())) {
-            throw new IllegalArgumentException("Já existe uma conta cadastrada neste email");
+            return null;
+        }
+
+        if (userRepository.existsByCpf(user.getEmail())) {
+            return null;
         }
 
         return userRepository.save(user);
@@ -55,7 +54,7 @@ public class UserServiceImpl implements UserService {
             UserModel existingUser = userBd.get();
 
             existingUser.setId(existingUser.getId());
-            existingUser.setCpf(existingUser.getCpf());
+            //existingUser.setCpf(existingUser.getCpf());
             existingUser.setNome(user.getNome());
             existingUser.setEmail(user.getEmail());
             existingUser.setEndereco(user.getEndereco());

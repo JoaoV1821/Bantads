@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import com.dac.user.models.UserModel;
 import com.dac.user.repository.UserRepository;
 import com.dac.user.service.UserService;
-import com.dac.user.util.Transformer;
+import com.dac.user.utils.Transformer;
 
 import shared.GenericData;
 import shared.Message;

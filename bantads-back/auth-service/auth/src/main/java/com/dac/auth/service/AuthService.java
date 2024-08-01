@@ -22,6 +22,7 @@ public class AuthService {
 
 
     public AuthDTO salvar(AuthModel auth){
+        if(repo.existsByEmail(auth.getEmail())) return null;
         AuthModel salvo = this.repo.save(auth);
         return Transformer.transform(salvo, AuthDTO.class);
 
