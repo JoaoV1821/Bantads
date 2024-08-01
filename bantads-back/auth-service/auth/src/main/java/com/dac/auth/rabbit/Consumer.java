@@ -5,9 +5,10 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.dac.auth.model.AuthModel;
 import com.dac.auth.repository.AuthRepository;
 import com.dac.auth.service.AuthService;
-import com.dac.auth.util.Transformer;
+import com.dac.auth.utils.Transformer;
 
 import shared.GenericData;
 import shared.Message;
@@ -44,8 +45,8 @@ public class Consumer {
     private Message<AuthDTO> handleSaveAuth(Message<?> message) {
         Message<AuthDTO> response = new Message<>();
         GenericData<AuthDTO> novo = (GenericData<AuthDTO>) message.getData();
-        AuthDTO salvo = service.salvar(novo.getDto());
-
+        AuthDTO salvo = service.salvar(Transformer.transform(novo.getDto(),AuthModel.class));
+        
         if (salvo != null) {
             GenericData<AuthDTO> data = new GenericData<>();
             data.setDto(Transformer.transform(salvo, AuthDTO.class));
@@ -61,7 +62,7 @@ public class Consumer {
         Message<AuthDTO> response = new Message<>();
         GenericData<AuthDTO> auth = (GenericData<AuthDTO>) message.getData();
 
-        if (service.deletarPorId(auth.getDto().getId())) {
+        if (service.deletarPorEmail(auth.getDto().getEmail())) {
             response.setData(auth);
         } else {
             response.setData(null);

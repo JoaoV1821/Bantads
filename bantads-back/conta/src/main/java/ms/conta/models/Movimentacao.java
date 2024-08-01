@@ -20,7 +20,7 @@ public class Movimentacao {
     private Long id;
     private DateTimeFormat data;
     private MovimentacaoEnum tipo;
-    private Long origem;
-    private Long destino;
+    private String origem;
+    private String destino;
     private Double valor;
 }

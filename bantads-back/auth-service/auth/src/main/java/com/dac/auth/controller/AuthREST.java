@@ -91,10 +91,10 @@ public class AuthREST {
     @DeleteMapping("/{email}")
     public ResponseEntity<Object> delete(@PathVariable String email) {
 
-        if (authService.deletarPorId(email)) {
+        if (authService.deletarPorEmail(email)) {
             return  ResponseEntity.status(200).build();
 
-        } else if (!authService.deletarPorId(email)) {
+        } else if (!authService.deletarPorEmail(email)) {
             return ResponseEntity.status(404).build();
         }
 

@@ -49,7 +49,7 @@ public class Consumer {
                 response = handleDeleteClient(message);
                 break;
             default:
-                return; // No need to send a response if the request is unknown
+                return;
         }
 
         sendResponse(message, response);

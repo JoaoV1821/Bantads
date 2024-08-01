@@ -5,9 +5,12 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.dac.auth.dto.AuthDTO;
+
 import com.dac.auth.utils.HashingUtils;
 import com.dac.auth.utils.Transformer;
+
+import shared.dtos.AuthDTO;
+
 import com.dac.auth.model.AuthModel;
 import com.dac.auth.repository.AuthRepository;
 
@@ -25,14 +28,14 @@ public class AuthService {
     }
 
 
-    public Boolean deletarPorId(String id) {
-        if (!repo.existsById(id)) {
+    public Boolean deletarPorEmail(String email) {
+        if (!repo.existsByEmail(email)) {
             return false;
         }
         
-        repo.deleteById(id);
+        repo.deleteByEmail(email);
         
-        return !repo.existsById(id);
+        return !repo.existsByEmail(email);
     }
     
     public Boolean existsByemail(String email){

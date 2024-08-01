@@ -28,9 +28,9 @@ public class UserController {
     }
 
 
-    @GetMapping("/{uuid}")
-    public ResponseEntity<UserDTO> findById(@PathVariable UUID uuid) {
-        Optional<UserModel> user = userService.findByUUID(uuid);
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDTO> findById(@PathVariable String id) {
+        Optional<UserModel> user = userService.findById(id);
 
         if (!user.isEmpty()) {
             UserDTO userDTO = Transformer.transform(user, UserDTO.class);
@@ -54,7 +54,7 @@ public class UserController {
 
             URI location = ServletUriComponentsBuilder.fromCurrentRequest()
             .path("/{uuid}")
-            .buildAndExpand(userCreated.getUuid())
+            .buildAndExpand(userCreated.getId())
             .toUri();
     
             return ResponseEntity.created(location).body(userCreated);
@@ -67,11 +67,11 @@ public class UserController {
     }
 
     @PutMapping("/atualizar")
-    public ResponseEntity<UserModel> atualizar(@PathVariable UUID uuid, @RequestBody UserModel user) {
-        Optional<UserModel> bd = userService.findByUUID(uuid);
+    public ResponseEntity<UserModel> atualizar(@PathVariable String id, @RequestBody UserModel user) {
+        Optional<UserModel> bd = userService.findById(id);
 
         if (!bd.isEmpty()) {
-            userService.atualizar(uuid, user);
+            userService.atualizar(id, user);
             return ResponseEntity.ok(user);
 
         } else if (bd.isEmpty()) {
@@ -83,12 +83,12 @@ public class UserController {
     } 
 
 
-    @DeleteMapping("/{uuid}")
-    public ResponseEntity<UserModel> deletar(@PathVariable UUID uuid) {
-        Optional<UserModel> bd = userService.findByUUID(uuid);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<UserModel> deletar(@PathVariable String id) {
+        Optional<UserModel> bd = userService.findById(id);
 
         if (!bd.isEmpty()) {
-            userService.delete(uuid);
+            userService.delete(id);
             return ResponseEntity.status(200).build();
 
         } else if (bd.isEmpty()) {

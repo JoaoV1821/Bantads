@@ -2,7 +2,6 @@ package com.dac.user.service.impl;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
@@ -30,8 +29,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional <UserModel> findByUUID(UUID uuid) {
-       Optional<UserModel> user = userRepository.findById(uuid);
+    public Optional <UserModel> findById(String id) {
+       Optional<UserModel> user = userRepository.findById(id);
 
        return user;
     }
@@ -47,15 +46,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void atualizar(UUID uuid, UserModel user) {
-        Optional<UserModel> userBd = userRepository.findById(uuid);
+    public void atualizar(String id, UserModel user) {
+        Optional<UserModel> userBd = userRepository.findById(id);
     
         
         if (userBd.isPresent()) {
            
             UserModel existingUser = userBd.get();
 
-            existingUser.setUuid(existingUser.getUuid());
+            existingUser.setId(existingUser.getId());
             existingUser.setCpf(existingUser.getCpf());
             existingUser.setNome(user.getNome());
             existingUser.setEmail(user.getEmail());
@@ -71,8 +70,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void delete(UUID uuid) {
-        userRepository.deleteById(uuid);    
+    public void delete(String id) {
+        userRepository.deleteById(id);    
+    }
+
+    @Override
+    public Boolean deletarPorId(String id) {
+        if (!userRepository.existsById(id)) {
+            return false;
+        }
+        
+        userRepository.deleteById(id);
+        
+        return !userRepository.existsById(id);
     }
     
 }
