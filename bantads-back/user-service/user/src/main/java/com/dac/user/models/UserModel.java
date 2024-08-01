@@ -2,18 +2,16 @@ package com.dac.user.models;
 
 import java.io.Serializable;
 
-
 import jakarta.persistence.Entity;
-
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
+@NoArgsConstructor
 
 public class UserModel implements Serializable {
     
@@ -27,8 +25,5 @@ public class UserModel implements Serializable {
     private int estado;
     private EnderecoModel endereco;
 
-    UserModel() {
-        super();
-    }
     
 }

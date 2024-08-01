@@ -6,10 +6,10 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.dac.auth.dto.AuthDTO;
+
 import com.dac.auth.utils.HashingUtils;
 import com.dac.auth.utils.Transformer;
-
+import com.dac.auth.dto.AuthDTO;
 import com.dac.auth.model.AuthModel;
 import com.dac.auth.repository.AuthRepository;
 
@@ -22,8 +22,11 @@ public class AuthService {
 
     public AuthDTO salvar(AuthModel auth){
         
-        auth.setUuid(UUID.randomUUID().toString());
+        //VEM DA SAGA
+        //auth.setUuid(UUID.randomUUID().toString());
+        if(repo.existsByEmail(auth.getEmail())) return null;
         AuthModel salvo = this.repo.save(auth);
+        System.out.println(salvo);
         return Transformer.transform(salvo, AuthDTO.class);
 
     }
@@ -34,6 +37,16 @@ public class AuthService {
         }
         
         repo.deleteById(email);
+        
+        return !repo.existsByEmail(email);
+    }
+
+    public Boolean deletarPorEmail(String email) {
+        if (!repo.existsByEmail(email)) {
+            return false;
+        }
+        
+        repo.deleteByEmail(email);
         
         return !repo.existsByEmail(email);
     }

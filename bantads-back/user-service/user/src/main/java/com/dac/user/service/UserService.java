@@ -4,7 +4,6 @@ import com.dac.user.models.UserModel;
 
 import java.util.Optional;
 
-
 public interface UserService {
     boolean findByEmail(String email);
 

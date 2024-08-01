@@ -1,6 +1,7 @@
 package ms.conta.models;
 
-import org.springframework.format.annotation.DateTimeFormat;
+import java.sql.Date;
+
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,9 +19,9 @@ public class Movimentacao {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private DateTimeFormat data;
+    private Date data;
     private MovimentacaoEnum tipo;
-    private Long origem;
-    private Long destino;
+    private String origem;
+    private String destino;
     private Double valor;
 }
