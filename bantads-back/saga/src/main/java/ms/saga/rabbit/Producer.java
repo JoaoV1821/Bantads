@@ -59,7 +59,7 @@ public class Producer {
             .timeout(Duration.ofSeconds(10))
             .doOnError(t -> {
                 monoSinkCache.invalidate(correlationId);
-            }).onErrorResume(TimeoutException.class, t -> {return Mono.empty();});
+            });
         return responseMono;
     }
 
