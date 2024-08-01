@@ -1,27 +1,26 @@
 package ms.conta.models;
 
-import java.sql.Date;
-
+import org.springframework.format.annotation.DateTimeFormat;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import ms.conta.models.enums.MovimentacaoEnum;
 
 @Entity
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 public class Movimentacao {
     
     @Id
-    private String id;
-    private Date data;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private DateTimeFormat data;
     private MovimentacaoEnum tipo;
-    private String origem;
-    private String destino;
+    private Long origem;
+    private Long destino;
     private Double valor;
 }

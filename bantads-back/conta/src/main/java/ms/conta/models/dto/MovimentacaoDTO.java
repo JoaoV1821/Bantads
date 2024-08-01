@@ -1,22 +1,18 @@
 package ms.conta.models.dto;
 
-import java.io.Serializable;
-import java.sql.Date;
-
+import org.springframework.format.annotation.DateTimeFormat;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import ms.conta.models.enums.MovimentacaoEnum;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
-public class MovimentacaoDTO implements Serializable{
-    private String id;
-    private Date data;
+public class MovimentacaoDTO {
+    private Long id;
+    private DateTimeFormat data;
     private MovimentacaoEnum tipo;
-    private String origem;
-    private String destino;
+    private Long origem;
+    private Long destino;
     private Double valor;
 }

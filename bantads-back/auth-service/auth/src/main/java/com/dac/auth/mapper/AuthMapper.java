@@ -9,3 +9,4 @@ public class AuthMapper {
         return new AuthDTO(authModel.getId(),authModel.getEmail(), authModel.getSenha(), authModel.getTipo());
     }
 }
+

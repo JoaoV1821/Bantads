@@ -2,12 +2,17 @@ package com.dac.user.service;
 
 import com.dac.user.models.UserModel;
 
+import java.util.Optional;
+import java.util.UUID;
+
 public interface UserService {
-    UserModel findByEmail(String email);
+    boolean findByEmail(String email);
+
+    Optional<UserModel> findByUUID(UUID uuid);
 
     UserModel create(UserModel user);
 
-    void atualizar(String cpf,UserModel user);
-
-    Boolean deletarPorId(String id);
+    void atualizar(UUID uuid, UserModel user);
+    
+    void delete(UUID uuid);
 }

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ms.gerente.util.Transformer;
-import shared.dtos.GerenteDTO;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,9 +40,9 @@ public class GerenteController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GerenteDTO> listarGerente(@PathVariable String id) {
-        GerenteDTO gerente = this.gerenteService.buscarPorId(id);
-        return gerente != null ? 
+    public ResponseEntity<GerenteDTO> listarGerente(@PathVariable Long id) {
+        Optional<Gerente> gerente = this.gerenteService.buscarPorId(id);
+        return gerente.isPresent() ? 
             ResponseEntity.ok().body(Transformer.transform(gerente, GerenteDTO.class)) 
             : ResponseEntity.notFound().build();
     }
@@ -55,19 +54,20 @@ public class GerenteController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<GerenteDTO> atualizar(@PathVariable String id, @RequestBody GerenteDTO dto) {
+    public ResponseEntity<GerenteDTO> atualizar(@PathVariable Long id, @RequestBody GerenteDTO dto) {
         GerenteDTO gerenteSalvo = this.gerenteService.atualizar(id, dto);
         return ResponseEntity.ok().body(gerenteSalvo);
     }
 
+    @SuppressWarnings("rawtypes")
     @DeleteMapping("/{id}")
-    public ResponseEntity remover(@PathVariable String id){
-        
-        if(this.gerenteService.remover(id)){
+    public ResponseEntity remover(@PathVariable Long id){
+        try {
+            this.gerenteService.remover(id);
             return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        
     }
     
     
