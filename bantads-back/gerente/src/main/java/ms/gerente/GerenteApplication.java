@@ -47,6 +47,7 @@ public class GerenteApplication implements CommandLineRunner{
 				UUID.randomUUID().toString(), "testConnection", 
 				null, "cliente", "gerente.response"));
 		
+/* 
 		Message<ClienteDTO> msg = new Message<>(UUID.randomUUID().toString(), 
         "listAll", null, "cliente", "gerente.response");    
 		
@@ -76,19 +77,20 @@ public class GerenteApplication implements CommandLineRunner{
 				GerenteDTO::getId,
 				gerente -> gerente
     		));
-/* 
-		List<MergedObject> merged = contas.stream()
-		.map(a -> {
-			gerente = gerenteMap.get(a.getId_gerente)
-			return new MergedObject(set atributos<conta> set atributos<gerente>))
-			}
-		.collect(Collectors.toList());
-*/		
-		List<Pair<GerenteDTO, ContaDTO>> joined = contas.stream()
-			.map(a -> new Pair(gerenteMap.get(a.getId_gerente()), a))
-			.collect(Collectors.toList());
+ 
+		//List<MergedObject> merged = contas.stream()
+		//.map(a -> {
+		//	gerente = gerenteMap.get(a.getId_gerente)
+		//	return new MergedObject(set atributos<conta> set atributos<gerente>))
+		//	}
+		//.collect(Collectors.toList());
+		
+		//List<Pair<GerenteDTO, ContaDTO>> joined = contas.stream()
+		//	.map(a -> new Pair(gerenteMap.get(a.getId_gerente()), a))
+		//	.collect(Collectors.toList());
 
-		System.out.println(joined);
+		//System.out.println(joined);
+	*/
     }
  
 	@Data

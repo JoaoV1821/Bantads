@@ -2,6 +2,7 @@ package ms.saga.rabbit;
 
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -58,7 +59,7 @@ public class Producer {
             .timeout(Duration.ofSeconds(10))
             .doOnError(t -> {
                 monoSinkCache.invalidate(correlationId);
-        });
+            }).onErrorResume(TimeoutException.class, t -> {return Mono.empty();});
         return responseMono;
     }
 

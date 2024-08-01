@@ -1,8 +1,5 @@
 package ms.saga;
 
-import java.util.UUID;
-
-import org.apache.tomcat.util.openssl.pem_password_cb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -14,9 +11,6 @@ import ms.saga.dtos.OrchestratorRequestDTO;
 import ms.saga.dtos.OrchestratorResponseDTO;
 import ms.saga.rabbit.Producer;
 import reactor.core.publisher.Mono;
-import shared.GenericData;
-import shared.Message;
-import shared.dtos.GerenteDTO;
 
 @SpringBootApplication
 public class SagaApplication {
