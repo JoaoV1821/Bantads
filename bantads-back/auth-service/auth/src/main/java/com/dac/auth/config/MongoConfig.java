@@ -6,15 +6,11 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 
 
 import com.dac.auth.repository.AuthRepository;
+import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
-
-import java.util.UUID;
-
-import org.bson.Document;
 import org.bson.UuidRepresentation;
-import org.bson.codecs.configuration.CodecRegistry;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -22,18 +18,19 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MongoConfig {
 
-    @Bean MongoClient mongoClient() {
-      return MongoClients.create("mongodb://localhost:27017");
-  }
+   @Bean
+    public MongoClient mongoClient() {
+        ConnectionString connectionString = new ConnectionString("mongodb://localhost:27017");
+        MongoClientSettings mongoClientSettings = MongoClientSettings.builder()
+                .applyConnectionString(connectionString)
+                .uuidRepresentation(UuidRepresentation.STANDARD)
+                .build();
+
+        return MongoClients.create(mongoClientSettings);
+    }
 
    @Bean MongoOperations mongoTemplate(MongoClient mongoClient) {
       return new MongoTemplate(mongoClient, "auth");
   }
-
- MongoClientSettings clientSettings = MongoClientSettings.builder().uuidRepresentation(UuidRepresentation.STANDARD).build();
-    CodecRegistry codecRegistry = MongoClients.create(clientSettings).getDatabase("test").getCodecRegistry();
-
-    Document document = new Document("id", UUID.randomUUID());
-
-    
+   
 }

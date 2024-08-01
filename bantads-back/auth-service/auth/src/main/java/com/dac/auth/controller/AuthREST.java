@@ -40,20 +40,28 @@ public class AuthREST {
     @Autowired
     AuthService authService;
 
-    @PostMapping("/autenticar")
+    @PostMapping("/auth/autenticar")
     ResponseEntity<AuthDTO> auth(@RequestBody LoginModel login) {
 
-       Optional<AuthModel> authBd = authRepository.findById(login.getEmail());
+        
+       Optional<AuthModel> authBd = authRepository.findByEmail(login.getEmail());
 
        if (!authBd.isEmpty()) {
             String hashPassword = HashingUtils.hashPassword(login.getSenha(), authBd.get().getSalt());
 
-            if (hashPassword.equals(authBd.get().getSenha())) {
-                return ResponseEntity.ok().body(Transformer.transform(authBd, AuthDTO.class));
+            if (authBd.get().isActive()) {
 
+                if (hashPassword.equals(authBd.get().getSenha())) {
+                    return ResponseEntity.ok().body(Transformer.transform(authBd, AuthDTO.class));
+    
+                } else {
+                    return ResponseEntity.status(401).build();
+                }
+                
             } else {
                 return ResponseEntity.status(401).build();
             }
+           
 
        } else if (authBd.isEmpty()) {
             return ResponseEntity.status(404).build();
@@ -63,7 +71,7 @@ public class AuthREST {
 
     }
 
-    @PostMapping("/registrar")
+    @PostMapping("/auth/registrar")
     public ResponseEntity<Object> register(@RequestBody AuthModel login ) throws AddressException, MessagingException {
 
         if (!authService.existsByemail(login.getEmail())) {
@@ -79,16 +87,16 @@ public class AuthREST {
             authService.salvar(login);
             EmailUtils.enviarEmail(msg, "Nova conta JV teste", login.getEmail());
     
-            return  ResponseEntity.status(201).build();
+            return  ResponseEntity.ok().body(login);
 
         } else if (authService.existsByemail(login.getEmail())) {
             return ResponseEntity.status(409).build();
-        }
+        } 
 
         return ResponseEntity.status(500).build();
     }
 
-    @DeleteMapping("/{email}")
+    @DeleteMapping("/auth/delete/{email}")
     public ResponseEntity<Object> delete(@PathVariable String email) {
 
         if (authService.deletarPorId(email)) {
@@ -101,9 +109,12 @@ public class AuthREST {
         return ResponseEntity.status(500).build();
     }
 
-    @PutMapping("/{email}")
+    @PutMapping("/auth/update/{email}")
     public ResponseEntity<Object> atualizar(@PathVariable String email, @RequestBody AuthModel login) {
-       Optional<AuthModel> authbd =  authRepository.findById(email);
+       Optional<AuthModel> authbd =  authRepository.findByEmail(email);
+
+        System.out.println(login.getEmail());
+        System.out.print(authbd);
 
        if (!authbd.isEmpty()) {
             authService.atualizar(email, login);
@@ -118,7 +129,7 @@ public class AuthREST {
         return ResponseEntity.status(500).build();
     }
     
-    @GetMapping("/users")
+    @GetMapping("/auth/users")
     public List<AuthModel> users() {
         return authRepository.findAll();
     }
