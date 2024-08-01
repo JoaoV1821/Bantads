@@ -25,15 +25,6 @@ public class SagaApplication {
 	@Bean
 	CommandLineRunner run(){
 		return args -> {
-		/* 
-		Mono<GenericData<?>> responseGerente = producer.sendRequest(new Message<>(UUID.randomUUID().toString()
-		, "requestManagerForNewAccount", null, "gerente", "saga.response"));
-		responseGerente.subscribe(
-			response -> System.out.println(response),
-			error -> System.err.println("Error: " + error.getMessage())
-		);
-		};
-		*/
 
 		OrchestratorRequestDTO requestDTO = new OrchestratorRequestDTO();
 		requestDTO.setNome("André");

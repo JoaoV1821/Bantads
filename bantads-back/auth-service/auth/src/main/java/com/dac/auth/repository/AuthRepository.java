@@ -12,5 +12,5 @@ public interface AuthRepository extends MongoRepository<AuthModel, String> {
     boolean existsByEmail(String email);
     
 
-    boolean deleteByEmail(String email);
+    void deleteByEmail(String email);
 }

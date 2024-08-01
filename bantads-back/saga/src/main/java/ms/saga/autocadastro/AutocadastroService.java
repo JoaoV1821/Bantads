@@ -37,10 +37,10 @@ import shared.dtos.GerenteDTO;
 public class AutocadastroService {
     
     @Autowired Producer producer;
-    private final String uuid = UUID.randomUUID().toString();
 
     public Mono<OrchestratorResponseDTO> autocadastro(final OrchestratorRequestDTO requestDTO){
-        Workflow autocadastWorkflow = this.getAutocadastWorkflow(requestDTO);
+        String uuid = UUID.randomUUID().toString();  // Generate a new UUID for each request
+        Workflow autocadastWorkflow = this.getAutocadastWorkflow(requestDTO, uuid);
         return Flux.fromStream(() -> autocadastWorkflow.getSteps().stream())
             .concatMap(WorkflowStep::process)
             .handle(((aBoolean, synchronousSink) -> {
@@ -50,15 +50,14 @@ public class AutocadastroService {
                 else
                     synchronousSink.error(new WorkflowException("Autocadastro failed"));
             }))
-            .then(Mono.fromCallable(() -> getResponseDTO(requestDTO, SagaStatus.COMPLETED)))
-            .onErrorResume(ex -> this.revertAutocadastro(autocadastWorkflow, requestDTO));
+            .then(Mono.fromCallable(() -> getResponseDTO(requestDTO, SagaStatus.COMPLETED, uuid)))
+            .onErrorResume(ex -> this.revertAutocadastro(autocadastWorkflow, requestDTO, uuid));
     }
 
-
-    public Mono<OrchestratorResponseDTO> revertAutocadastro(final Workflow workflow, final OrchestratorRequestDTO requestDTO){
+    public Mono<OrchestratorResponseDTO> revertAutocadastro(final Workflow workflow, final OrchestratorRequestDTO requestDTO, String uuid){
         
         System.out.println("revertAutocadastro::AutocadastroService");
-
+/* 
         String msg = "Devido a falhas internas, seu processo de cadastro não pode ser concluído. " 
         + "Contate o suporte para mais informações.";
         String assunto = "BANTADS - Cadastro não concluído";
@@ -69,15 +68,15 @@ public class AutocadastroService {
         } catch (MessagingException e) {
             System.err.println("Failed to send email: " + e.getMessage());
         }
-
+*/
         return Flux.fromStream(() -> workflow.getSteps().stream())
             .filter(wf -> wf.getStatus().equals(WorkflowStepStatus.COMPLETE))
             .concatMap(WorkflowStep::revert)
             .retry(3)
-            .then(Mono.just(this.getResponseDTO(requestDTO, SagaStatus.CANCELLED)));
+            .then(Mono.just(this.getResponseDTO(requestDTO, SagaStatus.CANCELLED, uuid)));
     }
 
-    private Workflow getAutocadastWorkflow(OrchestratorRequestDTO requestDTO){
+    private Workflow getAutocadastWorkflow(OrchestratorRequestDTO requestDTO, String uuid){
 
         Message msg = new Message<>(UUID.randomUUID().toString(),
         "requestManagerForNewAccount", null , "gerente", "saga.response");
@@ -90,16 +89,16 @@ public class AutocadastroService {
             return gerente.getDto();
         }).block();
 
-        WorkflowStep createClientStep = new CreateClientStep(producer, this.getClientRequestDTO(requestDTO));
-        WorkflowStep createAuthStep = new CreateAuthStep(producer, this.getAuthRequestDTO(requestDTO));
-        WorkflowStep createAccountStep = new CreateAccountStep(producer, this.getContaRequestDTO(requestDTO));
-        WorkflowStep associateManagerStep = new AssociateManagerStep(producer, this.getContaRequestDTO(requestDTO), gerenteDTO);
+        WorkflowStep createClientStep = new CreateClientStep(producer, this.getClientRequestDTO(requestDTO, uuid));
+        WorkflowStep createAuthStep = new CreateAuthStep(producer, this.getAuthRequestDTO(requestDTO, uuid));
+        WorkflowStep createAccountStep = new CreateAccountStep(producer, this.getContaRequestDTO(requestDTO, uuid));
+        WorkflowStep associateManagerStep = new AssociateManagerStep(producer, this.getContaRequestDTO(requestDTO, uuid), gerenteDTO);
 
         return new AutocadastroWorkflow(
             List.of(createClientStep, createAuthStep, createAccountStep, associateManagerStep));
     }
 
-    private ClienteDTO getClientRequestDTO(OrchestratorRequestDTO requestDTO){
+    private ClienteDTO getClientRequestDTO(OrchestratorRequestDTO requestDTO, String uuid){
         ClienteDTO clienteDTO = new ClienteDTO();
         clienteDTO.setId(uuid);
         clienteDTO.setNome(requestDTO.getNome());
@@ -117,10 +116,10 @@ public class AutocadastroService {
         return clienteDTO;
     }
 
-    private ContaDTO getContaRequestDTO(OrchestratorRequestDTO requestDTO){
+    private ContaDTO getContaRequestDTO(OrchestratorRequestDTO requestDTO, String uuid){
         ContaDTO contaDTO = new ContaDTO();
         contaDTO.setId_cliente(uuid);
-        Double salario = this.getClientRequestDTO(requestDTO).getSalario();
+        Double salario = this.getClientRequestDTO(requestDTO, uuid).getSalario();
         contaDTO.setLimite(salario > 2000.00 ? (Double) (salario / 2) : 0.00);
         contaDTO.setSaldo(0.00);
         contaDTO.setEstado(0);  
@@ -131,7 +130,7 @@ public class AutocadastroService {
         return contaDTO;
     }
 
-    private AuthDTO getAuthRequestDTO(OrchestratorRequestDTO requestDTO){
+    private AuthDTO getAuthRequestDTO(OrchestratorRequestDTO requestDTO, String uuid){
         AuthDTO authDTO = new AuthDTO();
         authDTO.setId(uuid);
         authDTO.setEmail(requestDTO.getEmail());
@@ -140,7 +139,7 @@ public class AutocadastroService {
         return authDTO;
     }
 
-    private OrchestratorResponseDTO getResponseDTO(OrchestratorRequestDTO requestDTO, SagaStatus status){
+    private OrchestratorResponseDTO getResponseDTO(OrchestratorRequestDTO requestDTO, SagaStatus status, String uuid){
         OrchestratorResponseDTO responseDTO = new OrchestratorResponseDTO();
         responseDTO = Transformer.transform(requestDTO, OrchestratorResponseDTO.class);
         responseDTO.setStatus(status);

@@ -14,6 +14,7 @@ import lombok.Setter;
 @Data
 public class AuthDTO {
 
+    private String id;
     private String email;
     private String senha;
     private String tipo;
