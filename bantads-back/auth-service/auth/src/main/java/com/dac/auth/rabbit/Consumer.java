@@ -44,6 +44,7 @@ public class Consumer {
 
     private Message<AuthDTO> handleSaveAuth(Message<?> message) {
         Message<AuthDTO> response = new Message<>();
+        @SuppressWarnings("unchecked")
         GenericData<AuthDTO> novo = (GenericData<AuthDTO>) message.getData();
         com.dac.auth.dto.AuthDTO salvoDTO = service.salvar(Transformer.transform(novo.getDto(),AuthModel.class));
         AuthDTO salvo = Transformer.transform(salvoDTO, AuthDTO.class);
@@ -61,6 +62,7 @@ public class Consumer {
 
     private Message<AuthDTO> handleDeleteAuth(Message<?> message) {
         Message<AuthDTO> response = new Message<>();
+        @SuppressWarnings("unchecked")
         GenericData<AuthDTO> auth = (GenericData<AuthDTO>) message.getData();
 
         if (service.deletarPorEmail(auth.getDto().getEmail())) {
