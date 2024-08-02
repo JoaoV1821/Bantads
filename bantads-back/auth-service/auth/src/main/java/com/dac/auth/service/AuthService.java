@@ -23,8 +23,11 @@ public class AuthService {
         //VEM DA SAGA
         //auth.setUuid(UUID.randomUUID().toString());
         if(repo.existsByEmail(auth.getEmail())) return null;
+        
         AuthModel salvo = this.repo.save(auth);
+
         System.out.println(salvo);
+
         return Transformer.transform(salvo, AuthDTO.class);
 
     }
@@ -64,14 +67,13 @@ public class AuthService {
         if (authBd.isPresent()) {
            
             AuthModel existingAuth = authBd.get();
-
             
             existingAuth.setUuid(existingAuth.getUuid());
             existingAuth.setEmail(auth.getEmail());
             existingAuth.setSenha(auth.getSenha());
             existingAuth.setActive(auth.isActive());
             existingAuth.setSalt(auth.getSalt());
-    
+           
             repo.save(existingAuth);
             
         } else {

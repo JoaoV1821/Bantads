@@ -48,15 +48,17 @@ public class AuthREST {
 
        if (!authBd.isEmpty()) {
             String hashPassword = HashingUtils.hashPassword(login.getSenha(), authBd.get().getSalt());
+
             System.out.println(hashPassword.equals(authBd.get().getSenha()));
+            System.out.println(hashPassword);
+            System.out.println(authBd.get().getSenha());
+            System.out.println(authBd.get().toString());
 
                 if (hashPassword.equals(authBd.get().getSenha()) ) {
                     return ResponseEntity.ok().body(Transformer.transform(authBd, AuthDTO.class));
     
                 } else {
-                    System.out.println("SENHA");
-                    System.out.println(authBd.get().getSenha());
-                    System.out.println(hashPassword);
+                
                     return ResponseEntity.status(401).build();
                     
                 }
@@ -113,6 +115,9 @@ public class AuthREST {
        Optional<AuthModel> authbd = authRepository.findByEmail(email);
 
        if (!authbd.isEmpty()) {
+
+            String hashPassword = HashingUtils.hashPassword(login.getSenha(), authbd.get().getSalt());
+            login.setSenha(hashPassword);
             authService.atualizar(email, login);
 
             return ResponseEntity.status(200).build();

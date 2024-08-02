@@ -12,6 +12,11 @@ const helmet = require('helmet');
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
+app.use(logger('dev'));
+app.use(helmet());
+app.use(express.json());
+app.use(express.urlencoded({extended: false}));
+app.use(cookieParser());
 
 const invalidTokens = new Set(); // Lista de tokens inválidos
 
@@ -124,6 +129,171 @@ const contaServiceProxy = httpProxy("http://localhost:5000/contas", {
 });
 
 
+const authUpdateProxy = httpProxy("http://localhost:8080/auth/update", {
+
+
+    proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
+        proxyReqOpts.headers['Content-Type'] = 'application/json';
+        proxyReqOpts.method = 'PUT';
+        return proxyReqOpts;
+    },
+
+    proxyReqBodyDecorator: function(bodyContent, srcReq) {
+        try {
+            let retBody = {};
+
+            retBody.email = bodyContent.email;
+            retBody.senha = bodyContent.senha;
+            retBody.tipo = bodyContent.tipo;
+            retBody.active = bodyContent.active;
+            
+      
+            bodyContent = retBody;
+
+        } catch(error) {
+            console.log('ERRO: ' + error);
+        }
+
+        return bodyContent;
+    },
+
+    userResDecorator: function(proxyRes, proxyResData, req, res) {
+
+        if (proxyRes.statusCode === 200) {
+
+            res.status(200);
+ 
+            return {message: "Usuário atualizado!!", status: 200};
+ 
+         } else if (proxyRes.statusCode === 404){
+             res.status(404);
+             return {message: 'Usuário não encontrado!', status: 404};
+ 
+         } else {
+             return {message: 'Erro ao atualizaro login', status: proxyRes.statusCode};
+         }
+    }
+});
+
+
+
+const authAprovarProxy = httpProxy("http://localhost:8080/auth", {
+    proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
+        proxyReqOpts.headers['Content-Type'] = 'application/json';
+        proxyReqOpts.method = 'PUT';
+        return proxyReqOpts;
+    },
+
+    proxyReqBodyDecorator: function(bodyContent, srcReq) {
+      
+        return bodyContent;
+    },
+
+    userResDecorator: function(proxyRes, proxyResData, req, res) {
+
+        if (proxyRes.statusCode === 200) {
+
+           res.status(200);
+
+           return {message: "Login aprovado!", status: 200};
+
+        } else if (proxyRes.statusCode === 404){
+            res.status(404);
+            return {message: 'Login não encontrado!', status: 404};
+
+        } else {
+            return {message: 'Erro ao aprovar o login', status: proxyRes.statusCode};
+        }
+    }
+});
+
+
+const authRegistrarProxy = httpProxy("http://localhost:8080/auth/registrar", {
+    proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
+        proxyReqOpts.headers['Content-Type'] = 'application/json';
+        proxyReqOpts.method = 'POST';
+        
+        console.log(proxyReqOpts)
+        return proxyReqOpts;
+    },
+
+    proxyReqBodyDecorator: function(bodyContent, srcReq) {
+        try {
+            let retBody = {};
+
+            retBody.email = bodyContent.email;
+            retBody.tipo = bodyContent.tipo;
+            
+            bodyContent = retBody;
+
+            console.log(bodyContent);
+
+        } catch(error) {
+            console.log('ERRO: ' + error);
+        }
+
+        return bodyContent;
+    },
+
+    userResDecorator: function(proxyRes, proxyResData, req, res) {
+
+        if (proxyRes.statusCode === 200) {
+
+         res.status(200);
+         return {message: "Login registrado com sucesso !", status: 200}
+
+        } else if (res.statusCode === 409) {
+
+            res.status(409);
+            return {message: "Login já existente", status: 409}
+        }
+        
+        else {
+            res.status(proxyRes.statusCode);
+            return {message: "Erro ao cadastrar o login"};
+        }
+    }
+});
+
+
+
+const authDeleteProxy = httpProxy("http://localhost:8080/auth", {
+    proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
+        proxyReqOpts.headers['Content-Type'] = 'application/json';
+        proxyReqOpts.method = 'DELETE';
+        return proxyReqOpts;
+    },
+
+    proxyReqBodyDecorator: function(bodyContent, srcReq) {
+       
+        return bodyContent;
+    },
+
+    userResDecorator: function(proxyRes, proxyResData, req, res) {
+
+        if (proxyRes.statusCode === 200) {
+
+            const str = Buffer.from(proxyResData).toString('utf-8');
+            const objBody = JSON.parse(str);
+            const email = objBody.email;
+
+            const token = jwt.sign({email}, process.env.SECRET, {
+                expiresIn: 30000
+
+            });
+
+            res.status(200);
+
+            return {auth: true, token: token, data: objBody};
+
+        } else {
+            res.status(401);
+            return {message: 'Login inválido!'};
+        }
+    }
+});
+
+
 
 const authServiceProxy = httpProxy("http://localhost:8080/auth", {
     proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
@@ -137,9 +307,9 @@ const authServiceProxy = httpProxy("http://localhost:8080/auth", {
             let retBody = {};
 
             retBody.email = bodyContent.email;
-            retBody.senha = bodyContent.password;
-            retBody.tipo = bodyContent.tipo;
-
+            retBody.senha = bodyContent.senha;
+            
+      
             bodyContent = retBody;
 
         } catch(error) {
@@ -150,15 +320,22 @@ const authServiceProxy = httpProxy("http://localhost:8080/auth", {
     },
 
     userResDecorator: function(proxyRes, proxyResData, req, res) {
+
         if (proxyRes.statusCode === 200) {
+
             const str = Buffer.from(proxyResData).toString('utf-8');
             const objBody = JSON.parse(str);
             const email = objBody.email;
+
             const token = jwt.sign({email}, process.env.SECRET, {
                 expiresIn: 30000
+
             });
+
             res.status(200);
+
             return {auth: true, token: token, data: objBody};
+
         } else {
             res.status(401);
             return {message: 'Login inválido!'};
@@ -185,30 +362,30 @@ const verifyJWT = (req, res, next) => {
 };
 
 
-app.post('/auth', (req, res, next) => {
+app.post('/auth/autenticar', (req, res, next) => {
     authServiceProxy(req, res, next);
 });
 
 
 app.post('/auth/registrar', (req, res, next) => {
-    authServiceProxy(req, res, next);
+    console.log(req.body)
+    authRegistrarProxy(req, res, next);
 });
 
 
-app.post('/auth/aprovar/:email', (req, res, next) => {
-    authServiceProxy(req, res, next);
+app.put('/auth/aprovar/:email', (req, res, next) => {
+    authAprovarProxy(req, res, next);
 });
 
 
 app.delete('/auth/delete/:email', (req, res, next) => {
-    authServiceProxy(req, res, next);
+    authDeleteProxy(req, res, next);
 });
 
 
 app.put('/auth/update/:email', (req, res, next) => {
-    authServiceProxy(req, res, next);
+    authUpdateProxy(req, res, next);
 });
-
 
 
 app.post('/logout', (req, res) => {
@@ -286,11 +463,7 @@ app.get('/autocadastro', (req, res, next) => {
     sagaAutocadastroProxy(req, res, next);
 });
 
-app.use(logger('dev'));
-app.use(helmet());
-app.use(express.json());
-app.use(express.urlencoded({extended: false}));
-app.use(cookieParser());
+
 
 var server = http.createServer(app);
 server.listen(3000);
