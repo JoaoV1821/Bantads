@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import ms.conta.models.Conta;
 import ms.conta.models.aggregation.GerenteContaAggregation;
 
-public interface QueryRepository extends JpaRepository<Conta, String>{
+public interface QueryRepository extends JpaRepository<Conta, Long>{
 
     @Query(value = "SELECT c.id_gerente AS Id_gerente, COUNT(c.id) AS Account_count" 
     + " FROM conta AS c GROUP BY c.id_gerente", nativeQuery = true)

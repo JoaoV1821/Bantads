@@ -11,7 +11,7 @@ public class MovimentacaoDTO {
     private Long id;
     private Date data;
     private MovimentacaoEnum tipo;
-    private String origem;
-    private String destino;
+    private Long origem;
+    private Long destino;
     private Double valor;
 }

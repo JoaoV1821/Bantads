@@ -28,7 +28,7 @@ public class QueryService {
         .collect(Collectors.toList());
     }
 
-    public Optional<Conta> buscarPorId(String id){
+    public Optional<Conta> buscarPorId(Long id){
         return this.queryRepository.findById(id);
     }
 
