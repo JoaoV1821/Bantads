@@ -27,7 +27,7 @@ public class SagaApplication {
 	@Bean
 	CommandLineRunner run(){
 		return args -> {
-
+/* 
 		UpdateProfileRequestDTO requestDTO = new UpdateProfileRequestDTO();
 		requestDTO.setId("client1");
 		requestDTO.setNome("André");
@@ -48,6 +48,7 @@ public class SagaApplication {
             response -> System.out.println("UpdateProfile Response: " + response),
             error -> System.err.println("Error: " + error.getMessage())
         );
+*/
 		}; 
 	}
 
