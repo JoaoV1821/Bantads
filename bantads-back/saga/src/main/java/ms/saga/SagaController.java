@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ms.saga.autocadastro.AutocadastroService;
-import ms.saga.dtos.OrchestratorRequestDTO;
-import ms.saga.dtos.OrchestratorResponseDTO;
+import ms.saga.dtos.AutocadastroRequestDTO;
+import ms.saga.dtos.AutocadastroResponseDTO;
 import reactor.core.publisher.Mono;
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,7 +24,7 @@ public class SagaController {
     @Autowired AutocadastroService autocadastroService;
 
     @PostMapping("/autocadastro")
-    public Mono<ResponseEntity<OrchestratorResponseDTO>> autocadastro(@RequestBody OrchestratorRequestDTO requestDTO) {
+    public Mono<ResponseEntity<AutocadastroResponseDTO>> autocadastro(@RequestBody AutocadastroRequestDTO requestDTO) {
         
         return autocadastroService.autocadastro(requestDTO)
             .map(response -> {
