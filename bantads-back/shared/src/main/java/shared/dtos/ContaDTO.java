@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 
 public class ContaDTO implements Serializable{
 
-    private String id;
+    private Long id;
     private Double limite;
     private Double saldo;
     private Date data; //Criação ou Rejeição

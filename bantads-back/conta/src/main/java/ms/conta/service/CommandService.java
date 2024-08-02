@@ -92,7 +92,7 @@ public class CommandService {
         return contaDTO;
     }
 
-    public Boolean deletarPorId(String id) {
+    public Boolean deletarPorId(Long id) {
         if (!contaRepository.existsById(id)) {
             return false;
         }
@@ -105,7 +105,7 @@ public class CommandService {
         return false;
     }
 
-    public MovimentacaoDTO saque(String origem, MovimentacaoDTO dto){
+    public MovimentacaoDTO saque(Long origem, MovimentacaoDTO dto){
         Conta conta = queryService.buscarPorId(origem).orElseThrow(NoSuchElementException::new);
         if (dto.getValor() > conta.getSaldo()) {
             throw new IllegalArgumentException("Sem fundos suficientes");
@@ -124,7 +124,7 @@ public class CommandService {
         return movimentacaoDTO;
     }
 
-    public MovimentacaoDTO deposito(String origem, MovimentacaoDTO dto){
+    public MovimentacaoDTO deposito(Long origem, MovimentacaoDTO dto){
         Conta conta = queryService.buscarPorId(origem).orElseThrow(NoSuchElementException::new);
         conta.setSaldo(conta.getSaldo() + dto.getValor());
         this.contaRepository.save(conta);
@@ -140,7 +140,7 @@ public class CommandService {
         return movimentacaoDTO;
     }
 
-    public MovimentacaoDTO transferencia(String origem, MovimentacaoDTO dto){
+    public MovimentacaoDTO transferencia(Long origem, MovimentacaoDTO dto){
         Conta contaOrigem = queryService.buscarPorId(origem).orElseThrow(NoSuchElementException::new);
         Conta contaDestino = queryService.buscarPorId(dto.getDestino()).orElseThrow(NoSuchElementException::new);
 

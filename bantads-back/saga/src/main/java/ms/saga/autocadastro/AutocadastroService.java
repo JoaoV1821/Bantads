@@ -57,18 +57,7 @@ public class AutocadastroService {
     public Mono<AutocadastroResponseDTO> revertAutocadastro(final Workflow workflow, final AutocadastroRequestDTO requestDTO, String uuid){
         
         System.out.println("revertAutocadastro::AutocadastroService");
-/* 
-        String msg = "Devido a falhas internas, seu processo de cadastro não pode ser concluído. " 
-        + "Contate o suporte para mais informações.";
-        String assunto = "BANTADS - Cadastro não concluído";
-        String email = requestDTO.getEmail();
 
-        try {
-            Email.enviarEmail(msg, assunto, email);
-        } catch (MessagingException e) {
-            System.err.println("Failed to send email: " + e.getMessage());
-        }
-*/
         return Flux.fromStream(() -> workflow.getSteps().stream())
             .filter(wf -> wf.getStatus().equals(WorkflowStepStatus.COMPLETE))
             .concatMap(WorkflowStep::revert)
@@ -123,9 +112,7 @@ public class AutocadastroService {
         contaDTO.setLimite(salario > 2000.00 ? (Double) (salario / 2) : 0.00);
         contaDTO.setSaldo(0.00);
         contaDTO.setEstado(0);  
-        contaDTO.setId(UUID.randomUUID().toString());
         contaDTO.setData(Date.valueOf(LocalDate.now()));
-        //contaDTO.setNumero_conta();
         //contaDTO.setId_gerente(); associateManagerStep faz o update
         return contaDTO;
     }
