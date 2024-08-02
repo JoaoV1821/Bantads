@@ -7,13 +7,11 @@ import java.util.Optional;
 public interface UserService {
     boolean findByEmail(String email);
 
-    Optional<UserModel> findById(String id);
+    Optional<UserModel> findByUUID(String uuid);
 
     UserModel create(UserModel user);
 
-    void atualizar(String id, UserModel user);
+    void atualizar(String uuid, UserModel user);
     
-    void delete(String id);
-
-    Boolean deletarPorId(String id);
+    void delete(String uuid);
 }

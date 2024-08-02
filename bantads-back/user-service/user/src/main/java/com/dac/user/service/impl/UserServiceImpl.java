@@ -37,12 +37,18 @@ public class UserServiceImpl implements UserService {
         return userRepository.existsByEmail(email);
     }
 
-    @Override
-    public Optional <UserModel> findById(String id) {
-       Optional<UserModel> user = userRepository.findById(id);
+ 
+    public Optional <UserModel> findByUUID(String uuid) {
+       Optional<UserModel> user = userRepository.findById(uuid);
 
        return user;
     }
+
+    public Optional <UserModel> findById(String id) {
+        Optional<UserModel> user = userRepository.findById(id);
+ 
+        return user;
+     }
  
     @Override
     public UserModel create(UserModel user) {
@@ -92,7 +98,6 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(id);    
     }
 
-    @Override
     public Boolean deletarPorId(String id) {
         if (!userRepository.existsById(id)) {
             return false;
@@ -124,6 +129,7 @@ public class UserServiceImpl implements UserService {
         
         return new Pair<ClienteDTO, ContaDTO>(cliente, conta);
 
+   
     }
 
     public ClienteDTO findByIdClienteDTO(ClienteDTO cliente){

@@ -7,17 +7,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.bind.annotation.*;
-import java.util.UUID;
+
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
+
 import com.dac.user.dto.UserDTO;
 import com.dac.user.models.UserModel;
 import com.dac.user.service.UserService;
 import com.dac.user.service.impl.UserServiceImpl;
 import com.dac.user.utils.Transformer;
-
 import shared.dtos.ClienteDTO;
 import shared.dtos.ContaDTO;
+
 
 
 
@@ -34,10 +36,9 @@ public class UserController {
         this.userService = userService;
     }
 
-
-    @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> findById(@PathVariable String id) {
-        Optional<UserModel> user = userService.findById(id);
+    @GetMapping("/find/{uuid}")
+    public ResponseEntity<UserDTO> findById(@PathVariable String uuid) {
+        Optional<UserModel> user = userService.findByUUID(uuid);
 
         if (!user.isEmpty()) {
             UserDTO userDTO = Transformer.transform(user, UserDTO.class);
@@ -53,15 +54,18 @@ public class UserController {
     }
 
 
-    @PostMapping
+    @PostMapping("/registrar")
     public ResponseEntity<UserModel> create(@RequestBody UserModel user) {
 
         if (userService.findByEmail(user.getEmail())) {
+            user.setUuid(UUID.randomUUID().toString());
             UserModel userCreated = userService.create(user);
+
+            user.setUuid(UUID.randomUUID().toString());
 
             URI location = ServletUriComponentsBuilder.fromCurrentRequest()
             .path("/{uuid}")
-            .buildAndExpand(userCreated.getId())
+            .buildAndExpand(userCreated.getUuid())
             .toUri();
     
             return ResponseEntity.created(location).body(userCreated);
@@ -73,12 +77,13 @@ public class UserController {
         return ResponseEntity.status(500).build();
     }
 
-    @PutMapping("/atualizar")
-    public ResponseEntity<UserModel> atualizar(@PathVariable String id, @RequestBody UserModel user) {
-        Optional<UserModel> bd = userService.findById(id);
+
+    @PutMapping("/update/{uuid}")
+    public ResponseEntity<UserModel> atualizar(@PathVariable String uuid, @RequestBody UserModel user) {
+        Optional<UserModel> bd = userService.findByUUID(uuid);
 
         if (!bd.isEmpty()) {
-            userService.atualizar(id, user);
+            userService.atualizar(uuid, user);
             return ResponseEntity.ok(user);
 
         } else if (bd.isEmpty()) {
@@ -89,13 +94,12 @@ public class UserController {
     
     } 
 
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<UserModel> deletar(@PathVariable String id) {
-        Optional<UserModel> bd = userService.findById(id);
+    @DeleteMapping("/delete/{uuid}")
+    public ResponseEntity<UserModel> deletar(@PathVariable String uuid) {
+        Optional<UserModel> bd = userService.findByUUID(uuid);
 
         if (!bd.isEmpty()) {
-            userService.delete(id);
+            userService.delete(uuid);
             return ResponseEntity.status(200).build();
 
         } else if (bd.isEmpty()) {

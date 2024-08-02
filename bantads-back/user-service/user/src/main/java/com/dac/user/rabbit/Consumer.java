@@ -126,7 +126,7 @@ public class Consumer {
 
         GenericData<ClienteDTO> cliente = (GenericData<ClienteDTO>) message.getData();
 
-        if (service.deletarPorId(cliente.getDto().getId())) {
+        if (serviceImpl.deletarPorId(cliente.getDto().getId())) {
             response.setData(cliente);
         } else {
             response.setData(null);
