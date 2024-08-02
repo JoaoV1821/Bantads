@@ -34,7 +34,7 @@ public class SagaApplication {
 		requestDTO.setEmail("aalexjankoski@gmail.com");
 		requestDTO.setCpf("10123415955");
 		requestDTO.setTelefone("41995448887");
-		requestDTO.setSalario(3200.00);
+		requestDTO.setSalario(1200.00);
 		requestDTO.setLogradouro("Rua Alcides Vieira Arcoverde");
 		requestDTO.setNumero("1225");
 		requestDTO.setComplemento("SEPT");
