@@ -65,6 +65,7 @@ public class Consumer {
         Mono<GenericData<?>> contaResponse = producer.sendRequest(request);
 
         contaResponse.map(response -> {
+            @SuppressWarnings("unchecked")
             GenericData<String> gerenteId = Transformer.transform(response, GenericData.class);
             System.out.println("gerente " + gerenteId);
             managerWithLeastAccountsId[0] = gerenteId.getDto();

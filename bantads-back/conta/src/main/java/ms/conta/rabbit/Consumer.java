@@ -77,6 +77,7 @@ public class Consumer {
 
     private Message<ContaDTO> handleUpdateAccount(Message<?> message) {
         Message<ContaDTO> response = new Message<>();
+        @SuppressWarnings("unchecked")
         GenericData<ContaDTO> novo = (GenericData<ContaDTO>) message.getData();
         ContaDTO salvo = commandService.atualizarPorId_cliente(Transformer.transform(novo.getDto(), ContaDTO.class));
 
@@ -109,6 +110,7 @@ public class Consumer {
 
     private Message<ContaDTO> handleDeleteAccount(Message<?> message) {
         Message<ContaDTO> response = new Message<>();
+        @SuppressWarnings("unchecked")
         GenericData<ContaDTO> conta = (GenericData<ContaDTO>) message.getData();
 
         if (commandService.deletarPorId(conta.getDto().getId())) {
@@ -122,6 +124,7 @@ public class Consumer {
 
     private Message<String> handleRequestManagerWithLeastAccounts(Message<?> message) {
         
+        @SuppressWarnings("unchecked")
         GenericData<String> lista = (GenericData<String>) message.getData();
         List<String> lista_id_gerente = lista.getList();
 
@@ -154,6 +157,7 @@ public class Consumer {
 
     private Message<ContaDTO> handleRequestAccount(Message<?> message) {
         Message<ContaDTO> response = new Message<>();
+        @SuppressWarnings("unchecked")
         GenericData<ClienteDTO> cliente = (GenericData<ClienteDTO>) message.getData();
 
         Optional<Conta> buscado = queryService.buscarPorId_cliente(cliente.getDto().getId());

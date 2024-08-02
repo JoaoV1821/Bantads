@@ -26,7 +26,7 @@ import shared.Message;
  * no Cache, assim que receber a resposta irá emiti-lo e removê-lo do Cache
  */
 
-
+ 
 @Component
 public class Producer {
     
@@ -81,3 +81,4 @@ public class Producer {
     }
 
 }
+

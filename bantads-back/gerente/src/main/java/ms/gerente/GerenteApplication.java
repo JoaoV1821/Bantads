@@ -1,10 +1,8 @@
 package ms.gerente;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+
 import java.util.UUID;
-import java.util.stream.Collectors;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -13,12 +11,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import lombok.Data;
 import ms.gerente.rabbit.Producer;
-import ms.gerente.util.Transformer;
-import shared.GenericData;
 import shared.Message;
-import shared.dtos.ClienteDTO;
-import shared.dtos.ContaDTO;
-import shared.dtos.GerenteDTO;
+
 
 @SpringBootApplication
 public class GerenteApplication implements CommandLineRunner{
@@ -28,14 +22,11 @@ public class GerenteApplication implements CommandLineRunner{
 	}
 
 	@Autowired private GerenteRepository repo;
-	@Autowired private GerenteService service;
+	
 	@Autowired private Producer producer;
 
-	private List<ClienteDTO> clientes = new ArrayList<>();
-	private List<GerenteDTO> gerentes = new ArrayList<>();
-	private List<ContaDTO> contas = new ArrayList<>();
 	
-	@SuppressWarnings("unchecked")
+	
 	@Override
 	public void run(String ...args) throws Exception{
 		repo.save(new Gerente("1", "000", "gerente1@email.com", "9999-9999"));

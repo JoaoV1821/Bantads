@@ -1,7 +1,6 @@
 package ms.gerente;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -60,6 +59,7 @@ public class GerenteController {
         return ResponseEntity.ok().body(gerenteSalvo);
     }
 
+    @SuppressWarnings("rawtypes")
     @DeleteMapping("/{id}")
     public ResponseEntity remover(@PathVariable String id){
         

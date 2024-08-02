@@ -15,36 +15,62 @@ app.use(bodyParser.json());
 
 const invalidTokens = new Set(); // Lista de tokens inválidos
 
-const clientesServiceProxy = httpProxy('http://localhost:5000/clientes', {
+const sagaAutocadastroProxy = httpProxy("http://localhost:5000/contas", {
     proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
         proxyReqOpts.headers['Content-Type'] = 'application/json';
         proxyReqOpts.method = 'POST';
         return proxyReqOpts;
     },
 
-
     proxyReqBodyDecorator: function(bodyContent, srcReq) {
-
+        
         try {
-
             let retBody = {};
-            retBody.email = bodyContent.user;
-            retBody.password = bodyContent.password;
+            retBody.cpf = bodyContent.cpf;
+            retBody.email = bodyContent.email;
+            retBody.nome = bodyContent.nome;
+            retBody.salario = bodyContent.salario;
+            retBody.telefone = bodyContent.telefone;
+            retBody.estado = bodyContent.estado;
+            retBody.endereco = bodyContent.endereco;
+
             bodyContent = retBody;
 
         } catch(error) {
             console.log('ERRO: ' + error);
-        };
+        }
 
         return bodyContent;
     },
-
 
     userResDecorator: function(proxyRes, proxyResData, req, res) {
         const data = JSON.parse(proxyResData.toString('utf8'));
         return JSON.stringify(data);
     }
 });
+
+const clientesServiceProxy = httpProxy('http://localhost:8083/clientes', {
+    proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
+
+        proxyReqOpts.headers['Content-Type'] = 'application/json';
+        proxyReqOpts.method = 'GET';
+
+        return proxyReqOpts;
+    },
+
+
+    proxyReqBodyDecorator: function(bodyContent, srcReq) {
+
+        return bodyContent;
+    },
+
+
+    userResDecorator: function(proxyRes, proxyResData, req, res) {
+      
+        return proxyResData;
+    }
+});
+
 
 const gerentesServiceProxy = httpProxy('http://localhost:5000/gerentes', {
     proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
@@ -56,10 +82,12 @@ const gerentesServiceProxy = httpProxy('http://localhost:5000/gerentes', {
     proxyReqBodyDecorator: function(bodyContent, srcReq) {
 
         try {
-            
+
             let retBody = {};
-            retBody.email = bodyContent.user;
-            retBody.password = bodyContent.password;
+
+            retBody.email = bodyContent.email;
+            retBody.nome = bodyContent.nome;
+            retBody.telefone = bodyContent.telefone;
             bodyContent = retBody;
 
         } catch(error) {
@@ -71,9 +99,11 @@ const gerentesServiceProxy = httpProxy('http://localhost:5000/gerentes', {
 
     userResDecorator: function(proxyRes, proxyResData, req, res) {
         const data = JSON.parse(proxyResData.toString('utf8'));
-        return JSON.stringify(data);
+        return data;
     }
 });
+
+
 
 const contaServiceProxy = httpProxy("http://localhost:5000/contas", {
     proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
@@ -84,15 +114,6 @@ const contaServiceProxy = httpProxy("http://localhost:5000/contas", {
 
     proxyReqBodyDecorator: function(bodyContent, srcReq) {
         
-        try {
-            let retBody = {};
-            retBody.email = bodyContent.user;
-            retBody.password = bodyContent.password;
-            bodyContent = retBody;
-
-        } catch(error) {
-            console.log('ERRO: ' + error);
-        }
         return bodyContent;
     },
 
@@ -101,6 +122,8 @@ const contaServiceProxy = httpProxy("http://localhost:5000/contas", {
         return JSON.stringify(data);
     }
 });
+
+
 
 const authServiceProxy = httpProxy("http://localhost:8080/auth", {
     proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
@@ -112,17 +135,19 @@ const authServiceProxy = httpProxy("http://localhost:8080/auth", {
     proxyReqBodyDecorator: function(bodyContent, srcReq) {
         try {
             let retBody = {};
+
             retBody.email = bodyContent.email;
             retBody.senha = bodyContent.password;
-            console.log(bodyContent)
-            console.log(retBody);
+            retBody.tipo = bodyContent.tipo;
+
             bodyContent = retBody;
+
         } catch(error) {
             console.log('ERRO: ' + error);
         }
+
         return bodyContent;
     },
-
 
     userResDecorator: function(proxyRes, proxyResData, req, res) {
         if (proxyRes.statusCode === 200) {
@@ -141,6 +166,7 @@ const authServiceProxy = httpProxy("http://localhost:8080/auth", {
     }
 });
 
+
 const verifyJWT = (req, res, next) => {
     const token = req.headers['x-access-token'];
     if(!token) {
@@ -158,9 +184,31 @@ const verifyJWT = (req, res, next) => {
     });
 };
 
+
 app.post('/auth', (req, res, next) => {
     authServiceProxy(req, res, next);
 });
+
+
+app.post('/auth/registrar', (req, res, next) => {
+    authServiceProxy(req, res, next);
+});
+
+
+app.post('/auth/aprovar/:email', (req, res, next) => {
+    authServiceProxy(req, res, next);
+});
+
+
+app.delete('/auth/delete/:email', (req, res, next) => {
+    authServiceProxy(req, res, next);
+});
+
+
+app.put('/auth/update/:email', (req, res, next) => {
+    authServiceProxy(req, res, next);
+});
+
 
 
 app.post('/logout', (req, res) => {
@@ -174,18 +222,68 @@ app.post('/logout', (req, res) => {
 });
 
 
-app.get('/clientes', verifyJWT, (req, res, next) => {
+app.get('/cliente/find/:uuid', (req, res, next) => {
     clientesServiceProxy(req, res, next);
 });
+
+
+app.get('/cliente/tela-inicial:uuid', verifyJWT, (req, res, next) => {
+    clientesServiceProxy(req, res, next);
+});
+
+
+app.delete('/cliente/delete/:uuid', (req, res, next) => {
+    clientesServiceProxy(req, res, next);
+});
+
+
+// ========== Conta ========
 
 
 app.get('/conta', verifyJWT, (req, res, next) => {
     contaServiceProxy(req, res, next);
 });
 
+app.get('/saque/:uuid', verifyJWT, (req, res, next) => {
+    contaServiceProxy(req, res, next);
+});
+
+
+app.get('/deposito/:uuid', verifyJWT, (req, res, next) => {
+    contaServiceProxy(req, res, next);
+});
+
+
+app.get('/transferencia/:uuid', verifyJWT, (req, res, next) => {
+    contaServiceProxy(req, res, next);
+})
+
+
+// ============= gerente ===========
 
 app.get('/gerentes', verifyJWT, (req, res, next) => {
     gerentesServiceProxy(req, res, next);
+});
+
+
+app.get('/:uuid', verifyJWT, (req, res, next) => {
+    gerentesServiceProxy(req, res, next);
+});
+
+
+app.put('/:uuid', verifyJWT, (req, res, next) => {
+    gerentesServiceProxy(req, res, next);
+});
+
+
+app.delete('/:uuid', verifyJWT, (req, res, next) => {
+    gerentesServiceProxy(req, res, next);
+});
+
+// ============ Autocadastro ===========
+
+app.get('/autocadastro', (req, res, next) => {
+    sagaAutocadastroProxy(req, res, next);
 });
 
 app.use(logger('dev'));

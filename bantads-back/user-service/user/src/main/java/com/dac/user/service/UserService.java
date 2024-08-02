@@ -5,7 +5,7 @@ import com.dac.user.models.UserModel;
 import java.util.Optional;
 
 public interface UserService {
-    boolean findByEmail(String email);
+   Optional<UserModel> findByEmail(String email);
 
     Optional<UserModel> findByUUID(String uuid);
 
@@ -13,5 +13,5 @@ public interface UserService {
 
     void atualizar(String uuid, UserModel user);
     
-    void delete(String uuid);
+    boolean delete(String uuid);
 }

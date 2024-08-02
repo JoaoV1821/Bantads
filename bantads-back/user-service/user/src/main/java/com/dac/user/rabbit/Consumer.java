@@ -77,6 +77,7 @@ public class Consumer {
     private Message<ClienteDTO> handleSaveClient(Message<?> message) {
         Message<ClienteDTO> response = new Message<>();
 
+        @SuppressWarnings("rawtypes")
         GenericData novo = message.getData();
         UserModel salvo = service.create(Transformer.transform(novo.getDto(), UserModel.class));
 
@@ -95,9 +96,10 @@ public class Consumer {
     private Message<ClienteDTO> handleDeleteClient(Message<?> message) {
         Message<ClienteDTO> response = new Message<>();
 
+        @SuppressWarnings("unchecked")
         GenericData<ClienteDTO> cliente = (GenericData<ClienteDTO>) message.getData();
 
-        if (service.deletarPorId(cliente.getDto().getId())) {
+        if (service.delete(cliente.getDto().getId())) {
             response.setData(cliente);
         } else {
             response.setData(null);
