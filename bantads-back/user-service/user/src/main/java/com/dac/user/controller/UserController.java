@@ -1,14 +1,11 @@
 package com.dac.user.controller;
 
-import java.net.URI;
-
 import org.antlr.v4.runtime.misc.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
+
 import java.util.Optional;
 import java.util.UUID;
 
@@ -57,20 +54,15 @@ public class UserController {
     @PostMapping("/registrar")
     public ResponseEntity<UserModel> create(@RequestBody UserModel user) {
 
-        if (userService.findByEmail(user.getEmail())) {
+        Optional <UserModel> bdUser = userService.findByEmail(user.getEmail());
+        if (bdUser.isEmpty()) {
             user.setUuid(UUID.randomUUID().toString());
             UserModel userCreated = userService.create(user);
 
-            user.setUuid(UUID.randomUUID().toString());
 
-            URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-            .path("/{uuid}")
-            .buildAndExpand(userCreated.getUuid())
-            .toUri();
-    
-            return ResponseEntity.created(location).body(userCreated);
+            return ResponseEntity.ok(userCreated);
 
-        } else if (!userService.findByEmail(user.getEmail())) {
+        } else if (bdUser.isPresent()) {
             return ResponseEntity.status(409).build();
         }
 

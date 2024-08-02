@@ -1,6 +1,5 @@
 package com.dac.user.service.impl;
 
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
@@ -33,8 +32,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean findByEmail(String email) {
-        return userRepository.existsByEmail(email);
+    public Optional <UserModel>findByEmail(String email) {
+        return userRepository.findById(email);
     }
 
  
@@ -52,14 +51,7 @@ public class UserServiceImpl implements UserService {
  
     @Override
     public UserModel create(UserModel user) {
-        if (userRepository.existsByEmail(user.getEmail())) {
-            return null;
-        }
-
-        if (userRepository.existsByCpf(user.getEmail())) {
-            return null;
-        }
-
+        
         return userRepository.save(user);
 
     }
@@ -94,8 +86,9 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public void delete(String id) {
-        userRepository.deleteById(id);    
+    public boolean delete(String id) {
+        userRepository.deleteById(id);   
+        return true; 
     }
 
     public Boolean deletarPorId(String id) {
@@ -111,7 +104,7 @@ public class UserServiceImpl implements UserService {
     public Pair<ClienteDTO, ContaDTO> clienteComConta(String id){
         if(!userRepository.existsById(id)) return null;
 
-        ClienteDTO cliente = Transformer.transform(findById(id).get(), ClienteDTO.class);
+        ClienteDTO cliente = Transformer.transform(findByUUID(id).get(), ClienteDTO.class);
 
         GenericData<ClienteDTO> data = new GenericData<>();
         data.setDto(cliente);
@@ -120,6 +113,7 @@ public class UserServiceImpl implements UserService {
 
 		ContaDTO conta = producer.sendRequest(msgConta)
             .map(response -> {
+                @SuppressWarnings("unchecked")
                 GenericData<ContaDTO> dataResponse = Transformer.transform(response, GenericData.class);
 				return dataResponse.getDto();
             })
