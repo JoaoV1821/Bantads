@@ -17,8 +17,8 @@ import io.github.cdimascio.dotenv.Dotenv;
 public class Email {
     
     private static Dotenv dotenv = Dotenv.load();
-    private static String senderEmail = dotenv.get("SENDER_EMAIL");
-    private static String senderPassword = dotenv.get("SENDER_PASSWORD");
+    private static String senderEmail = dotenv.get("REMETENTE");
+    private static String senderPassword = dotenv.get("SENHA_REMETENTE");
 
 
     private static Session criarSessionMail() {

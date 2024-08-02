@@ -1,5 +1,7 @@
 package ms.saga;
 
+import javax.mail.MessagingException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -7,9 +9,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import ms.saga.alteracaodeperfil.UpdateProfileService;
-import ms.saga.autocadastro.AutocadastroService;
-import ms.saga.dtos.AutocadastroRequestDTO;
-import ms.saga.dtos.AutocadastroResponseDTO;
 import ms.saga.dtos.UpdateProfileRequestDTO;
 import ms.saga.dtos.UpdateProfileResponseDTO;
 import ms.saga.rabbit.Producer;
@@ -49,7 +48,7 @@ public class SagaApplication {
             response -> System.out.println("UpdateProfile Response: " + response),
             error -> System.err.println("Error: " + error.getMessage())
         );
-		};
+		}; 
 	}
 
 }
