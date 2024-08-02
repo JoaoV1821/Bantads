@@ -19,6 +19,7 @@ import ms.conta.repository.commandrepository.MovimentacaoCommandRepository;
 import ms.conta.util.Transformer;
 import shared.GenericData;
 import shared.Message;
+import shared.dtos.ClienteDTO;
 import shared.dtos.ContaDTO;
 
 @Service
@@ -55,6 +56,26 @@ public class CommandService {
         atualizada.setEstado(conta.getEstado());
         atualizada.setLimite(conta.getLimite());
         atualizada.setId_gerente(conta.getId_gerente());
+        
+        ContaDTO salva = Transformer.transform(this.contaRepository.save(atualizada), ContaDTO.class);
+        queryUpdate(salva, "updateAccount");
+
+        return salva;
+    }
+
+    public ContaDTO atualizarLimite(ClienteDTO cliente){
+        Optional<Conta> old = queryService.buscarPorId_cliente(cliente.getId());
+        if (!old.isPresent()) {
+            return null;
+        }
+        Conta atualizada = old.get();
+
+        Double novoLimite = cliente.getSalario() > 2000 ? cliente.getSalario() / 2 : 0.00;
+
+        if(novoLimite < atualizada.getSaldo())
+            novoLimite = atualizada.getSaldo();
+
+        atualizada.setLimite(novoLimite);
         
         ContaDTO salva = Transformer.transform(this.contaRepository.save(atualizada), ContaDTO.class);
         queryUpdate(salva, "updateAccount");

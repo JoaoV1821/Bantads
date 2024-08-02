@@ -6,9 +6,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import ms.saga.alteracaodeperfil.UpdateProfileService;
 import ms.saga.autocadastro.AutocadastroService;
-import ms.saga.dtos.OrchestratorRequestDTO;
-import ms.saga.dtos.OrchestratorResponseDTO;
+import ms.saga.dtos.AutocadastroRequestDTO;
+import ms.saga.dtos.AutocadastroResponseDTO;
+import ms.saga.dtos.UpdateProfileRequestDTO;
+import ms.saga.dtos.UpdateProfileResponseDTO;
 import ms.saga.rabbit.Producer;
 import reactor.core.publisher.Mono;
 
@@ -19,14 +22,15 @@ public class SagaApplication {
 		SpringApplication.run(SagaApplication.class, args);
 	}
 
-	@Autowired AutocadastroService autocadastroService;
+	@Autowired UpdateProfileService service;
 	@Autowired Producer producer;
 
 	@Bean
 	CommandLineRunner run(){
 		return args -> {
 
-		OrchestratorRequestDTO requestDTO = new OrchestratorRequestDTO();
+		UpdateProfileRequestDTO requestDTO = new UpdateProfileRequestDTO();
+		requestDTO.setId("client1");
 		requestDTO.setNome("André");
 		requestDTO.setEmail("aalexjankoski@gmail.com");
 		requestDTO.setCpf("10123415955");
@@ -40,9 +44,9 @@ public class SagaApplication {
 		requestDTO.setUf("PR");
 		
 		//Vai vir do controller 
-        Mono<OrchestratorResponseDTO> responseMono = autocadastroService.autocadastro(requestDTO);
+        Mono<UpdateProfileResponseDTO> responseMono = service.updateProfile(requestDTO);
         responseMono.subscribe(
-            response -> System.out.println("Autocadastro Response: " + response),
+            response -> System.out.println("UpdateProfile Response: " + response),
             error -> System.err.println("Error: " + error.getMessage())
         );
 		};

@@ -53,6 +53,9 @@ public class Consumer {
                 break;
             case "requestAccount":
                 response = handleRequestAccount(message);
+                break;  
+            case "updateLimit":
+                response = handleUpdateLimit(message);
                 break;    
             default:
                 return;
@@ -79,6 +82,22 @@ public class Consumer {
         Message<ContaDTO> response = new Message<>();
         GenericData<ContaDTO> novo = (GenericData<ContaDTO>) message.getData();
         ContaDTO salvo = commandService.atualizarPorId_cliente(Transformer.transform(novo.getDto(), ContaDTO.class));
+
+        if (salvo != null) {
+            GenericData<ContaDTO> data = new GenericData<>();
+            data.setDto(Transformer.transform(salvo, ContaDTO.class));
+            response.setData(data);
+        } else {
+            response.setData(null);
+            response.setRequest("error");
+        }
+        return response;
+    }
+
+    private Message<ContaDTO> handleUpdateLimit(Message<?> message) {
+        Message<ContaDTO> response = new Message<>();
+        GenericData<ClienteDTO> novo = (GenericData<ClienteDTO>) message.getData();
+        ContaDTO salvo = commandService.atualizarLimite(Transformer.transform(novo.getDto(), ClienteDTO.class));
 
         if (salvo != null) {
             GenericData<ContaDTO> data = new GenericData<>();

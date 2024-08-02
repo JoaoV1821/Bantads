@@ -65,7 +65,7 @@ public class UserController {
 
             URI location = ServletUriComponentsBuilder.fromCurrentRequest()
             .path("/{uuid}")
-            .buildAndExpand(userCreated.getId())
+            .buildAndExpand(userCreated.getUuid())
             .toUri();
     
             return ResponseEntity.created(location).body(userCreated);
@@ -83,7 +83,7 @@ public class UserController {
         Optional<UserModel> bd = userService.findByUUID(uuid);
 
         if (!bd.isEmpty()) {
-            userService.atualizar(id, user);
+            userService.atualizar(uuid, user);
             return ResponseEntity.ok(user);
 
         } else if (bd.isEmpty()) {
@@ -99,7 +99,7 @@ public class UserController {
         Optional<UserModel> bd = userService.findByUUID(uuid);
 
         if (!bd.isEmpty()) {
-            userService.delete(id);
+            userService.delete(uuid);
             return ResponseEntity.status(200).build();
 
         } else if (bd.isEmpty()) {

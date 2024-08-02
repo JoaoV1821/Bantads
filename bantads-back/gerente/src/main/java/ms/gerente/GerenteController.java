@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 @RestController
@@ -27,10 +29,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RequestMapping("/gerente")
 public class GerenteController {
     
-    //TODO 
-    //RELATÓRIO DE CLIENTES : listar clientes com nome, cpf, limite, saldo, limite (MS cliente + MS conta)
-    //DASHBOARD : listar gerentes com n clientes, soma de saldo positivo e soma de saldo negativo (MS conta + MS cliente)
-
     @Autowired
     private GerenteService gerenteService;
 
@@ -69,6 +67,5 @@ public class GerenteController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         
     }
-    
     
 }
