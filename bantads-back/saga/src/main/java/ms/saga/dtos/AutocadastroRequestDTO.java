@@ -3,13 +3,11 @@ package ms.saga.dtos;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ms.saga.dtos.enums.SagaStatus;
-
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrchestratorResponseDTO {
+public class AutocadastroRequestDTO {
     private String nome;
     private String email;
     private String cpf;
@@ -23,6 +21,5 @@ public class OrchestratorResponseDTO {
     private String cidade;
     private String uf;
     
-    private SagaStatus status;
+    //private int estado;
 }
-

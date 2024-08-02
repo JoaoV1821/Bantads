@@ -1,6 +1,7 @@
 package com.dac.user.rabbit;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -11,11 +12,13 @@ import org.springframework.stereotype.Component;
 import com.dac.user.models.UserModel;
 import com.dac.user.repository.UserRepository;
 import com.dac.user.service.UserService;
+import com.dac.user.service.impl.UserServiceImpl;
 import com.dac.user.utils.Transformer;
 
 import shared.GenericData;
 import shared.Message;
 import shared.dtos.ClienteDTO;
+import shared.dtos.ContaDTO;
 
 @Component
 public class Consumer {
@@ -28,6 +31,9 @@ public class Consumer {
     
     @Autowired 
     UserService service;
+
+    @Autowired 
+    UserServiceImpl serviceImpl;
     
     @Autowired 
     RabbitTemplate rabbitTemplate;
@@ -45,8 +51,14 @@ public class Consumer {
             case "saveClient":
                 response = handleSaveClient(message);
                 break;
+            case "updateClient":
+                response = handleUpdateClient(message);
+                break;
             case "deleteClient":
                 response = handleDeleteClient(message);
+                break;
+            case "requestClient":
+                response = handleRequestClient(message);
                 break;
             default:
                 return;
@@ -93,14 +105,49 @@ public class Consumer {
         return response;
     }
 
+    private Message<ClienteDTO> handleUpdateClient(Message<?> message) {
+        Message<ClienteDTO> response = new Message<>();
+        GenericData<ClienteDTO> novo = (GenericData<ClienteDTO>) message.getData();
+
+        ClienteDTO salvo = serviceImpl.atualizarRabbit(novo.getDto());
+
+        if (salvo != null) {
+            GenericData<ClienteDTO> data = new GenericData<>();
+            data.setDto(Transformer.transform(salvo, ClienteDTO.class));
+            response.setData(data);
+        } else {
+            response.setData(null);
+            response.setRequest("error");
+        }
+        return response;
+    }
+
     private Message<ClienteDTO> handleDeleteClient(Message<?> message) {
         Message<ClienteDTO> response = new Message<>();
 
         @SuppressWarnings("unchecked")
         GenericData<ClienteDTO> cliente = (GenericData<ClienteDTO>) message.getData();
 
-        if (service.delete(cliente.getDto().getId())) {
+        if (serviceImpl.deletarPorId(cliente.getDto().getId())) {
             response.setData(cliente);
+        } else {
+            response.setData(null);
+            response.setRequest("error");
+        }
+
+        return response;
+    }
+
+    private Message<ClienteDTO> handleRequestClient(Message<?> message) {
+        Message<ClienteDTO> response = new Message<>();
+        GenericData<ClienteDTO> cliente = (GenericData<ClienteDTO>) message.getData();
+
+        ClienteDTO buscado = serviceImpl.findByIdClienteDTO(cliente.getDto());
+
+        if(buscado != null){
+            GenericData<ClienteDTO> data = new GenericData<>();
+            data.setDto(buscado);
+            response.setData(data);
         } else {
             response.setData(null);
             response.setRequest("error");

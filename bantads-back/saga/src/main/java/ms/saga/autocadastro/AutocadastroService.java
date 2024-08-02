@@ -18,8 +18,8 @@ import ms.saga.autocadastro.steps.AssociateManagerStep;
 import ms.saga.autocadastro.steps.CreateAccountStep;
 import ms.saga.autocadastro.steps.CreateAuthStep;
 import ms.saga.autocadastro.steps.CreateClientStep;
-import ms.saga.dtos.OrchestratorRequestDTO;
-import ms.saga.dtos.OrchestratorResponseDTO;
+import ms.saga.dtos.AutocadastroRequestDTO;
+import ms.saga.dtos.AutocadastroResponseDTO;
 import ms.saga.dtos.enums.SagaStatus;
 import ms.saga.rabbit.Producer;
 import ms.saga.util.Email;
@@ -38,7 +38,7 @@ public class AutocadastroService {
     
     @Autowired Producer producer;
 
-    public Mono<OrchestratorResponseDTO> autocadastro(final OrchestratorRequestDTO requestDTO){
+    public Mono<AutocadastroResponseDTO> autocadastro(final AutocadastroRequestDTO requestDTO){
         String uuid = UUID.randomUUID().toString();  // Generate a new UUID for each request
         Workflow autocadastWorkflow = this.getAutocadastWorkflow(requestDTO, uuid);
         return Flux.fromStream(() -> autocadastWorkflow.getSteps().stream())
@@ -54,7 +54,7 @@ public class AutocadastroService {
             .onErrorResume(ex -> this.revertAutocadastro(autocadastWorkflow, requestDTO, uuid));
     }
 
-    public Mono<OrchestratorResponseDTO> revertAutocadastro(final Workflow workflow, final OrchestratorRequestDTO requestDTO, String uuid){
+    public Mono<AutocadastroResponseDTO> revertAutocadastro(final Workflow workflow, final AutocadastroRequestDTO requestDTO, String uuid){
         
         System.out.println("revertAutocadastro::AutocadastroService");
 /* 
@@ -76,7 +76,7 @@ public class AutocadastroService {
             .then(Mono.just(this.getResponseDTO(requestDTO, SagaStatus.CANCELLED, uuid)));
     }
 
-    private Workflow getAutocadastWorkflow(OrchestratorRequestDTO requestDTO, String uuid){
+    private Workflow getAutocadastWorkflow(AutocadastroRequestDTO requestDTO, String uuid){
 
         Message msg = new Message<>(UUID.randomUUID().toString(),
         "requestManagerForNewAccount", null , "gerente", "saga.response");
@@ -98,7 +98,7 @@ public class AutocadastroService {
             List.of(createClientStep, createAuthStep, createAccountStep, associateManagerStep));
     }
 
-    private ClienteDTO getClientRequestDTO(OrchestratorRequestDTO requestDTO, String uuid){
+    private ClienteDTO getClientRequestDTO(AutocadastroRequestDTO requestDTO, String uuid){
         ClienteDTO clienteDTO = new ClienteDTO();
         clienteDTO.setId(uuid);
         clienteDTO.setNome(requestDTO.getNome());
@@ -116,7 +116,7 @@ public class AutocadastroService {
         return clienteDTO;
     }
 
-    private ContaDTO getContaRequestDTO(OrchestratorRequestDTO requestDTO, String uuid){
+    private ContaDTO getContaRequestDTO(AutocadastroRequestDTO requestDTO, String uuid){
         ContaDTO contaDTO = new ContaDTO();
         contaDTO.setId_cliente(uuid);
         Double salario = this.getClientRequestDTO(requestDTO, uuid).getSalario();
@@ -130,7 +130,7 @@ public class AutocadastroService {
         return contaDTO;
     }
 
-    private AuthDTO getAuthRequestDTO(OrchestratorRequestDTO requestDTO, String uuid){
+    private AuthDTO getAuthRequestDTO(AutocadastroRequestDTO requestDTO, String uuid){
         AuthDTO authDTO = new AuthDTO();
         authDTO.setId(uuid);
         authDTO.setEmail(requestDTO.getEmail());
@@ -139,9 +139,9 @@ public class AutocadastroService {
         return authDTO;
     }
 
-    private OrchestratorResponseDTO getResponseDTO(OrchestratorRequestDTO requestDTO, SagaStatus status, String uuid){
-        OrchestratorResponseDTO responseDTO = new OrchestratorResponseDTO();
-        responseDTO = Transformer.transform(requestDTO, OrchestratorResponseDTO.class);
+    private AutocadastroResponseDTO getResponseDTO(AutocadastroRequestDTO requestDTO, SagaStatus status, String uuid){
+        AutocadastroResponseDTO responseDTO = new AutocadastroResponseDTO();
+        responseDTO = Transformer.transform(requestDTO, AutocadastroResponseDTO.class);
         responseDTO.setStatus(status);
         return responseDTO;
     }

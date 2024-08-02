@@ -42,6 +42,12 @@ public class UserServiceImpl implements UserService {
 
        return user;
     }
+
+    public Optional <UserModel> findById(String id) {
+        Optional<UserModel> user = userRepository.findById(id);
+ 
+        return user;
+     }
  
     @Override
     public UserModel create(UserModel user) {
@@ -51,28 +57,49 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void atualizar(String id, UserModel user) {
+        Optional<UserModel> userBd = userRepository.findById(id);
 
-    public void atualizar(String uuid, UserModel user) {
-        Optional<UserModel> userBd = userRepository.findById(uuid);
-            
         if (userBd.isPresent()) {
-           
             UserModel existingUser = userBd.get();
 
-            existingUser.setUuid(uuid);
+            // Keep id and cpf unchanged
             existingUser.setNome(user.getNome());
             existingUser.setEmail(user.getEmail());
-            existingUser.setEndereco(user.getEndereco());
             existingUser.setSalario(user.getSalario());
             existingUser.setTelefone(user.getTelefone());
-         
-            userRepository.save(existingUser);
+            existingUser.setEstado(user.getEstado());
             
+            existingUser.setTipo(user.getTipo());
+            existingUser.setLogradouro(user.getLogradouro());
+            existingUser.setNumero(user.getNumero());
+            existingUser.setComplemento(user.getComplemento());
+            existingUser.setCep(user.getCep());
+            existingUser.setCidade(user.getCidade());
+            existingUser.setUf(user.getUf());
+
+            userRepository.save(existingUser);
         } else {
             throw new NoSuchElementException();
         }
+}
+
+
+    @Override
+    public boolean delete(String id) {
+        userRepository.deleteById(id);   
+        return true; 
     }
 
+    public Boolean deletarPorId(String id) {
+        if (!userRepository.existsById(id)) {
+            return false;
+        }
+        
+        userRepository.deleteById(id);
+        
+        return !userRepository.existsById(id);
+    }
 
     public Pair<ClienteDTO, ContaDTO> clienteComConta(String id){
         if(!userRepository.existsById(id)) return null;
@@ -98,12 +125,39 @@ public class UserServiceImpl implements UserService {
 
    
     }
-  
-  @Override
-   public boolean delete(String uuid) {
-        userRepository.deleteById(uuid);
-        
-        return true;
 
-   }
+    public ClienteDTO findByIdClienteDTO(ClienteDTO cliente){
+        
+        Optional<UserModel> buscado = this.userRepository.findById(cliente.getId());
+        if(!buscado.isPresent())
+            return null;
+
+        return Transformer.transform(buscado.get(), ClienteDTO.class);    
+    }
+
+    public ClienteDTO atualizarRabbit(ClienteDTO cliente){
+        Optional<UserModel> old = this.findById(cliente.getId());
+        if (!old.isPresent()) {
+            return null;
+        }
+        UserModel atualizada = old.get();
+        atualizada.setEmail(cliente.getEmail());
+        atualizada.setTelefone(cliente.getTelefone());
+        atualizada.setSalario(cliente.getSalario());
+        atualizada.setEstado(cliente.getEstado());
+        atualizada.setNome(cliente.getNome());
+        atualizada.setTipo(cliente.getTipo());
+        atualizada.setLogradouro(cliente.getLogradouro());
+        atualizada.setNumero(cliente.getNumero());
+        atualizada.setComplemento(cliente.getComplemento());
+        atualizada.setCep(cliente.getCep());
+        atualizada.setCidade(cliente.getCidade());
+        atualizada.setUf(cliente.getUf());
+    
+        ClienteDTO salvo = Transformer.transform(this.userRepository.save(atualizada), ClienteDTO.class);
+    
+        return salvo;
+    }
+    
+    
 }
