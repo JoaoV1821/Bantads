@@ -31,16 +31,13 @@ public class GerenteApplication implements CommandLineRunner{
 	@Autowired private GerenteService service;
 	@Autowired private Producer producer;
 
-	private List<ClienteDTO> clientes = new ArrayList<>();
-	private List<GerenteDTO> gerentes = new ArrayList<>();
-	private List<ContaDTO> contas = new ArrayList<>();
+	//private List<ClienteDTO> clientes = new ArrayList<>();
+	//private List<GerenteDTO> gerentes = new ArrayList<>();
+	//private List<ContaDTO> contas = new ArrayList<>();
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public void run(String ...args) throws Exception{
-		repo.save(new Gerente("1", "000", "gerente1@email.com", "9999-9999"));
-		repo.save(new Gerente("2", "111", "gerente2@email.com", "9998-8888"));
-		repo.save(new Gerente("3", "222", "gerente3@email.com", "9997-7777"));
+		
 		System.out.println(this.repo.findAll());
 
 		producer.sendMessage(new Message<>(

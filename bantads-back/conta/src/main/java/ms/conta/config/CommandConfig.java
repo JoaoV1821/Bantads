@@ -31,10 +31,10 @@ public class CommandConfig {
     @Bean(name = "commandDataSource")
     public DataSource commandDataSource() {
         return DataSourceBuilder.create()
-                .url("jdbc:h2:mem:command;DB_CLOSE_DELAY=-1;")
-                .username("sa")
-                .password("")
-                .driverClassName("org.h2.Driver")
+                .url("jdbc:postgresql://localhost:5432/command")
+                .username("postgres")
+                .password("admin")
+                .driverClassName("org.postgresql.Driver")
                 .build();
     }
 

@@ -27,10 +27,10 @@ public class QueryConfig {
     @Bean(name = "queryDataSource")
     public DataSource queryDataSource() {
         return DataSourceBuilder.create()
-                .url("jdbc:h2:mem:query;DB_CLOSE_DELAY=-1;")
-                .username("sa")
-                .password("")
-                .driverClassName("org.h2.Driver")
+                .url("jdbc:postgresql://localhost:5432/query")
+                .username("postgres")
+                .password("admin")
+                .driverClassName("org.postgresql.Driver")
                 .build();
     }
 

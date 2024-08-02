@@ -29,7 +29,7 @@ public class SagaApplication {
 		return args -> {
 /* 
 		UpdateProfileRequestDTO requestDTO = new UpdateProfileRequestDTO();
-		requestDTO.setId("client1");
+		requestDTO.setId("u1");
 		requestDTO.setNome("André");
 		requestDTO.setEmail("aalexjankoski@gmail.com");
 		requestDTO.setCpf("10123415955");
