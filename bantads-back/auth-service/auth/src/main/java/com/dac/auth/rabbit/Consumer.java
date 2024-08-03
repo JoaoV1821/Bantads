@@ -1,5 +1,6 @@
 package com.dac.auth.rabbit;
 
+import org.springframework.amqp.AmqpRejectAndDontRequeueException;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,15 +29,21 @@ public class Consumer {
 
         Message<?> response = null;
 
-        switch (message.getRequest()) {
-            case "saveAuth":
-                response = handleSaveAuth(message);
-                break;
-            case "deleteAuth":
-                response = handleDeleteAuth(message);
-                break;
-            default:
-                return;
+        try {
+            
+            switch (message.getRequest()) {
+                case "saveAuth":
+                    response = handleSaveAuth(message);
+                    break;
+                case "deleteAuth":
+                    response = handleDeleteAuth(message);
+                    break;
+                default:
+                    return;
+            }
+        } catch (Exception e) {
+            System.err.println("Error processing message: " + e.getMessage());
+            throw new AmqpRejectAndDontRequeueException(e);
         }
 
         sendResponse(message, response);
@@ -48,7 +55,7 @@ public class Consumer {
         GenericData<AuthDTO> novo = (GenericData<AuthDTO>) message.getData();
         com.dac.auth.dto.AuthDTO salvoDTO = service.salvar(Transformer.transform(novo.getDto(),AuthModel.class));
         AuthDTO salvo = Transformer.transform(salvoDTO, AuthDTO.class);
-
+        System.out.println(salvo);
         if (salvo != null) {
             GenericData<AuthDTO> data = new GenericData<>();
             data.setDto(Transformer.transform(salvo, AuthDTO.class));

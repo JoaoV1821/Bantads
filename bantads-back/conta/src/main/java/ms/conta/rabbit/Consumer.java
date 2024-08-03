@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.amqp.AmqpRejectAndDontRequeueException;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,30 +36,44 @@ public class Consumer {
 
         Message<?> response = null;
 
-        switch (message.getRequest()) {
-            case "listAll":
-                response = handleListAll(message);
-                break;
-            case "updateAccount":
-                response = handleUpdateAccount(message);
-                break;
-            case "saveAccount":
-                response = handleSaveAccount(message);
-                break;
-            case "deleteAccount":
-                response = handleDeleteAccount(message);
-                break;
-            case "requestManagerWithLeastAccounts":
-                response = handleRequestManagerWithLeastAccounts(message);
-                break;
-            case "requestAccount":
-                response = handleRequestAccount(message);
-                break;  
-            case "updateLimit":
-                response = handleUpdateLimit(message);
-                break;    
-            default:
-                return;
+        try {
+            switch (message.getRequest()) {
+                case "listAll":
+                    response = handleListAll(message);
+                    break;
+                case "updateAccount":
+                    response = handleUpdateAccount(message);
+                    break;
+                case "saveAccount":
+                    response = handleSaveAccount(message);
+                    break;
+                case "deleteAccount":
+                    response = handleDeleteAccount(message);
+                    break;
+                case "requestManagerWithLeastAccounts":
+                    response = handleRequestManagerWithLeastAccounts(message);
+                    break;
+                case "requestAccount":
+                    response = handleRequestAccount(message);
+                    break;  
+                case "updateLimit":
+                    response = handleUpdateLimit(message);
+                    break;   
+                case "requestPending":
+                    response = handleRequestPending(message);
+                    break;  
+                case "requestAllFromManager":
+                    response = handleRequestAllFromManager(message);
+                    break;    
+                case "requestTop3":
+                    response = handleRequestTop3(message);
+                    break; 
+                default:
+                    return;
+            }
+        } catch (Exception e) {
+            System.err.println("Error processing message: " + e.getMessage());
+            throw new AmqpRejectAndDontRequeueException(e);
         }
         sendResponse(message, response);
     }
@@ -179,7 +194,7 @@ public class Consumer {
         @SuppressWarnings("unchecked")
         GenericData<ClienteDTO> cliente = (GenericData<ClienteDTO>) message.getData();
 
-        Optional<Conta> buscado = queryService.buscarPorId_cliente(cliente.getDto().getId());
+        Optional<Conta> buscado = queryService.buscarPorId_cliente(cliente.getDto().getUuid());
         if(buscado.isPresent()){
             GenericData<ContaDTO> data = new GenericData<>();
             data.setDto(Transformer.transform(buscado.get(), ContaDTO.class));
@@ -189,6 +204,57 @@ public class Consumer {
             response.setRequest("error");
         }
 
+        return response;
+    }
+
+    private Message<ContaDTO> handleRequestPending(Message<?> message) {
+        Message<ContaDTO> response = new Message<>();
+        GenericData<String> id_gerente = (GenericData<String>) message.getData();
+        List<ContaDTO> list = queryService.listarPendentes(id_gerente.getDto());
+
+        if (list != null) {
+            GenericData<ContaDTO> data = new GenericData<>();
+            data.setList(list);
+            response.setData(data);
+        } else {
+            response.setData(null);
+            response.setRequest("error");
+        }
+        
+        return response;
+    }
+
+    private Message<ContaDTO> handleRequestAllFromManager(Message<?> message) {
+        Message<ContaDTO> response = new Message<>();
+        GenericData<String> id_gerente = (GenericData<String>) message.getData();
+        List<ContaDTO> list = queryService.listarPorGerente(id_gerente.getDto());
+
+        if (list != null) {
+            GenericData<ContaDTO> data = new GenericData<>();
+            data.setList(list);
+            response.setData(data);
+        } else {
+            response.setData(null);
+            response.setRequest("error");
+        }
+        
+        return response;
+    }
+
+    private Message<ContaDTO> handleRequestTop3(Message<?> message) {
+        Message<ContaDTO> response = new Message<>();
+        GenericData<String> id_gerente = (GenericData<String>) message.getData();
+        List<ContaDTO> list = queryService.buscarTop3(id_gerente.getDto());
+
+        if (list != null) {
+            GenericData<ContaDTO> data = new GenericData<>();
+            data.setList(list);
+            response.setData(data);
+        } else {
+            response.setData(null);
+            response.setRequest("error");
+        }
+        
         return response;
     }
 

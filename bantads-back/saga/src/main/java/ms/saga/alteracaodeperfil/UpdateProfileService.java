@@ -97,7 +97,7 @@ public class UpdateProfileService {
 
     private ClienteDTO getClientRequestDTO(UpdateProfileRequestDTO requestDTO){
         ClienteDTO clienteDTO = new ClienteDTO();
-        clienteDTO.setId(requestDTO.getId());
+        clienteDTO.setUuid(requestDTO.getId());
         clienteDTO.setNome(requestDTO.getNome());
         clienteDTO.setEmail(requestDTO.getEmail());
         clienteDTO.setCpf(requestDTO.getCpf());

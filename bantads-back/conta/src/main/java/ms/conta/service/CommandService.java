@@ -64,7 +64,7 @@ public class CommandService {
     }
 
     public ContaDTO atualizarLimite(ClienteDTO cliente){
-        Optional<Conta> old = queryService.buscarPorId_cliente(cliente.getId());
+        Optional<Conta> old = queryService.buscarPorId_cliente(cliente.getUuid());
         if (!old.isPresent()) {
             return null;
         }
@@ -85,6 +85,7 @@ public class CommandService {
 
     public ContaDTO salvar(ContaDTO conta){
         if (conta == null) return null;
+        
         Conta salva = this.contaRepository.save(Transformer.transform(conta, Conta.class));
         ContaDTO contaDTO = Transformer.transform(salva, ContaDTO.class);
         queryUpdate(contaDTO, "saveAccount");

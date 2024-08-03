@@ -71,7 +71,11 @@ public class Producer {
         MonoSink<GenericData<?>> sink = monoSinkCache.getIfPresent(correlationId);
         if(sink != null){
             GenericData<?> response = convertDataFromMsg(message);
-            sink.success(response);
+            if(response == null){
+                sink.error(new Throwable("Null Data encountered"));
+            } else {
+                sink.success(response); 
+            }
             monoSinkCache.invalidate(correlationId);
         }
         

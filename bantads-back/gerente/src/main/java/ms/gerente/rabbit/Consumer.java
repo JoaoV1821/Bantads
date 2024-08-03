@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.amqp.AmqpRejectAndDontRequeueException;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,12 +39,18 @@ public class Consumer {
 
         Message<?> response = null;
 
-        switch (message.getRequest()) {
-            case "requestManagerForNewAccount":
-                response = handleRequestManagerForNewAccount(message);
-                break;
-            default:
-                return;
+        try {
+            
+            switch (message.getRequest()) {
+                case "requestManagerForNewAccount":
+                    response = handleRequestManagerForNewAccount(message);
+                    break;
+                default:
+                    return;
+            }
+        } catch (Exception e) {
+            System.err.println("Error processing message: " + e.getMessage());
+            throw new AmqpRejectAndDontRequeueException(e);
         }
 
         sendResponse(message, response);
