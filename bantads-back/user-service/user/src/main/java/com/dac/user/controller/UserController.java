@@ -107,10 +107,6 @@ public class UserController {
     @GetMapping("/tela-inicial/{id}")
     public ResponseEntity<Pair<ClienteDTO, ContaDTO>> telaInicial(@PathVariable String id) {
         Pair<ClienteDTO, ContaDTO> pair = this.service.clienteComConta(id);
-        
-        if(pair != null){
-            return ResponseEntity.ok(pair);
-        }
 
         return pair != null ? ResponseEntity.ok(pair) : ResponseEntity.notFound().build();
     }
@@ -129,6 +125,15 @@ public class UserController {
         List<Pair<ClienteDTO,ContaDTO>> list = this.service.listarTodosPorGerente(id);
 
         return list.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok().body(list);
+
+    }
+
+    @GetMapping("/buscar-cpf/{cpf}")
+    public ResponseEntity buscarPorCpf(@PathVariable String cpf) {
+        
+        Pair<ClienteDTO,ContaDTO> pair = this.service.buscarPorCpf(cpf);
+
+        return pair != null ? ResponseEntity.ok(pair) : ResponseEntity.notFound().build();
 
     }
     

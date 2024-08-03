@@ -219,6 +219,31 @@ public class UserServiceImpl implements UserService {
 
         return clientes;
     }
+
+    public Pair<ClienteDTO, ContaDTO> buscarPorCpf(String cpf){
+        if(!userRepository.existsByCpf(cpf)) return null;
+
+        ClienteDTO cliente = Transformer.transform(userRepository.findByCpf(cpf), ClienteDTO.class);
+
+        GenericData<ClienteDTO> data = new GenericData<>();
+        data.setDto(cliente);
+        Message<ClienteDTO> msgConta = new Message<>(UUID.randomUUID().toString(), 
+			"requestAccount", data, "conta", "cliente.response");    
+
+		ContaDTO conta = producer.sendRequest(msgConta)
+            .map(response -> {
+                @SuppressWarnings("unchecked")
+                GenericData<ContaDTO> dataResponse = Transformer.transform(response, GenericData.class);
+				return dataResponse.getDto();
+            })
+            .block();
+
+        if (conta == null) return null;
+        
+        return new Pair<ClienteDTO, ContaDTO>(cliente, conta);
+
+   
+    }
     
     
 }
