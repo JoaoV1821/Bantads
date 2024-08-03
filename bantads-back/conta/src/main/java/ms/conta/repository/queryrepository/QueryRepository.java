@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import ms.conta.models.Conta;
 import ms.conta.models.aggregation.GerenteContaAggregation;
+import shared.dtos.TelaInicialDTO;
 
 public interface QueryRepository extends JpaRepository<Conta, Long>{
 
@@ -30,6 +31,13 @@ public interface QueryRepository extends JpaRepository<Conta, Long>{
     @Query(value = "SELECT * FROM conta AS c WHERE c.id_gerente = :idGerente " +
     "ORDER BY c.saldo DESC LIMIT 3", nativeQuery = true)
     List<Conta> buscarTop3(@Param("idGerente") String idGerente);
+
+    @Query("SELECT new shared.dtos.TelaInicialDTO(c.id_gerente, COUNT(c.id), " +
+        "SUM(CASE WHEN c.saldo > 0 THEN c.saldo ELSE 0 END), " +
+        "SUM(CASE WHEN c.saldo < 0 THEN c.saldo ELSE 0 END)) " +
+        "FROM Conta c " +
+        "GROUP BY c.id_gerente")
+    List<TelaInicialDTO> buscarContasGroupByGerenteSumSaldos();
 
 
 

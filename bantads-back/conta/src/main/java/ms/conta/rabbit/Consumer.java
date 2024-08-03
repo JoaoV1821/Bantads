@@ -21,6 +21,7 @@ import shared.GenericData;
 import shared.Message;
 import shared.dtos.ClienteDTO;
 import shared.dtos.ContaDTO;
+import shared.dtos.TelaInicialDTO;
 
 @Component
 public class Consumer {
@@ -67,6 +68,9 @@ public class Consumer {
                     break;    
                 case "requestTop3":
                     response = handleRequestTop3(message);
+                    break; 
+                case "requestAllAccountsByManager":
+                    response = handleRequestAllAccountsByManager(message);
                     break; 
                 default:
                     return;
@@ -248,6 +252,23 @@ public class Consumer {
 
         if (list != null) {
             GenericData<ContaDTO> data = new GenericData<>();
+            data.setList(list);
+            response.setData(data);
+        } else {
+            response.setData(null);
+            response.setRequest("error");
+        }
+        
+        return response;
+    }
+
+    private Message<TelaInicialDTO> handleRequestAllAccountsByManager(Message<?> message) {
+        Message<TelaInicialDTO> response = new Message<>();
+        GenericData<String> id_gerente = (GenericData<String>) message.getData();
+        List<TelaInicialDTO> list = queryService.listarContasParaTelaInicial();
+
+        if (list != null) {
+            GenericData<TelaInicialDTO> data = new GenericData<>();
             data.setList(list);
             response.setData(data);
         } else {

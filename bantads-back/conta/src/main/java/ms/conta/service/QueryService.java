@@ -16,6 +16,7 @@ import ms.conta.repository.queryrepository.QueryRepository;
 import ms.conta.repository.queryrepository.MovimentacaoQueryRepository;
 import ms.conta.util.Transformer;
 import shared.dtos.ContaDTO;
+import shared.dtos.TelaInicialDTO;
 
 @Service
 public class QueryService {
@@ -45,6 +46,10 @@ public class QueryService {
         return this.queryRepository.buscarTop3(id).stream()
         .map(conta -> Transformer.transform(conta, ContaDTO.class))
         .collect(Collectors.toList());
+    }
+
+    public List<TelaInicialDTO> listarContasParaTelaInicial(){
+        return this.queryRepository.buscarContasGroupByGerenteSumSaldos();
     }
 
     public Optional<Conta> buscarPorId(Long id){
