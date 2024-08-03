@@ -63,6 +63,22 @@ public class CommandService {
         return salva;
     }
 
+    public ContaDTO atualizarPorId_gerente(List<String> ids){
+        //List[0] = novo id
+        //List[1] = antigo id
+        Optional<Conta> old = queryService.buscarPorId_gerente(ids.get(1));
+        if (!old.isPresent()) {
+            return null;
+        }
+        Conta atualizada = old.get();
+        atualizada.setId_gerente(ids.get(0));
+        
+        ContaDTO salva = Transformer.transform(this.contaRepository.save(atualizada), ContaDTO.class);
+        queryUpdate(salva, "updateAccount");
+
+        return salva;
+    }
+
     public ContaDTO atualizarLimite(ClienteDTO cliente){
         Optional<Conta> old = queryService.buscarPorId_cliente(cliente.getUuid());
         if (!old.isPresent()) {

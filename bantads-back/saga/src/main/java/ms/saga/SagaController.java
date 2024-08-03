@@ -14,9 +14,11 @@ import ms.saga.alteracaodeperfil.UpdateProfileService;
 import ms.saga.autocadastro.AutocadastroService;
 import ms.saga.dtos.AutocadastroRequestDTO;
 import ms.saga.dtos.AutocadastroResponseDTO;
+import ms.saga.dtos.InsercaoGerenteRequestDTO;
 import ms.saga.dtos.UpdateProfileRequestDTO;
 import ms.saga.dtos.UpdateProfileResponseDTO;
 import ms.saga.dtos.enums.SagaStatus;
+import ms.saga.insercaodegerente.InsercaoGerenteService;
 import ms.saga.util.Email;
 import reactor.core.publisher.Mono;
 
@@ -31,6 +33,7 @@ public class SagaController {
 
     @Autowired AutocadastroService autocadastroService;
     @Autowired UpdateProfileService updateProfileService;
+    @Autowired InsercaoGerenteService insercaoGerenteService;
 
     @PostMapping("/autocadastro")
     public Mono<Object> autocadastro(@RequestBody AutocadastroRequestDTO requestDTO) {
@@ -51,6 +54,20 @@ public class SagaController {
     public Mono<Object> updateProfile(@RequestBody UpdateProfileRequestDTO requestDTO) {
         
         return updateProfileService.updateProfile(requestDTO)
+        .map(response -> {
+            if(response.getStatus() == SagaStatus.COMPLETED){
+                return Mono.just(ResponseEntity.status(HttpStatus.CREATED).body(response));
+            }
+            else {
+                return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null));
+            }
+        });
+    }
+
+    @PostMapping("/inserir-gerente")
+    public Mono<Object> insertManager(@RequestBody InsercaoGerenteRequestDTO requestDTO) {
+        
+        return insercaoGerenteService.insercaoGerente(requestDTO)
         .map(response -> {
             if(response.getStatus() == SagaStatus.COMPLETED){
                 return Mono.just(ResponseEntity.status(HttpStatus.CREATED).body(response));

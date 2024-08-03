@@ -42,6 +42,10 @@ public class QueryService {
         .collect(Collectors.toList());
     }
 
+    public String buscarGerenteComMaisContas(){
+        return this.queryRepository.buscarGerenteComMaisContas();
+    }
+
     public List<ContaDTO> buscarTop3(String id){
         return this.queryRepository.buscarTop3(id).stream()
         .map(conta -> Transformer.transform(conta, ContaDTO.class))
@@ -58,6 +62,10 @@ public class QueryService {
 
     public Optional<Conta> buscarPorId_cliente(String id){
         return this.queryRepository.findById_cliente(id);
+    }
+
+    public Optional<Conta> buscarPorId_gerente(String id){
+        return this.queryRepository.findById_gerente(id);
     }
 
     public List<MovimentacaoDTO> extrato(Long id, Date dataInicial, Date dataFinal){

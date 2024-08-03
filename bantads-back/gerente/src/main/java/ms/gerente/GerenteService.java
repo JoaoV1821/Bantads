@@ -16,6 +16,7 @@ import ms.gerente.rabbit.Producer;
 import ms.gerente.util.Transformer;
 import shared.GenericData;
 import shared.Message;
+import shared.dtos.AuthDTO;
 import shared.dtos.ClienteDTO;
 import shared.dtos.ContaDTO;
 import shared.dtos.GerenteDTO;
@@ -42,14 +43,6 @@ public class GerenteService {
             return Transformer.transform(salvo, GerenteDTO.class);
         }
         return null;
-    }
-
-    public GerenteDTO salvar(GerenteDTO dto) {
-        //TODO RELACIONAR CONTAS
-
-        Gerente gerente = Transformer.transform(dto, Gerente.class);
-        Gerente savedGerente = this.gerenteRepository.save(gerente);
-        return Transformer.transform(savedGerente, GerenteDTO.class);
     }
 
     public GerenteDTO atualizar(String id, GerenteDTO dto) {
@@ -152,6 +145,27 @@ public class GerenteService {
 
     return relatorioClientes;
         
+    }
+
+    public GerenteDTO salvar(GerenteDTO gerente){
+        
+        if(gerenteRepository.existsByEmail(gerente.getEmail())) return null;
+        if(gerenteRepository.existsByCpf(gerente.getCpf())) return null;
+        
+        Gerente salvo = this.gerenteRepository.save(Transformer.transform(gerente, Gerente.class));
+
+        return Transformer.transform(salvo, GerenteDTO.class);
+
+    }
+
+    public Boolean deletarPorId(String id) {
+        if (!gerenteRepository.existsById(id)) {
+            return false;
+        }
+        
+        gerenteRepository.deleteById(id);
+        
+        return !gerenteRepository.existsById(id);
     }
     
 }

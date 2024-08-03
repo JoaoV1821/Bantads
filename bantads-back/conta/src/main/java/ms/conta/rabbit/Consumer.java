@@ -72,6 +72,12 @@ public class Consumer {
                 case "requestAllAccountsByManager":
                     response = handleRequestAllAccountsByManager(message);
                     break; 
+                case "requestManagerWithMostAccounts":
+                    response = handleRequestManagerWithMostAccounts(message);
+                    break; 
+                case "updateAccountByManager":
+                    response = handleUpdateAccountByManager(message);
+                    break; 
                 default:
                     return;
             }
@@ -211,6 +217,22 @@ public class Consumer {
         return response;
     }
 
+    private Message<String> handleRequestManagerWithMostAccounts(Message<?> message) {
+        Message<String> response = new Message<>();
+
+        String buscado = queryService.buscarGerenteComMaisContas();
+        if(!buscado.isEmpty()){
+            GenericData<String> data = new GenericData<>();
+            data.setDto(buscado);
+            response.setData(data);
+        } else {
+            response.setData(null);
+            response.setRequest("error");
+        }
+
+        return response;
+    }
+
     private Message<ContaDTO> handleRequestPending(Message<?> message) {
         Message<ContaDTO> response = new Message<>();
         GenericData<String> id_gerente = (GenericData<String>) message.getData();
@@ -276,6 +298,23 @@ public class Consumer {
             response.setRequest("error");
         }
         
+        return response;
+    }
+
+    private Message<ContaDTO> handleUpdateAccountByManager(Message<?> message) {
+        Message<ContaDTO> response = new Message<>();
+        @SuppressWarnings("unchecked")
+        GenericData<String> novo = (GenericData<String>) message.getData();
+        ContaDTO salvo = commandService.atualizarPorId_gerente(novo.getList());
+
+        if (salvo != null) {
+            GenericData<ContaDTO> data = new GenericData<>();
+            data.setDto(Transformer.transform(salvo, ContaDTO.class));
+            response.setData(data);
+        } else {
+            response.setData(null);
+            response.setRequest("error");
+        }
         return response;
     }
 

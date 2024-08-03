@@ -10,12 +10,14 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import ms.gerente.Gerente;
 import ms.gerente.GerenteRepository;
 import ms.gerente.GerenteService;
 import ms.gerente.util.Transformer;
 import reactor.core.publisher.Mono;
 import shared.GenericData;
 import shared.Message;
+import shared.dtos.AuthDTO;
 import shared.dtos.GerenteDTO;
 
 @Component
@@ -44,6 +46,12 @@ public class Consumer {
             switch (message.getRequest()) {
                 case "requestManagerForNewAccount":
                     response = handleRequestManagerForNewAccount(message);
+                    break;
+                case "saveManager":
+                    response = handleSaveManager(message);
+                    break;
+                case "deleteManager":
+                    response = handleDeleteManager(message);
                     break;
                 default:
                     return;
@@ -91,6 +99,37 @@ public class Consumer {
             response.setRequest("error");
         }
 
+        return response;
+    }
+
+    private Message<GerenteDTO> handleSaveManager(Message<?> message) {
+        Message<GerenteDTO> response = new Message<>();
+        @SuppressWarnings("unchecked")
+        GenericData<GerenteDTO> novo = (GenericData<GerenteDTO>) message.getData();
+        GerenteDTO salvo = service.salvar(novo.getDto());
+        
+        if (salvo != null) {
+            GenericData<GerenteDTO> data = new GenericData<>();
+            data.setDto(Transformer.transform(salvo, GerenteDTO.class));
+            response.setData(data);
+        } else {
+            response.setData(null);
+            response.setRequest("error");
+        }
+        return response;
+    }
+
+    private Message<GerenteDTO> handleDeleteManager(Message<?> message) {
+        Message<GerenteDTO> response = new Message<>();
+        @SuppressWarnings("unchecked")
+        GenericData<GerenteDTO> gerente = (GenericData<GerenteDTO>) message.getData();
+
+        if (service.deletarPorId(gerente.getDto().getId())) {
+            response.setData(gerente);
+        } else {
+            response.setData(null);
+            response.setRequest("error");
+        }
         return response;
     }
 
