@@ -10,14 +10,13 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import ms.gerente.Gerente;
 import ms.gerente.GerenteRepository;
 import ms.gerente.GerenteService;
 import ms.gerente.util.Transformer;
 import reactor.core.publisher.Mono;
 import shared.GenericData;
 import shared.Message;
-import shared.dtos.AuthDTO;
+import shared.dtos.ClienteDTO;
 import shared.dtos.GerenteDTO;
 
 @Component
@@ -52,6 +51,9 @@ public class Consumer {
                     break;
                 case "deleteManager":
                     response = handleDeleteManager(message);
+                    break;
+                case "requestManager":
+                    response = handleRequestManager(message);
                     break;
                 default:
                     return;
@@ -130,6 +132,24 @@ public class Consumer {
             response.setData(null);
             response.setRequest("error");
         }
+        return response;
+    }
+
+    private Message<GerenteDTO> handleRequestManager(Message<?> message) {
+        Message<GerenteDTO> response = new Message<>();
+        GenericData<String> gerente = (GenericData<String>) message.getData();
+
+        GerenteDTO buscado = service.buscarPorId(gerente.getDto());
+
+        if(buscado != null){
+            GenericData<GerenteDTO> data = new GenericData<>();
+            data.setDto(buscado);
+            response.setData(data);
+        } else {
+            response.setData(null);
+            response.setRequest("error");
+        }
+
         return response;
     }
 

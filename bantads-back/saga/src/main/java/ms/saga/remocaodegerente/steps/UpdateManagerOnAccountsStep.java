@@ -1,4 +1,4 @@
-package ms.saga.insercaodegerente.steps;
+package ms.saga.remocaodegerente.steps;
 
 import java.util.List;
 import java.util.UUID;
@@ -13,14 +13,14 @@ import shared.Message;
 import shared.dtos.ContaDTO;
 import shared.dtos.GerenteDTO;
 
-public class AssociateManagerStep implements WorkflowStep{
+public class UpdateManagerOnAccountsStep implements WorkflowStep{
     
     private WorkflowStepStatus stepStatus = WorkflowStepStatus.PENDING;
     private final Producer producer;
     private final GerenteDTO newManager;
-    private final String oldManager;
+    private final GerenteDTO oldManager;
 
-    public AssociateManagerStep(Producer producer, GerenteDTO newManager, String oldManager) {
+    public UpdateManagerOnAccountsStep(Producer producer, GerenteDTO newManager, GerenteDTO oldManager) {
         this.producer = producer;
         this.newManager = newManager;
         this.oldManager = oldManager;
@@ -34,18 +34,19 @@ public class AssociateManagerStep implements WorkflowStep{
     @Override
     public Mono<Boolean> process(){
         
-        System.out.println("AssociateManagerStep::Process");
+        System.out.println("UpdateManagerOnAccountsStep::Process");
+    
         if(newManager == null || oldManager == null) return Mono.just(null);
 
         GenericData<String> data = new GenericData<>();
-        data.setList(List.of(newManager.getId(), oldManager));
+        data.setList(List.of(newManager.getId(), oldManager.getId()));
 
         Message<String> msgConta = new Message<String>(UUID.randomUUID().toString(),
-        "updateAccountByManager", data , "conta", "saga.response");
+        "updateManager", data , "conta", "saga.response");
     
         return producer.sendRequest(msgConta)
             .map(response -> {
-                GenericData<ContaDTO> conta = Transformer.transform(response, GenericData.class);
+                GenericData<String> conta = Transformer.transform(response, GenericData.class);
                 System.out.println("conta " + conta);
                 return conta.getDto() != null;
             })
@@ -56,19 +57,17 @@ public class AssociateManagerStep implements WorkflowStep{
 
     @Override
     public Mono<Boolean> revert(){
-
-        System.out.println("AssociateManagerStep::Revert");
+        System.out.println("UpdateManagerOnAccountsStep::Revert");
 
         GenericData<String> data = new GenericData<>();
-        data.setList(List.of(oldManager, newManager.getId()));
+        data.setList(List.of(oldManager.getId(), newManager.getId()));
 
-        Message<String> msgConta = new Message<String>(UUID.randomUUID().toString(),
-        "updateAccountByManager", data , "conta", "saga.response");
-    
-        return producer.sendRequest(msgConta)
+        Message<String> msg = new Message<String>(UUID.randomUUID().toString(),
+        "updateManager", data , "conta", "saga.response");
+
+        return producer.sendRequest(msg)
             .map(response -> {
                 GenericData<ContaDTO> conta = Transformer.transform(response, GenericData.class);
-                System.out.println("conta " + conta);
                 return conta.getDto() != null;
             })
             .onErrorReturn(false);

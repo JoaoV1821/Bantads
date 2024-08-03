@@ -78,6 +78,9 @@ public class Consumer {
                 case "updateAccountByManager":
                     response = handleUpdateAccountByManager(message);
                     break; 
+                case "updateManager":
+                    response = handleUpdateManager(message);
+                    break; 
                 default:
                     return;
             }
@@ -310,6 +313,23 @@ public class Consumer {
         if (salvo != null) {
             GenericData<ContaDTO> data = new GenericData<>();
             data.setDto(Transformer.transform(salvo, ContaDTO.class));
+            response.setData(data);
+        } else {
+            response.setData(null);
+            response.setRequest("error");
+        }
+        return response;
+    }
+
+    private Message<Integer> handleUpdateManager(Message<?> message) {
+        Message<Integer> response = new Message<>();
+        @SuppressWarnings("unchecked")
+        GenericData<String> novo = (GenericData<String>) message.getData();
+        Integer salvo = commandService.atualizarGerente(novo.getList());
+
+        if (salvo != -1) {
+            GenericData<Integer> data = new GenericData<>();
+            data.setDto(salvo);
             response.setData(data);
         } else {
             response.setData(null);

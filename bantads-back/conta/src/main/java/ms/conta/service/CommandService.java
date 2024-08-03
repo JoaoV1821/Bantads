@@ -79,6 +79,30 @@ public class CommandService {
         return salva;
     }
 
+    public Integer atualizarGerente(List<String> ids) {
+        // List[0] = novo id
+        // List[1] = antigo id
+        List<Conta> oldGerenteAccounts = contaRepository.findAllByIdgerente(ids.get(1));
+        System.out.println("CONTA REPOSITORY FIND ALL");
+        System.out.println(contaRepository.findAll());
+        if (oldGerenteAccounts.isEmpty()) {
+            return -1;
+        }
+    
+        for (Conta account : oldGerenteAccounts) {
+            account.setId_gerente(ids.get(0));
+        }
+        
+        contaRepository.saveAll(oldGerenteAccounts);
+        
+        List<Conta> updatedAccounts = contaRepository.findAllByIdgerente(ids.get(0));
+        for (Conta account : updatedAccounts) {
+            queryUpdate(Transformer.transform(account, ContaDTO.class), "updateAccount");
+        }
+    
+        return 1;
+    }
+
     public ContaDTO atualizarLimite(ClienteDTO cliente){
         Optional<Conta> old = queryService.buscarPorId_cliente(cliente.getUuid());
         if (!old.isPresent()) {

@@ -1,4 +1,4 @@
-package ms.saga;
+package ms.saga.workflow;
 
 import java.util.List;
 

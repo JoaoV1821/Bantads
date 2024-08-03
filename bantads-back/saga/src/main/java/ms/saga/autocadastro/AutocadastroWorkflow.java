@@ -2,8 +2,8 @@ package ms.saga.autocadastro;
 
 import java.util.List;
 
-import ms.saga.Workflow;
-import ms.saga.WorkflowStep;
+import ms.saga.workflow.Workflow;
+import ms.saga.workflow.WorkflowStep;
 
 public class AutocadastroWorkflow implements Workflow{
     

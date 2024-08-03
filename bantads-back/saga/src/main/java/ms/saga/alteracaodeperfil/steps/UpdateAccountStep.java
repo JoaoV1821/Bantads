@@ -2,10 +2,10 @@ package ms.saga.alteracaodeperfil.steps;
 
 import java.util.UUID;
 
-import ms.saga.WorkflowStep;
-import ms.saga.WorkflowStepStatus;
 import ms.saga.rabbit.Producer;
 import ms.saga.util.Transformer;
+import ms.saga.workflow.WorkflowStep;
+import ms.saga.workflow.WorkflowStepStatus;
 import reactor.core.publisher.Mono;
 import shared.GenericData;
 import shared.Message;

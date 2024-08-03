@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.misc.Pair;
@@ -16,7 +15,6 @@ import ms.gerente.rabbit.Producer;
 import ms.gerente.util.Transformer;
 import shared.GenericData;
 import shared.Message;
-import shared.dtos.AuthDTO;
 import shared.dtos.ClienteDTO;
 import shared.dtos.ContaDTO;
 import shared.dtos.GerenteDTO;
@@ -56,7 +54,6 @@ public class GerenteService {
     }
 
     public Boolean remover(String id){
-        //TODO RELACIONAR CONTAS
         
         if(this.listar().size() <= 1){ return false; }
         if (!gerenteRepository.existsById(id)) { return false; }
@@ -162,6 +159,8 @@ public class GerenteService {
         if (!gerenteRepository.existsById(id)) {
             return false;
         }
+
+        if(gerenteRepository.findAll().size() == 1) return false;
         
         gerenteRepository.deleteById(id);
         

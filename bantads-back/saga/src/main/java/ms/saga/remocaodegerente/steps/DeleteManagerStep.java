@@ -1,4 +1,4 @@
-package ms.saga.insercaodegerente.steps;
+package ms.saga.remocaodegerente.steps;
 
 import java.util.UUID;
 
@@ -12,16 +12,16 @@ import shared.Message;
 import shared.dtos.ClienteDTO;
 import shared.dtos.GerenteDTO;
 
-public class InsertManagerStep implements WorkflowStep{
+public class DeleteManagerStep implements WorkflowStep{
     
     private WorkflowStepStatus stepStatus = WorkflowStepStatus.PENDING;
     private final Producer producer;
-    private final GerenteDTO gerenteDTO;
+    private final GerenteDTO oldGerente;
 
 
-    public InsertManagerStep(Producer producer, GerenteDTO gerenteDTO) {
+    public DeleteManagerStep(Producer producer, GerenteDTO gerenteDTO) {
         this.producer = producer;
-        this.gerenteDTO = gerenteDTO;
+        this.oldGerente = gerenteDTO;
     }
 
     @Override
@@ -32,18 +32,17 @@ public class InsertManagerStep implements WorkflowStep{
     @Override
     public Mono<Boolean> process(){
 
-        System.out.println("InsertManagerStep::Process");
+        System.out.println("DeleteManagerStep::Process");
     
         GenericData<GerenteDTO> data = new GenericData<>();
-        data.setDto(gerenteDTO);
+        data.setDto(oldGerente);
 
         Message<GerenteDTO> msg = new Message<GerenteDTO>(UUID.randomUUID().toString(),
-        "saveManager", data , "gerente", "saga.response");
+        "deleteManager", data , "gerente", "saga.response");
 
         return producer.sendRequest(msg)
             .map(response -> {
                 GenericData<GerenteDTO> gerente = Transformer.transform(response, GenericData.class);
-                System.out.println("gerente " + gerente);
                 return gerente.getDto() != null;
             })
             .doOnNext(b -> this.stepStatus = b ? WorkflowStepStatus.COMPLETE : WorkflowStepStatus.FAILED)
@@ -54,18 +53,17 @@ public class InsertManagerStep implements WorkflowStep{
     @Override
     public Mono<Boolean> revert(){
 
-        System.out.println("InsertManagerStep::Revert");
+        System.out.println("DeleteManagerStep::Revert");
 
         GenericData<GerenteDTO> data = new GenericData<>();
-        data.setDto(gerenteDTO);
+        data.setDto(oldGerente);
 
         Message<GerenteDTO> msg = new Message<GerenteDTO>(UUID.randomUUID().toString(),
-        "deleteManager", data , "gerente", "saga.response");
+        "saveManager", data , "gerente", "saga.response");
 
         return producer.sendRequest(msg)
             .map(response -> {
                 GenericData<GerenteDTO> gerente = Transformer.transform(response, GenericData.class);
-                System.out.println("gerente" + gerente);
                 return gerente.getDto() != null;
             })
             .onErrorReturn(false);
