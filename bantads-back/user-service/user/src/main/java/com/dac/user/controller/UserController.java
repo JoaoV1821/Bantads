@@ -136,6 +136,15 @@ public class UserController {
         return pair != null ? ResponseEntity.ok(pair) : ResponseEntity.notFound().build();
 
     }
+
+    @GetMapping("/buscar-top3/{id}")
+    public ResponseEntity buscarTop3(@PathVariable String id) {
+        
+        List<Pair<ClienteDTO,ContaDTO>> list = this.service.buscarTop3(id);
+
+        return list.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok().body(list);
+
+    }
     
     
 

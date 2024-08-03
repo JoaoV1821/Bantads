@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.antlr.v4.runtime.misc.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +37,12 @@ public class QueryService {
 
     public List<ContaDTO> listarPorGerente(String id){
         return this.queryRepository.listByGerente(id).stream()
+        .map(conta -> Transformer.transform(conta, ContaDTO.class))
+        .collect(Collectors.toList());
+    }
+
+    public List<ContaDTO> buscarTop3(String id){
+        return this.queryRepository.buscarTop3(id).stream()
         .map(conta -> Transformer.transform(conta, ContaDTO.class))
         .collect(Collectors.toList());
     }

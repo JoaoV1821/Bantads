@@ -244,6 +244,35 @@ public class UserServiceImpl implements UserService {
 
    
     }
+
+    public List<Pair<ClienteDTO, ContaDTO>> buscarTop3(String id) {
+       
+        GenericData<String> data = new GenericData<>();
+        data.setDto(id);
+        //PUXAR CONTAS DE GERENTE TOP 3
+        Message msgConta = new Message<>(UUID.randomUUID().toString(), 
+			"requestTop3", data, "conta", "cliente.response");    
+
+		List<ContaDTO> contas = producer.sendRequest(msgConta)
+            .map(response -> {
+                @SuppressWarnings("unchecked")
+                GenericData<ContaDTO> dataResponse = Transformer.transform(response, GenericData.class);
+				return dataResponse.getList();
+            })
+            .block();
+
+        //PUXAR CLIENTES QUE CONSTAM NA LISTA
+        List<Pair<ClienteDTO, ContaDTO>> clientes = new ArrayList<>();
+        for (ContaDTO conta : contas) {
+            Optional<UserModel> buscado = userRepository.findById(conta.getId_cliente());
+            if (buscado.isPresent()) {
+                ClienteDTO cliente = Transformer.transform(buscado.get(), ClienteDTO.class);
+                clientes.add(new Pair<ClienteDTO,ContaDTO>(cliente, conta));
+            }
+        }
+
+        return clientes;
+    }
     
     
 }

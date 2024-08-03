@@ -4,13 +4,17 @@ package ms.conta.controller;
 import java.sql.Date;
 import java.util.List;
 
+import org.antlr.v4.runtime.misc.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
 import ms.conta.models.dto.MovimentacaoDTO;
 import ms.conta.service.QueryService;
+import shared.dtos.ClienteDTO;
+import shared.dtos.ContaDTO;
 
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;

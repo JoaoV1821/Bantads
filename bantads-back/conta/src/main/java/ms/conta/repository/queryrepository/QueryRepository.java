@@ -27,5 +27,10 @@ public interface QueryRepository extends JpaRepository<Conta, Long>{
     "WHERE c.estado != 0 AND c.id_gerente = :idGerente", nativeQuery = true)
     List<Conta> listByGerente(@Param("idGerente") String idGerente);
 
+    @Query(value = "SELECT * FROM conta AS c WHERE c.id_gerente = :idGerente " +
+    "ORDER BY c.saldo DESC LIMIT 3", nativeQuery = true)
+    List<Conta> buscarTop3(@Param("idGerente") String idGerente);
+
+
 
 }
