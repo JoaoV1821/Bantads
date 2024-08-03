@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -16,6 +16,9 @@ import com.dac.user.service.impl.UserServiceImpl;
 import com.dac.user.utils.Transformer;
 import shared.dtos.ClienteDTO;
 import shared.dtos.ContaDTO;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 
@@ -111,6 +114,15 @@ public class UserController {
 
         return pair != null ? ResponseEntity.ok(pair) : ResponseEntity.notFound().build();
     }
+
+    @GetMapping("/para-aprovar")
+    public ResponseEntity contasParaAprovar() {
+        
+        List<ClienteDTO> list = service.listarPorEstado(0);
+        return list.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok().body(list);
+
+    }
+    
     
 
 }

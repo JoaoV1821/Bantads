@@ -1,8 +1,10 @@
 package com.dac.user.service.impl;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.misc.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -157,6 +159,16 @@ public class UserServiceImpl implements UserService {
         ClienteDTO salvo = Transformer.transform(this.userRepository.save(atualizada), ClienteDTO.class);
     
         return salvo;
+    }
+
+    public List<ClienteDTO> listarPorEstado(int estado){
+
+        List<ClienteDTO> list = userRepository.findByEstado(estado).stream()
+            .map(c -> Transformer.transform(c, ClienteDTO.class))
+            .collect(Collectors.toList());
+
+        return list.isEmpty() ? null : list;
+
     }
     
     

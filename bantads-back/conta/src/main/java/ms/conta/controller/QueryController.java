@@ -31,6 +31,7 @@ public class QueryController {
     @GetMapping("/extrato/{id}")
     @ResponseStatus(HttpStatus.OK)
     public List<MovimentacaoDTO> extrato(
+        //! AGREGACAO DE SALDO POR DIA DESDE O INICIO
         @PathVariable Long id,
         @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") Date dataInicio,
         @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") Date dataFim) {
