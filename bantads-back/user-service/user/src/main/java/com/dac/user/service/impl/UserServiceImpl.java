@@ -1,5 +1,6 @@
 package com.dac.user.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -161,13 +162,32 @@ public class UserServiceImpl implements UserService {
         return salvo;
     }
 
-    public List<ClienteDTO> listarPorEstado(int estado){
+    public List<ClienteDTO> listarPorEstado(int estado, String id){
 
-        List<ClienteDTO> list = userRepository.findByEstado(estado).stream()
-            .map(c -> Transformer.transform(c, ClienteDTO.class))
-            .collect(Collectors.toList());
+        GenericData<String> data = new GenericData<>();
+        data.setDto(id);
+        //PUXAR CONTAS DE GERENTE COM ESTADO 0
+        Message msgConta = new Message<>(UUID.randomUUID().toString(), 
+			"requestPending", data, "conta", "cliente.response");    
 
-        return list.isEmpty() ? null : list;
+		List<ContaDTO> contas = producer.sendRequest(msgConta)
+            .map(response -> {
+                @SuppressWarnings("unchecked")
+                GenericData<ContaDTO> dataResponse = Transformer.transform(response, GenericData.class);
+				return dataResponse.getList();
+            })
+            .block();
+        //PUXAR CLIENTES QUE CONSTAM NA LISTA
+        List<ClienteDTO> clientes = new ArrayList<>();
+        for (ContaDTO conta : contas) {
+            Optional<UserModel> buscado = userRepository.findById(conta.getId_cliente());
+            if (buscado.isPresent()) {
+                ClienteDTO cliente = Transformer.transform(buscado.get(), ClienteDTO.class);
+                clientes.add(cliente);
+            }
+        }
+
+        return clientes;
 
     }
     

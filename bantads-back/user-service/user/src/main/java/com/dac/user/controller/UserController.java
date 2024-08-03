@@ -115,10 +115,10 @@ public class UserController {
         return pair != null ? ResponseEntity.ok(pair) : ResponseEntity.notFound().build();
     }
 
-    @GetMapping("/para-aprovar")
-    public ResponseEntity contasParaAprovar() {
+    @GetMapping("/para-aprovar/{id}")
+    public ResponseEntity contasParaAprovar(@PathVariable String id) {
         
-        List<ClienteDTO> list = service.listarPorEstado(0);
+        List<ClienteDTO> list = service.listarPorEstado(0, id);
         return list.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok().body(list);
 
     }

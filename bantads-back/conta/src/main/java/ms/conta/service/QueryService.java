@@ -28,6 +28,12 @@ public class QueryService {
         .collect(Collectors.toList());
     }
 
+    public List<ContaDTO> listarPendentes(String id){
+        return this.queryRepository.findByEstadoAndGroupByManager(id, 0).stream()
+        .map(conta -> Transformer.transform(conta, ContaDTO.class))
+        .collect(Collectors.toList());
+    }
+
     public Optional<Conta> buscarPorId(Long id){
         return this.queryRepository.findById(id);
     }
