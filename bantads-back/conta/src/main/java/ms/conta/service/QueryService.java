@@ -34,6 +34,12 @@ public class QueryService {
         .collect(Collectors.toList());
     }
 
+    public List<ContaDTO> listarPorGerente(String id){
+        return this.queryRepository.listByGerente(id).stream()
+        .map(conta -> Transformer.transform(conta, ContaDTO.class))
+        .collect(Collectors.toList());
+    }
+
     public Optional<Conta> buscarPorId(Long id){
         return this.queryRepository.findById(id);
     }

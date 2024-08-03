@@ -23,5 +23,9 @@ public interface QueryRepository extends JpaRepository<Conta, Long>{
     + " WHERE c.estado = :estado AND c.id_gerente = :idGerente", nativeQuery = true)
     List<Conta> findByEstadoAndGroupByManager(@Param("idGerente") String id, @Param("estado") int estado);
 
+    @Query(value = "SELECT * FROM conta AS c " + 
+    "WHERE c.estado != 0 AND c.id_gerente = :idGerente", nativeQuery = true)
+    List<Conta> listByGerente(@Param("idGerente") String idGerente);
+
 
 }

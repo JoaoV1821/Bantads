@@ -122,6 +122,15 @@ public class UserController {
         return list.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok().body(list);
 
     }
+
+    @GetMapping("/listar-todos/{id}")
+    public ResponseEntity listarTodosPorGerente(@PathVariable String id) {
+        
+        List<Pair<ClienteDTO,ContaDTO>> list = this.service.listarTodosPorGerente(id);
+
+        return list.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok().body(list);
+
+    }
     
     
 

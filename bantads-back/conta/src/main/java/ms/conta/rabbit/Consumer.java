@@ -61,6 +61,9 @@ public class Consumer {
                     break;   
                 case "requestPending":
                     response = handleRequestPending(message);
+                    break;  
+                case "requestAllFromManager":
+                    response = handleRequestAllFromManager(message);
                     break;    
                 default:
                     return;
@@ -205,6 +208,23 @@ public class Consumer {
         Message<ContaDTO> response = new Message<>();
         GenericData<String> id_gerente = (GenericData<String>) message.getData();
         List<ContaDTO> list = queryService.listarPendentes(id_gerente.getDto());
+
+        if (list != null) {
+            GenericData<ContaDTO> data = new GenericData<>();
+            data.setList(list);
+            response.setData(data);
+        } else {
+            response.setData(null);
+            response.setRequest("error");
+        }
+        
+        return response;
+    }
+
+    private Message<ContaDTO> handleRequestAllFromManager(Message<?> message) {
+        Message<ContaDTO> response = new Message<>();
+        GenericData<String> id_gerente = (GenericData<String>) message.getData();
+        List<ContaDTO> list = queryService.listarPorGerente(id_gerente.getDto());
 
         if (list != null) {
             GenericData<ContaDTO> data = new GenericData<>();
