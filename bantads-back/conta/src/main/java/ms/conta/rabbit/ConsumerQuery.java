@@ -1,5 +1,6 @@
 package ms.conta.rabbit;
 
+import org.springframework.amqp.AmqpRejectAndDontRequeueException;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,21 +25,27 @@ public class ConsumerQuery {
         System.out.println("CONSUMER QUERY");
         System.out.println("Received message on contaApplication::ConsumerQuery " + message);
 
-        switch (message.getRequest()) {
-            case "updateAccount":
-                handleUpdateAccount(message);
-                break;
-            case "saveAccount":
-                handleSaveAccount(message);
-                break;
-            case "deleteAccount":
-                handleDeleteAccount(message);
-                break;
-            case "saveMovement":
-                handleSaveMovement(message);
-                break;
-            default:
-                return;
+        try {
+            
+            switch (message.getRequest()) {
+                case "updateAccount":
+                    handleUpdateAccount(message);
+                    break;
+                case "saveAccount":
+                    handleSaveAccount(message);
+                    break;
+                case "deleteAccount":
+                    handleDeleteAccount(message);
+                    break;
+                case "saveMovement":
+                    handleSaveMovement(message);
+                    break;
+                default:
+                    return;
+            }
+        } catch (Exception e) {
+            System.err.println("Error processing message: " + e.getMessage());
+            throw new AmqpRejectAndDontRequeueException(e);
         }
     }
 

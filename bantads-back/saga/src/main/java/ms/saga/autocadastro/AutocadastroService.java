@@ -89,7 +89,7 @@ public class AutocadastroService {
 
     private ClienteDTO getClientRequestDTO(AutocadastroRequestDTO requestDTO, String uuid){
         ClienteDTO clienteDTO = new ClienteDTO();
-        clienteDTO.setId(uuid);
+        clienteDTO.setUuid(uuid);
         clienteDTO.setNome(requestDTO.getNome());
         clienteDTO.setEmail(requestDTO.getEmail());
         clienteDTO.setCpf(requestDTO.getCpf());

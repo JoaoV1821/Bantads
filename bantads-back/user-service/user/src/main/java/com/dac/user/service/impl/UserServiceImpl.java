@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
  
     @Override
     public UserModel create(UserModel user) {
-        
+        if(userRepository.existsByCpf(user.getCpf()) || userRepository.existsByEmail(user.getEmail())) return null;
         return userRepository.save(user);
 
     }
@@ -128,7 +128,7 @@ public class UserServiceImpl implements UserService {
 
     public ClienteDTO findByIdClienteDTO(ClienteDTO cliente){
         
-        Optional<UserModel> buscado = this.userRepository.findById(cliente.getId());
+        Optional<UserModel> buscado = this.userRepository.findById(cliente.getUuid());
         if(!buscado.isPresent())
             return null;
 
@@ -136,7 +136,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public ClienteDTO atualizarRabbit(ClienteDTO cliente){
-        Optional<UserModel> old = this.findById(cliente.getId());
+        Optional<UserModel> old = this.findById(cliente.getUuid());
         if (!old.isPresent()) {
             return null;
         }
