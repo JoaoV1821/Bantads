@@ -2,8 +2,10 @@ package ms.gerente;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.misc.Pair;
@@ -17,6 +19,7 @@ import shared.Message;
 import shared.dtos.ClienteDTO;
 import shared.dtos.ContaDTO;
 import shared.dtos.GerenteDTO;
+import shared.dtos.RelatorioClientesDTO;
 import shared.dtos.TelaInicialDTO;
 
 @Service
@@ -96,6 +99,58 @@ public class GerenteService {
         }
 
         return lista;
+        
+    }
+
+    public List<RelatorioClientesDTO> relatorioClientes(){
+        
+        //PUXAR CONTAS
+        Message msgConta = new Message<>(UUID.randomUUID().toString(), 
+			"listAll", null, "conta", "gerente.response");    
+
+		List<ContaDTO> contas = producer.sendRequest(msgConta)
+            .map(response -> {
+                @SuppressWarnings("unchecked")
+                GenericData<ContaDTO> dataResponse = Transformer.transform(response, GenericData.class);
+				return dataResponse.getList();
+            })
+            .block();
+
+        if(contas == null) return null;
+
+        //PUXAR CLIENTES
+        Message msgCliente = new Message<>(UUID.randomUUID().toString(), 
+			"listAll", null, "cliente", "gerente.response"); 
+
+        List<ClienteDTO> clientes = producer.sendRequest(msgCliente)
+            .map(response -> {
+                @SuppressWarnings("unchecked")
+                GenericData<ClienteDTO> dataResponse = Transformer.transform(response, GenericData.class);
+				return dataResponse.getList();
+            })
+            .block();
+
+        if(clientes == null) return null;
+
+        Map<String, ClienteDTO> clienteMap = clientes.stream()
+            .collect(Collectors.toMap(
+                ClienteDTO::getUuid,
+                cliente -> cliente));
+
+        List<RelatorioClientesDTO> relatorioClientes = new ArrayList<>();
+
+        for (ContaDTO conta : contas) {
+            ClienteDTO cliente = clienteMap.get(conta.getId_cliente());
+            if (cliente != null) {
+                RelatorioClientesDTO relatorio = new RelatorioClientesDTO();
+                relatorio.setConta(conta);
+                relatorio.setCliente(cliente);
+                relatorio.setGerente(buscarPorId(conta.getId_gerente()));
+                relatorioClientes.add(relatorio);
+                }
+        }
+
+    return relatorioClientes;
         
     }
     

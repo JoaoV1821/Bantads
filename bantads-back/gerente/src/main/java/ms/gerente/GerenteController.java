@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ms.gerente.util.Transformer;
 import shared.dtos.GerenteDTO;
+import shared.dtos.RelatorioClientesDTO;
 import shared.dtos.TelaInicialDTO;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -52,6 +53,15 @@ public class GerenteController {
     public ResponseEntity telaInicial() {
         
         List<Pair<GerenteDTO,TelaInicialDTO>> list = this.gerenteService.telaInicial();
+
+        return list.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok().body(list);
+
+    }
+
+    @GetMapping("/relatorio")
+    public ResponseEntity relatorio() {
+        
+        List<RelatorioClientesDTO> list = this.gerenteService.relatorioClientes();
 
         return list.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok().body(list);
 
