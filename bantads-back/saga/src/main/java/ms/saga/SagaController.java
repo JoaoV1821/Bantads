@@ -41,6 +41,7 @@ public class SagaController {
                     return Mono.just(ResponseEntity.status(HttpStatus.CREATED).body(response));
                 }
                 else {
+                    sendEmailInternalError(requestDTO.getEmail());
                     return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null));
                 }
             });
