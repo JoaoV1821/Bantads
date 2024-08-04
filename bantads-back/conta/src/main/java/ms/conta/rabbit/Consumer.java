@@ -21,6 +21,7 @@ import shared.GenericData;
 import shared.Message;
 import shared.dtos.ClienteDTO;
 import shared.dtos.ContaDTO;
+import shared.dtos.TelaInicialDTO;
 
 @Component
 public class Consumer {
@@ -67,6 +68,18 @@ public class Consumer {
                     break;    
                 case "requestTop3":
                     response = handleRequestTop3(message);
+                    break; 
+                case "requestAllAccountsByManager":
+                    response = handleRequestAllAccountsByManager(message);
+                    break; 
+                case "requestManagerWithMostAccounts":
+                    response = handleRequestManagerWithMostAccounts(message);
+                    break; 
+                case "updateAccountByManager":
+                    response = handleUpdateAccountByManager(message);
+                    break; 
+                case "updateManager":
+                    response = handleUpdateManager(message);
                     break; 
                 default:
                     return;
@@ -207,6 +220,22 @@ public class Consumer {
         return response;
     }
 
+    private Message<String> handleRequestManagerWithMostAccounts(Message<?> message) {
+        Message<String> response = new Message<>();
+
+        String buscado = queryService.buscarGerenteComMaisContas();
+        if(!buscado.isEmpty()){
+            GenericData<String> data = new GenericData<>();
+            data.setDto(buscado);
+            response.setData(data);
+        } else {
+            response.setData(null);
+            response.setRequest("error");
+        }
+
+        return response;
+    }
+
     private Message<ContaDTO> handleRequestPending(Message<?> message) {
         Message<ContaDTO> response = new Message<>();
         GenericData<String> id_gerente = (GenericData<String>) message.getData();
@@ -255,6 +284,57 @@ public class Consumer {
             response.setRequest("error");
         }
         
+        return response;
+    }
+
+    private Message<TelaInicialDTO> handleRequestAllAccountsByManager(Message<?> message) {
+        Message<TelaInicialDTO> response = new Message<>();
+        GenericData<String> id_gerente = (GenericData<String>) message.getData();
+        List<TelaInicialDTO> list = queryService.listarContasParaTelaInicial();
+
+        if (list != null) {
+            GenericData<TelaInicialDTO> data = new GenericData<>();
+            data.setList(list);
+            response.setData(data);
+        } else {
+            response.setData(null);
+            response.setRequest("error");
+        }
+        
+        return response;
+    }
+
+    private Message<ContaDTO> handleUpdateAccountByManager(Message<?> message) {
+        Message<ContaDTO> response = new Message<>();
+        @SuppressWarnings("unchecked")
+        GenericData<String> novo = (GenericData<String>) message.getData();
+        ContaDTO salvo = commandService.atualizarPorId_gerente(novo.getList());
+
+        if (salvo != null) {
+            GenericData<ContaDTO> data = new GenericData<>();
+            data.setDto(Transformer.transform(salvo, ContaDTO.class));
+            response.setData(data);
+        } else {
+            response.setData(null);
+            response.setRequest("error");
+        }
+        return response;
+    }
+
+    private Message<Integer> handleUpdateManager(Message<?> message) {
+        Message<Integer> response = new Message<>();
+        @SuppressWarnings("unchecked")
+        GenericData<String> novo = (GenericData<String>) message.getData();
+        Integer salvo = commandService.atualizarGerente(novo.getList());
+
+        if (salvo != -1) {
+            GenericData<Integer> data = new GenericData<>();
+            data.setDto(salvo);
+            response.setData(data);
+        } else {
+            response.setData(null);
+            response.setRequest("error");
+        }
         return response;
     }
 

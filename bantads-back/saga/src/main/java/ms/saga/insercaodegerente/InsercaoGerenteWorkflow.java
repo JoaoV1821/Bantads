@@ -1,15 +1,15 @@
-package ms.saga.autocadastro;
+package ms.saga.insercaodegerente;
 
 import java.util.List;
 
 import ms.saga.workflow.Workflow;
 import ms.saga.workflow.WorkflowStep;
 
-public class AutocadastroWorkflow implements Workflow{
-    
+public class InsercaoGerenteWorkflow implements Workflow{
+ 
     private final List<WorkflowStep> steps;
 
-    public AutocadastroWorkflow(List<WorkflowStep> steps){
+    public InsercaoGerenteWorkflow(List<WorkflowStep> steps){
         this.steps = steps;
     }
 
@@ -20,3 +20,4 @@ public class AutocadastroWorkflow implements Workflow{
 
 
 }
+

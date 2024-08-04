@@ -1,5 +1,6 @@
-package ms.saga.autocadastro.steps;
+package ms.saga.insercaodegerente.steps;
 
+import java.util.List;
 import java.util.UUID;
 
 import ms.saga.rabbit.Producer;
@@ -16,13 +17,13 @@ public class AssociateManagerStep implements WorkflowStep{
     
     private WorkflowStepStatus stepStatus = WorkflowStepStatus.PENDING;
     private final Producer producer;
-    private final ContaDTO contaDTO;
-    private final GerenteDTO gerenteDTO;
+    private final GerenteDTO newManager;
+    private final String oldManager;
 
-    public AssociateManagerStep(Producer producer, ContaDTO contaDTO, GerenteDTO gerenteDTO) {
+    public AssociateManagerStep(Producer producer, GerenteDTO newManager, String oldManager) {
         this.producer = producer;
-        this.contaDTO = contaDTO;
-        this.gerenteDTO = gerenteDTO;
+        this.newManager = newManager;
+        this.oldManager = oldManager;
     }
 
     @Override
@@ -34,16 +35,13 @@ public class AssociateManagerStep implements WorkflowStep{
     public Mono<Boolean> process(){
         
         System.out.println("AssociateManagerStep::Process");
-        //request alterar conta com id do gerente selecionado
-        //confirmar resposta
-        if(gerenteDTO == null) return Mono.just(null);
+        if(newManager == null || oldManager == null) return Mono.just(null);
 
-        contaDTO.setId_gerente(gerenteDTO.getId());
-        GenericData<ContaDTO> data = new GenericData<>();
-        data.setDto(contaDTO);
+        GenericData<String> data = new GenericData<>();
+        data.setList(List.of(newManager.getId(), oldManager));
 
-        Message<ContaDTO> msgConta = new Message<ContaDTO>(UUID.randomUUID().toString(),
-        "updateAccount", data , "conta", "saga.response");
+        Message<String> msgConta = new Message<String>(UUID.randomUUID().toString(),
+        "updateAccountByManager", data , "conta", "saga.response");
     
         return producer.sendRequest(msgConta)
             .map(response -> {
@@ -58,20 +56,19 @@ public class AssociateManagerStep implements WorkflowStep{
 
     @Override
     public Mono<Boolean> revert(){
+
         System.out.println("AssociateManagerStep::Revert");
-        this.contaDTO.setId_gerente(null);
 
-        GenericData<ContaDTO> data = new GenericData<>();
-        data.setDto(contaDTO);
+        GenericData<String> data = new GenericData<>();
+        data.setList(List.of(oldManager, newManager.getId()));
 
-        Message<ContaDTO> msg = new Message<ContaDTO>(UUID.randomUUID().toString(),
-        "updateAccount", data , "conta", "saga.response");
-
-        return producer.sendRequest(msg)
+        Message<String> msgConta = new Message<String>(UUID.randomUUID().toString(),
+        "updateAccountByManager", data , "conta", "saga.response");
+    
+        return producer.sendRequest(msgConta)
             .map(response -> {
-                System.out.println("response" + response);
                 GenericData<ContaDTO> conta = Transformer.transform(response, GenericData.class);
-                System.out.println("conta" + conta);
+                System.out.println("conta " + conta);
                 return conta.getDto() != null;
             })
             .onErrorReturn(false);

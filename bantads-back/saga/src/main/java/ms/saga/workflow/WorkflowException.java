@@ -1,4 +1,4 @@
-package ms.saga;
+package ms.saga.workflow;
 
 public class WorkflowException extends RuntimeException{
     
