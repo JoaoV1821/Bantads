@@ -5,4 +5,5 @@ shared\dtos\ClienteDTO.class
 shared\dtos\GerenteDTO.class
 shared\GenericData.class
 shared\Message.class
+shared\dtos\RelatorioClientesDTO.class
 shared\dtos\AuthDTO.class
