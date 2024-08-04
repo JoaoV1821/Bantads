@@ -20,37 +20,20 @@ app.use(cookieParser());
 
 const invalidTokens = new Set(); // Lista de tokens inválidos
 
-const sagaAutocadastroProxy = httpProxy("http://localhost:5000/contas", {
+const sagaAutocadastroProxy = httpProxy('http://localhost:8084/saga/autocadastro', {
     proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
         proxyReqOpts.headers['Content-Type'] = 'application/json';
         proxyReqOpts.method = 'POST';
         return proxyReqOpts;
     },
-
     proxyReqBodyDecorator: function(bodyContent, srcReq) {
-        
-        try {
-            let retBody = {};
-            retBody.cpf = bodyContent.cpf;
-            retBody.email = bodyContent.email;
-            retBody.nome = bodyContent.nome;
-            retBody.salario = bodyContent.salario;
-            retBody.telefone = bodyContent.telefone;
-            retBody.estado = bodyContent.estado;
-            retBody.endereco = bodyContent.endereco;
-
-            bodyContent = retBody;
-
-        } catch(error) {
-            console.log('ERRO: ' + error);
-        }
-
         return bodyContent;
     },
-
     userResDecorator: function(proxyRes, proxyResData, req, res) {
-        const data = JSON.parse(proxyResData.toString('utf8'));
-        return JSON.stringify(data);
+        return proxyResData;
+    },
+    proxyReqPathResolver: function(req) {
+        return '/saga/autocadastro';
     }
 });
 
@@ -305,7 +288,6 @@ const authServiceProxy = httpProxy("http://localhost:8080/auth", {
     proxyReqBodyDecorator: function(bodyContent, srcReq) {
         try {
             let retBody = {};
-
             retBody.email = bodyContent.email;
             retBody.senha = bodyContent.senha;
             
@@ -459,11 +441,11 @@ app.delete('/:uuid', verifyJWT, (req, res, next) => {
 
 // ============ Autocadastro ===========
 
-app.get('/autocadastro', (req, res, next) => {
+app.post('/autocadastro', (req, res, next) => {
     sagaAutocadastroProxy(req, res, next);
 });
 
 
 
 var server = http.createServer(app);
-server.listen(3000);
+server.listen(3000, () => {console.log("Gateway up")});

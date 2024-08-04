@@ -10,15 +10,12 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.reactive.result.method.annotation.ResponseEntityExceptionHandler;
 
 import ms.saga.alteracaodeperfil.UpdateProfileService;
 import ms.saga.autocadastro.AutocadastroService;
 import ms.saga.dtos.AutocadastroRequestDTO;
-import ms.saga.dtos.AutocadastroResponseDTO;
 import ms.saga.dtos.InsercaoGerenteRequestDTO;
 import ms.saga.dtos.UpdateProfileRequestDTO;
-import ms.saga.dtos.UpdateProfileResponseDTO;
 import ms.saga.dtos.enums.SagaStatus;
 import ms.saga.insercaodegerente.InsercaoGerenteService;
 import ms.saga.remocaodegerente.RemocaoGerenteService;
