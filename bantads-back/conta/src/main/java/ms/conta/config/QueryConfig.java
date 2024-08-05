@@ -29,7 +29,7 @@ public class QueryConfig {
         return DataSourceBuilder.create()
                 .url("jdbc:postgresql://localhost:5432/query")
                 .username("postgres")
-                .password("admin")
+                .password("postgres")
                 .driverClassName("org.postgresql.Driver")
                 .build();
     }

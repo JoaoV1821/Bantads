@@ -20,7 +20,14 @@ app.use(cookieParser());
 
 const invalidTokens = new Set(); // Lista de tokens inválidos
 
-const sagaAutocadastroProxy = httpProxy('http://localhost:8084/saga/autocadastro', {
+const contasProxy = httpProxy('http://localhost:8081', {
+    proxyReqPathResolver: function(req) {
+        const newPath = req.url.replace('/conta/rejeitar-cliente/:id', '/conta/rejeitar-cliente/:id');
+        return newPath;
+    }
+});
+
+const sagaAutocadastroProxy = httpProxy('http://localhost:8084', {
     proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
         proxyReqOpts.headers['Content-Type'] = 'application/json';
         proxyReqOpts.method = 'POST';
@@ -386,7 +393,7 @@ app.get('/cliente/find/:uuid', (req, res, next) => {
 });
 
 
-app.get('/cliente/tela-inicial:uuid', verifyJWT, (req, res, next) => {
+app.get('/cliente/tela-inicial/:uuid', verifyJWT, (req, res, next) => {
     clientesServiceProxy(req, res, next);
 });
 
@@ -402,6 +409,9 @@ app.delete('/cliente/delete/:uuid', (req, res, next) => {
 app.get('/conta', verifyJWT, (req, res, next) => {
     contaServiceProxy(req, res, next);
 });
+
+app.put('/conta/rejeitar-cliente/:id', (req,res,next) => 
+    contasProxy(req,res,next));
 
 app.get('/saque/:uuid', verifyJWT, (req, res, next) => {
     contaServiceProxy(req, res, next);

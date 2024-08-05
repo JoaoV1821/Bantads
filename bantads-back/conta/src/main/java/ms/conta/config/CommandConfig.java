@@ -33,7 +33,7 @@ public class CommandConfig {
         return DataSourceBuilder.create()
                 .url("jdbc:postgresql://localhost:5432/command")
                 .username("postgres")
-                .password("admin")
+                .password("postgres")
                 .driverClassName("org.postgresql.Driver")
                 .build();
     }
