@@ -16,18 +16,6 @@ build_jar() {
     cd ..
 }
 
-build_image() {
-    service=$1
-    echo "Buildando imagem Docker para serviço $service"
-    docker build -t ${service}:latest ./$service
-}
-
-run_container() {
-    service=$1
-    echo "Running Docker container for $service"
-    docker run -d --name ${service} -p 8080:8080 ${service}:latest
-}
-
 for s in "${services[@]}"; do
     build_jar $s
     build_image $s
@@ -64,7 +52,8 @@ docker build --pull --rm -f "auth-service/auth/Dockerfile" -t auth "auth-service
 docker network create bantads
 docker-compose -f compose.yaml up --build -d
 
+#tempo para subir tudo
 sleep 10
 
-#ultimo
+#up
 docker-compose -f apps-compose.yaml up --build -d
