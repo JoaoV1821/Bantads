@@ -54,6 +54,8 @@ public class CreateAccountStep implements WorkflowStep{
         System.out.println("CreateAccountStep::Revert");
 
         GenericData<ContaDTO> data = new GenericData<>();
+        System.out.println("***************************");
+        System.out.println(contaDTO);
         data.setDto(contaDTO);
 
         Message<ContaDTO> msg = new Message<ContaDTO>(UUID.randomUUID().toString(),

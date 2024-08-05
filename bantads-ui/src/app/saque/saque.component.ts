@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 
 
 @Component({
@@ -15,7 +16,8 @@ export class SaqueComponent {
   valid: boolean = false;
   valorSaque!: number;
 
-  constructor(private  fb: FormBuilder) {}
+  constructor(private  fb: FormBuilder, 
+    private http : HttpClient) {}
 
   form: FormGroup = new FormGroup({
     valorSaque: new FormControl('', [Validators.required]),
@@ -40,11 +42,24 @@ export class SaqueComponent {
 
   public submit() : void {
     this.submitted = true;
+    let id : number = 3;
     if (this.form.invalid) {
 
       return;
     } else {
       alert('Saque realizado com sucesso!')
+      this.http.post(`http://localhost:3000/saque/${id}`, new Movimentacao(0, '', 'SAQUE', id, undefined, this.valorSaque), {
+        headers: {
+          "Content-Type": 'application/json'
+        }
+      }).subscribe(
+        response => {
+          console.log('POST request successful', response);
+        },
+        error => {
+          console.error('POST request error', error);
+        }
+      );
     }
   }
 
@@ -53,4 +68,13 @@ export class SaqueComponent {
     this.form.reset();
   }
 }
-
+class Movimentacao {
+  constructor(
+      public id? : number,
+      public data? : string,
+      public tipo? : string,
+      public origem? : number,
+      public destino? : number,
+      public valor? : number
+  ){}
+}

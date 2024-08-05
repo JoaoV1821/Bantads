@@ -21,12 +21,12 @@ const routes: Routes = [
   {path:'login', component:  LoginComponent},
 
   
-  {path: 'saque', component: SaqueComponent, canActivate: [AuthGuard]},
-  {path: 'transferencia', component: TransferenciaComponent, canActivate: [AuthGuard]},
-  {path: 'deposito', component: DepositoComponent, canActivate: [AuthGuard]},
+  {path: 'saque', component: SaqueComponent},
+  {path: 'transferencia', component: TransferenciaComponent},
+  {path: 'deposito', component: DepositoComponent},
 
-  {path: 'extrato', component: ConsultarExtratoComponent, canActivate: [AuthGuard]},
-  {path: 'consultar-extrato', component: ConsultarExtratoComponent, canActivate: [AuthGuard]},
+  {path: 'extrato', component: ConsultarExtratoComponent},
+  {path: 'consultar-extrato', component: ConsultarExtratoComponent},
 
   {path: 'dashboard', component: DashboardComponent},
   {path: 'home', component: HomeComponent},
@@ -38,7 +38,7 @@ const routes: Routes = [
   {path: 'administrador/gerentes/:id', component: InserirEditarGerenteComponent, canActivate: [AuthGuard]},
 
   //Gerentes
-  {path:'gerente', component: TelaInicialGerenteComponent, canActivate: [AuthGuard]},
+  {path:'gerente', component: TelaInicialGerenteComponent},
   {path:'gerente/consultar', component: ConsultarClienteComponent, canActivate: [AuthGuard]},
   {path:'gerente/consultar-todos', component: ConsultarTodosComponent, canActivate: [AuthGuard]},
   {path:'gerente/consultar-top3', component: ConsultarTop3Component, canActivate: [AuthGuard]},
