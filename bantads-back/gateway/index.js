@@ -20,7 +20,7 @@ app.use(cookieParser());
 
 const invalidTokens = new Set(); // Lista de tokens inválidos
 
-const sagaAutocadastroProxy = httpProxy("http://localhost:5000/contas", {
+const sagaAutocadastroProxy = httpProxy("http://localhost:8084/autocadastro", {
     proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
         proxyReqOpts.headers['Content-Type'] = 'application/json';
         proxyReqOpts.method = 'POST';
@@ -142,6 +142,7 @@ const authUpdateProxy = httpProxy("http://localhost:8080/auth/update", {
 
     proxyReqBodyDecorator: function(bodyContent, srcReq) {
         try {
+
             let retBody = {};
 
             retBody.email = bodyContent.email;
