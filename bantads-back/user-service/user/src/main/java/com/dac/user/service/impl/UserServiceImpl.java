@@ -55,6 +55,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserModel create(UserModel user) {
         if(userRepository.existsByCpf(user.getCpf()) || userRepository.existsByEmail(user.getEmail())) return null;
+        System.out.println("**********************************");
+        System.out.println(user);
         return userRepository.save(user);
 
     }
@@ -73,7 +75,6 @@ public class UserServiceImpl implements UserService {
             existingUser.setTelefone(user.getTelefone());
             existingUser.setEstado(user.getEstado());
             
-            existingUser.setTipo(user.getTipo());
             existingUser.setLogradouro(user.getLogradouro());
             existingUser.setNumero(user.getNumero());
             existingUser.setComplemento(user.getComplemento());
@@ -149,7 +150,6 @@ public class UserServiceImpl implements UserService {
         atualizada.setSalario(cliente.getSalario());
         atualizada.setEstado(cliente.getEstado());
         atualizada.setNome(cliente.getNome());
-        atualizada.setTipo(cliente.getTipo());
         atualizada.setLogradouro(cliente.getLogradouro());
         atualizada.setNumero(cliente.getNumero());
         atualizada.setComplemento(cliente.getComplemento());

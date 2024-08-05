@@ -13,13 +13,10 @@ public class AutocadastroRequestDTO {
     private String cpf;
     private String telefone;
     private Double salario;
-    //Endereço
     private String logradouro;
     private String numero;
     private String complemento;
     private String cep;
     private String cidade;
     private String uf;
-    
-    //private int estado;
 }

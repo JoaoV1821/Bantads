@@ -95,6 +95,7 @@ public class AutocadastroService {
         clienteDTO.setCpf(requestDTO.getCpf());
         clienteDTO.setTelefone(requestDTO.getTelefone());
         clienteDTO.setSalario(requestDTO.getSalario());
+
         clienteDTO.setLogradouro(requestDTO.getLogradouro());
         clienteDTO.setNumero(requestDTO.getNumero());
         clienteDTO.setComplemento(requestDTO.getComplemento());

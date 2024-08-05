@@ -43,9 +43,6 @@ public class Email {
 
 
         public static void enviarEmail(String msg, String assunto, String email) throws AddressException, MessagingException {
-            System.out.println("__________________________________________________");
-            System.out.println("Enviando email DE: " + senderEmail + " PARA: " + email);
-            System.out.println("Assunto: " + assunto);  
 
             Message message = new MimeMessage(criarSessionMail());
             message.setFrom(new InternetAddress(senderEmail));  
@@ -56,8 +53,5 @@ public class Email {
             message.setContent(msg, "text/html");   
             
             Transport.send(message);    
-
-            System.out.println("Email enviado com sucesso !");
-            System.out.println("__________________________________________________");
         }
 }
