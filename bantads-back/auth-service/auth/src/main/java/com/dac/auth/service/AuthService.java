@@ -67,6 +67,9 @@ public class AuthService {
         if (authBd.isPresent()) {
            
             AuthModel existingAuth = authBd.get();
+            System.out.println(auth.getSalt());
+
+
             
             existingAuth.setUuid(existingAuth.getUuid());
             existingAuth.setEmail(auth.getEmail());

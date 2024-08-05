@@ -8,11 +8,13 @@ import java.util.Base64;
 public class HashingUtils {
 
     private static final String CARACTERES = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+";
+    final static String SALT = "8B50DC0F91F9215BA519E28232D3B5DD";
 
-    public static String hashPassword(String password, String salt) {
+
+    public static String hashPassword(String password) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
-            md.update(salt.getBytes());
+            md.update(SALT.getBytes());
 
             byte[] hashedBytes = md.digest(password.getBytes());
             return Base64.getEncoder().encodeToString(hashedBytes);

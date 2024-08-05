@@ -45,15 +45,16 @@ public class AuthREST {
     ResponseEntity<AuthDTO> auth(@RequestBody LoginModel login) {
         
        Optional<AuthModel> authBd = authRepository.findByEmail(login.getEmail());
-
+        
        if (!authBd.isEmpty()) {
-            String hashPassword = HashingUtils.hashPassword(login.getSenha(), authBd.get().getSalt());
 
-            System.out.println(hashPassword.equals(authBd.get().getSenha()));
-            System.out.println(hashPassword);
-            System.out.println(authBd.get().getSenha());
-            System.out.println(authBd.get().toString());
 
+        String senha = login.getSenha();
+        
+
+        String hashPassword = HashingUtils.hashPassword(senha);
+           
+           
                 if (hashPassword.equals(authBd.get().getSenha()) ) {
                     return ResponseEntity.ok().body(Transformer.transform(authBd, AuthDTO.class));
     
@@ -116,7 +117,7 @@ public class AuthREST {
 
        if (!authbd.isEmpty()) {
 
-            String hashPassword = HashingUtils.hashPassword(login.getSenha(), authbd.get().getSalt());
+            String hashPassword = HashingUtils.hashPassword(login.getSenha());
             login.setSenha(hashPassword);
             authService.atualizar(email, login);
 
@@ -145,7 +146,7 @@ public class AuthREST {
 
             String password = HashingUtils.gerarSenha(6);
             String salt = SaltGenerator.generateSalt();
-            String hashPassword = HashingUtils.hashPassword(password, salt);
+            String hashPassword = HashingUtils.hashPassword(password);
             String msg = "Sua senha: " + "".concat(password);
 
             authBd.get().setSenha(hashPassword);

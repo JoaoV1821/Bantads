@@ -906,7 +906,7 @@ app.put('/auth/update/:email', (req, res, next) => {
 });
 
 
-app.post('/logout', (req, res) => {
+app.post('/auth/logout', (req, res) => {
     const token = req.headers['x-access-token'];
     if (token) {
         invalidTokens.add(token); // Adiciona o token à lista de tokens inválidos
