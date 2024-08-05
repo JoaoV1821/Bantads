@@ -42,6 +42,7 @@ export class AutocadastroComponent implements OnInit{
   solicitarCadastro(form: NgForm) {
     this.solicitado = true;    
     let dadosForm : Formulario = form.value;
-    this.autocadastroService.solicitarCadastro(dadosForm);
+    console.log("***********************************************")
+    console.log(this.autocadastroService.solicitarCadastro(dadosForm));
   }
 }

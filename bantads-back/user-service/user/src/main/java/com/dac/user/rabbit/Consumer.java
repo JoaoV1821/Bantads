@@ -1,7 +1,6 @@
 package com.dac.user.rabbit;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.amqp.AmqpRejectAndDontRequeueException;
@@ -98,7 +97,6 @@ public class Consumer {
         @SuppressWarnings("rawtypes")
         GenericData novo = message.getData();
         UserModel salvo = service.create(Transformer.transform(novo.getDto(), UserModel.class));
-
         if (salvo != null) {
             GenericData<ClienteDTO> data = new GenericData<>();
             data.setDto(Transformer.transform(salvo, ClienteDTO.class));

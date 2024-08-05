@@ -18,7 +18,6 @@ public class ClienteDTO implements Serializable{
     private String telefone;
     private double salario;
     //Endereço
-    private String tipo;
     private String logradouro;
     private String numero;
     private String complemento;

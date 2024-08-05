@@ -9,6 +9,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var logger = require("morgan");
 const helmet = require('helmet');
+const cors = require('cors');
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
@@ -17,6 +18,13 @@ app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
+app.use(cors());
+
+app.use(cors({
+    origin: 'http://localhost:4200',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type']
+  }));
 
 const invalidTokens = new Set(); // Lista de tokens inválidos
 
@@ -36,8 +44,13 @@ const sagaAutocadastroProxy = httpProxy("http://localhost:8084/autocadastro", {
             retBody.nome = bodyContent.nome;
             retBody.salario = bodyContent.salario;
             retBody.telefone = bodyContent.telefone;
-            retBody.estado = bodyContent.estado;
-            retBody.endereco = bodyContent.endereco;
+            
+            retBody.logradouro = bodyContent.logradouro;
+            retBody.numero = bodyContent.numero;
+            retBody.complemento = bodyContent.complemento;
+            retBody.cep = bodyContent.cep;
+            retBody.cidade = bodyContent.cidade;
+            retBody.uf = bodyContent.uf;
 
             bodyContent = retBody;
 
@@ -465,6 +478,7 @@ app.delete('/:uuid', verifyJWT, (req, res, next) => {
 // ============ Autocadastro ===========
 
 app.post('/autocadastro', (req, res, next) => {
+    console.log(req)
     sagaAutocadastroProxy(req, res, next);
 });
 
