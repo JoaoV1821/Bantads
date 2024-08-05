@@ -31,9 +31,9 @@ public class CommandConfig {
     @Primary
     @Bean(name = "commandDataSource")
     public DataSource commandDataSource(
-        @Value("${command.datasource.url:jdbc:postgresql://localhost:5432/command}") String url,
-        @Value("${command.datasource.username:postgres}") String username,
-        @Value("${command.datasource.password:postgres}") String password)
+        @Value("jdbc:postgresql://host.docker.internal:5432/command") String url,
+        @Value("postgres") String username,
+        @Value("postgres") String password)
     {
         return DataSourceBuilder.create()
                 .url(url)

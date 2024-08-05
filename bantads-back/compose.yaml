@@ -9,7 +9,6 @@ services:
       - bantads
     volumes:
       - C:/Users/aalex/Downloads/bds/postgres:/var/lib/postgresql/data
-      - C:/Users/aalex/Downloads/bds/init-scripts:/docker-entrypoint-initdb.d
 
   pgadmin:
     image: docker.io/dpage/pgadmin4
@@ -25,7 +24,6 @@ services:
     volumes:
       - C:/Users/aalex/Downloads/bds/pgadmin:/var/lib/pgadmin
     
-
   mongo:
     image: mongo
     ports:

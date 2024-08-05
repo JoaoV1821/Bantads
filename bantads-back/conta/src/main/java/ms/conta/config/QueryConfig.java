@@ -27,9 +27,9 @@ public class QueryConfig {
 
     @Bean(name = "queryDataSource")
     public DataSource queryDataSource(
-        @Value("${query.datasource.url:jdbc:postgresql://localhost:5432/query}") String url,
-        @Value("${query.datasource.username:postgres}") String username,
-        @Value("${query.datasource.password:postgres}") String password)
+        @Value("jdbc:postgresql://host.docker.internal:5432/query") String url,
+        @Value("postgres") String username,
+        @Value("postgres") String password)
     {
         return DataSourceBuilder.create()
                 .url(url)
