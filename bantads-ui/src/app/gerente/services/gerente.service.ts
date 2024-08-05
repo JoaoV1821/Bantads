@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Cliente, Endereco, Gerente } from '../../shared';
+import { HttpClient } from '@angular/common/http';
 
 const LS_CLIENTES : string = "clientes";
 const enderecosExemplo : Endereco[] = [
@@ -36,11 +37,15 @@ const gerenteExemplo = new Gerente(1, 'Gerente do Rafael I', '20220220222', 'ger
 })
 export class GerenteService {
 
-  constructor() { }
+  constructor(private http : HttpClient) { }
 
   listarTodosClientes() : Cliente[] {
     const clientes = localStorage[LS_CLIENTES];
     return clientes ? JSON.parse(clientes) : [];
+  }
+
+  listarTodosParaAprovar(id : string){
+    return this.http.get(`localhost:8083/para-aprovar/${id}`);
   }
 
   listarTop3() : Cliente[] {

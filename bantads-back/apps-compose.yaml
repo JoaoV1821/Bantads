@@ -54,6 +54,13 @@ services:
       SPRING_RABBITMQ_PORT: 5672
       SPRING_AMQP_DESERIALIZATION_TRUST_ALL: true
 
+  gateway:
+    image: gateway
+    ports:
+      - "3000:3000"
+    networks:
+      - bantads
+
 networks:
   bantads:
     external: true
