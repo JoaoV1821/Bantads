@@ -20,20 +20,31 @@ app.use(cookieParser());
 
 const invalidTokens = new Set(); // Lista de tokens inválidos
 
-const contasProxy = httpProxy('http://localhost:8081', {
-    proxyReqPathResolver: function(req) {
-        const newPath = req.url.replace('/conta/rejeitar-cliente/:id', '/conta/rejeitar-cliente/:id');
-        return newPath;
-    }
-});
-
-const sagaAutocadastroProxy = httpProxy('http://localhost:8084', {
+const sagaAutocadastroProxy = httpProxy("http://localhost:8084/autocadastro", {
     proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
         proxyReqOpts.headers['Content-Type'] = 'application/json';
         proxyReqOpts.method = 'POST';
         return proxyReqOpts;
     },
     proxyReqBodyDecorator: function(bodyContent, srcReq) {
+        
+        try {
+
+            let retBody = {};
+            retBody.cpf = bodyContent.cpf;
+            retBody.email = bodyContent.email;
+            retBody.nome = bodyContent.nome;
+            retBody.salario = bodyContent.salario;
+            retBody.telefone = bodyContent.telefone;
+            retBody.estado = bodyContent.estado;
+            retBody.endereco = bodyContent.endereco;
+
+            bodyContent = retBody;
+
+        } catch(error) {
+            console.log('ERRO: ' + error);
+        }
+
         return bodyContent;
     },
     userResDecorator: function(proxyRes, proxyResData, req, res) {
@@ -43,6 +54,7 @@ const sagaAutocadastroProxy = httpProxy('http://localhost:8084', {
         return '/saga/autocadastro';
     }
 });
+
 
 const clientesServiceProxy = httpProxy('http://localhost:8083/clientes', {
     proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
@@ -130,6 +142,7 @@ const authUpdateProxy = httpProxy("http://localhost:8080/auth/update", {
 
     proxyReqBodyDecorator: function(bodyContent, srcReq) {
         try {
+
             let retBody = {};
 
             retBody.email = bodyContent.email;
@@ -185,7 +198,7 @@ const authAprovarProxy = httpProxy("http://localhost:8080/auth", {
 
            res.status(200);
 
-           return {message: "Login aprovado!", status: 200};
+           return {message: "Login aprovado!", status: 200, body: ""};
 
         } else if (proxyRes.statusCode === 404){
             res.status(404);
