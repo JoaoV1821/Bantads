@@ -8,7 +8,7 @@ services:
     networks:
       - bantads
     volumes:
-      - C:/Users/aalex/Downloads/bds/postgres:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
 
   pgadmin:
     image: docker.io/dpage/pgadmin4
@@ -22,7 +22,7 @@ services:
     networks:
       - bantads
     volumes:
-      - C:/Users/aalex/Downloads/bds/pgadmin:/var/lib/pgadmin
+      - pgadmin_data:/var/lib/pgadmin
     
   mongo:
     image: mongo
@@ -31,7 +31,7 @@ services:
     networks:
       - bantads
     volumes:
-      - C:/Users/aalex/Downloads/bds/mongo:/data/db
+      - mongo_data:/data/db
 
   rabbitmq:
     image: rabbitmq
@@ -43,3 +43,8 @@ services:
 networks:
   bantads:
     external: true
+
+volumes:
+  postgres_data:
+  pgadmin_data:
+  mongo_data:
