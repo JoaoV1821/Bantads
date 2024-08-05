@@ -10,10 +10,6 @@ import javax.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import ms.saga.Workflow;
-import ms.saga.WorkflowException;
-import ms.saga.WorkflowStep;
-import ms.saga.WorkflowStepStatus;
 import ms.saga.autocadastro.steps.AssociateManagerStep;
 import ms.saga.autocadastro.steps.CreateAccountStep;
 import ms.saga.autocadastro.steps.CreateAuthStep;
@@ -24,6 +20,10 @@ import ms.saga.dtos.enums.SagaStatus;
 import ms.saga.rabbit.Producer;
 import ms.saga.util.Email;
 import ms.saga.util.Transformer;
+import ms.saga.workflow.Workflow;
+import ms.saga.workflow.WorkflowException;
+import ms.saga.workflow.WorkflowStep;
+import ms.saga.workflow.WorkflowStepStatus;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import shared.GenericData;
@@ -89,12 +89,13 @@ public class AutocadastroService {
 
     private ClienteDTO getClientRequestDTO(AutocadastroRequestDTO requestDTO, String uuid){
         ClienteDTO clienteDTO = new ClienteDTO();
-        clienteDTO.setId(uuid);
+        clienteDTO.setUuid(uuid);
         clienteDTO.setNome(requestDTO.getNome());
         clienteDTO.setEmail(requestDTO.getEmail());
         clienteDTO.setCpf(requestDTO.getCpf());
         clienteDTO.setTelefone(requestDTO.getTelefone());
         clienteDTO.setSalario(requestDTO.getSalario());
+
         clienteDTO.setLogradouro(requestDTO.getLogradouro());
         clienteDTO.setNumero(requestDTO.getNumero());
         clienteDTO.setComplemento(requestDTO.getComplemento());

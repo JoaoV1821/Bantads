@@ -2,10 +2,10 @@ package ms.saga.autocadastro.steps;
 
 import java.util.UUID;
 
-import ms.saga.WorkflowStep;
-import ms.saga.WorkflowStepStatus;
 import ms.saga.rabbit.Producer;
 import ms.saga.util.Transformer;
+import ms.saga.workflow.WorkflowStep;
+import ms.saga.workflow.WorkflowStepStatus;
 import reactor.core.publisher.Mono;
 import shared.GenericData;
 import shared.Message;
@@ -41,8 +41,11 @@ public class CreateAuthStep implements WorkflowStep{
 
         return producer.sendRequest(msg)
             .map(response -> {
-                GenericData<AuthDTO> auth = Transformer.transform(response, GenericData.class);
+                System.out.println("**************************response***************8");
+                System.out.println(response);
+                GenericData auth = Transformer.transform(response, GenericData.class);
                 System.out.println("auth" + auth);
+                System.out.println(auth.getDto() != null);
                 return auth.getDto() != null;
             })
             .doOnNext(b -> this.stepStatus = b ? WorkflowStepStatus.COMPLETE : WorkflowStepStatus.FAILED)

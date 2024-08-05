@@ -22,11 +22,10 @@ public class AuthService {
         
         //VEM DA SAGA
         //auth.setUuid(UUID.randomUUID().toString());
+        System.out.println(repo.existsByEmail(auth.getEmail()));
         if(repo.existsByEmail(auth.getEmail())) return null;
         
         AuthModel salvo = this.repo.save(auth);
-
-        System.out.println(salvo);
 
         return Transformer.transform(salvo, AuthDTO.class);
 

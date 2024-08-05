@@ -1,8 +1,11 @@
 package com.dac.user.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.misc.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +54,9 @@ public class UserServiceImpl implements UserService {
  
     @Override
     public UserModel create(UserModel user) {
-        
+        if(userRepository.existsByCpf(user.getCpf()) || userRepository.existsByEmail(user.getEmail())) return null;
+        System.out.println("**********************************");
+        System.out.println(user);
         return userRepository.save(user);
 
     }
@@ -70,7 +75,6 @@ public class UserServiceImpl implements UserService {
             existingUser.setTelefone(user.getTelefone());
             existingUser.setEstado(user.getEstado());
             
-            existingUser.setTipo(user.getTipo());
             existingUser.setLogradouro(user.getLogradouro());
             existingUser.setNumero(user.getNumero());
             existingUser.setComplemento(user.getComplemento());
@@ -128,7 +132,7 @@ public class UserServiceImpl implements UserService {
 
     public ClienteDTO findByIdClienteDTO(ClienteDTO cliente){
         
-        Optional<UserModel> buscado = this.userRepository.findById(cliente.getId());
+        Optional<UserModel> buscado = this.userRepository.findById(cliente.getUuid());
         if(!buscado.isPresent())
             return null;
 
@@ -136,7 +140,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public ClienteDTO atualizarRabbit(ClienteDTO cliente){
-        Optional<UserModel> old = this.findById(cliente.getId());
+        Optional<UserModel> old = this.findById(cliente.getUuid());
         if (!old.isPresent()) {
             return null;
         }
@@ -146,7 +150,6 @@ public class UserServiceImpl implements UserService {
         atualizada.setSalario(cliente.getSalario());
         atualizada.setEstado(cliente.getEstado());
         atualizada.setNome(cliente.getNome());
-        atualizada.setTipo(cliente.getTipo());
         atualizada.setLogradouro(cliente.getLogradouro());
         atualizada.setNumero(cliente.getNumero());
         atualizada.setComplemento(cliente.getComplemento());
@@ -157,6 +160,118 @@ public class UserServiceImpl implements UserService {
         ClienteDTO salvo = Transformer.transform(this.userRepository.save(atualizada), ClienteDTO.class);
     
         return salvo;
+    }
+
+    public List<ClienteDTO> listarPorEstado(int estado, String id){
+
+        GenericData<String> data = new GenericData<>();
+        data.setDto(id);
+        //PUXAR CONTAS DE GERENTE COM ESTADO 0
+        Message msgConta = new Message<>(UUID.randomUUID().toString(), 
+			"requestPending", data, "conta", "cliente.response");    
+
+		List<ContaDTO> contas = producer.sendRequest(msgConta)
+            .map(response -> {
+                @SuppressWarnings("unchecked")
+                GenericData<ContaDTO> dataResponse = Transformer.transform(response, GenericData.class);
+				return dataResponse.getList();
+            })
+            .block();
+        //PUXAR CLIENTES QUE CONSTAM NA LISTA
+        List<ClienteDTO> clientes = new ArrayList<>();
+        for (ContaDTO conta : contas) {
+            Optional<UserModel> buscado = userRepository.findById(conta.getId_cliente());
+            if (buscado.isPresent()) {
+                ClienteDTO cliente = Transformer.transform(buscado.get(), ClienteDTO.class);
+                clientes.add(cliente);
+            }
+        }
+
+        return clientes;
+
+    }
+
+    public List<Pair<ClienteDTO, ContaDTO>> listarTodosPorGerente(String id) {
+       
+        GenericData<String> data = new GenericData<>();
+        data.setDto(id);
+        //PUXAR CONTAS DE GERENTE
+        Message msgConta = new Message<>(UUID.randomUUID().toString(), 
+			"requestAllFromManager", data, "conta", "cliente.response");    
+
+		List<ContaDTO> contas = producer.sendRequest(msgConta)
+            .map(response -> {
+                @SuppressWarnings("unchecked")
+                GenericData<ContaDTO> dataResponse = Transformer.transform(response, GenericData.class);
+				return dataResponse.getList();
+            })
+            .block();
+
+        //PUXAR CLIENTES QUE CONSTAM NA LISTA
+        List<Pair<ClienteDTO, ContaDTO>> clientes = new ArrayList<>();
+        for (ContaDTO conta : contas) {
+            Optional<UserModel> buscado = userRepository.findById(conta.getId_cliente());
+            if (buscado.isPresent()) {
+                ClienteDTO cliente = Transformer.transform(buscado.get(), ClienteDTO.class);
+                clientes.add(new Pair<ClienteDTO,ContaDTO>(cliente, conta));
+            }
+        }
+
+        return clientes;
+    }
+
+    public Pair<ClienteDTO, ContaDTO> buscarPorCpf(String cpf){
+        if(!userRepository.existsByCpf(cpf)) return null;
+
+        ClienteDTO cliente = Transformer.transform(userRepository.findByCpf(cpf), ClienteDTO.class);
+
+        GenericData<ClienteDTO> data = new GenericData<>();
+        data.setDto(cliente);
+        Message<ClienteDTO> msgConta = new Message<>(UUID.randomUUID().toString(), 
+			"requestAccount", data, "conta", "cliente.response");    
+
+		ContaDTO conta = producer.sendRequest(msgConta)
+            .map(response -> {
+                @SuppressWarnings("unchecked")
+                GenericData<ContaDTO> dataResponse = Transformer.transform(response, GenericData.class);
+				return dataResponse.getDto();
+            })
+            .block();
+
+        if (conta == null) return null;
+        
+        return new Pair<ClienteDTO, ContaDTO>(cliente, conta);
+
+   
+    }
+
+    public List<Pair<ClienteDTO, ContaDTO>> buscarTop3(String id) {
+       
+        GenericData<String> data = new GenericData<>();
+        data.setDto(id);
+        //PUXAR CONTAS DE GERENTE TOP 3
+        Message msgConta = new Message<>(UUID.randomUUID().toString(), 
+			"requestTop3", data, "conta", "cliente.response");    
+
+		List<ContaDTO> contas = producer.sendRequest(msgConta)
+            .map(response -> {
+                @SuppressWarnings("unchecked")
+                GenericData<ContaDTO> dataResponse = Transformer.transform(response, GenericData.class);
+				return dataResponse.getList();
+            })
+            .block();
+
+        //PUXAR CLIENTES QUE CONSTAM NA LISTA
+        List<Pair<ClienteDTO, ContaDTO>> clientes = new ArrayList<>();
+        for (ContaDTO conta : contas) {
+            Optional<UserModel> buscado = userRepository.findById(conta.getId_cliente());
+            if (buscado.isPresent()) {
+                ClienteDTO cliente = Transformer.transform(buscado.get(), ClienteDTO.class);
+                clientes.add(new Pair<ClienteDTO,ContaDTO>(cliente, conta));
+            }
+        }
+
+        return clientes;
     }
     
     

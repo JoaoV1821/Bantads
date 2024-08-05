@@ -20,10 +20,21 @@ export class AutocadastroService {
   }
 
   solicitarCadastro(formData : Formulario){
-    console.log('solicitarCadastro(cliente) :: autocadastro.service');
-    let endereco = new Endereco(formData.cep, formData.cidade, formData.estado, formData.logradouro, formData.numero, formData.complemento);
-    let cliente = new Cliente(0,formData.nome, formData.cpf, formData.telefone, formData.email, formData.salario, endereco);
-    console.log(cliente);
+    console.log(formData)
+    this.http.post(`http://localhost:3000/autocadastro`, formData, {
+      headers: {
+        "Content-Type": 'application/json'
+      }
+    }).subscribe(
+      response => {
+        // Handle successful response here
+        console.log('POST request successful', response);
+      },
+      error => {
+        // Handle error response here
+        console.error('POST request error', error);
+      }
+    );
   }
 
 }

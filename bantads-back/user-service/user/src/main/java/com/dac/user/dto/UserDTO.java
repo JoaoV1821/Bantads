@@ -1,22 +1,23 @@
 package com.dac.user.dto;
 
-import java.util.UUID;
+import lombok.Data;
 
-import com.dac.user.models.EnderecoModel;
-
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter 
+@Data
 public class UserDTO {  
     
-    private UUID uuid;
+    private String uuid;
     private String cpf;
     private String email;
     private String nome;
     private double salario;
     private String telefone;
-    private int estado;
-    private EnderecoModel endereco;    
+    
+    private String logradouro;
+    private String numero;
+    private String complemento;
+    private String cep;
+    private String cidade;
+    private String uf;
+    
+    private int estado; 
 }

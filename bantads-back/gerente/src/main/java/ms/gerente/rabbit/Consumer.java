@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.amqp.AmqpRejectAndDontRequeueException;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import ms.gerente.util.Transformer;
 import reactor.core.publisher.Mono;
 import shared.GenericData;
 import shared.Message;
+import shared.dtos.ClienteDTO;
 import shared.dtos.GerenteDTO;
 
 @Component
@@ -38,12 +40,27 @@ public class Consumer {
 
         Message<?> response = null;
 
-        switch (message.getRequest()) {
-            case "requestManagerForNewAccount":
-                response = handleRequestManagerForNewAccount(message);
-                break;
-            default:
-                return;
+        try {
+            
+            switch (message.getRequest()) {
+                case "requestManagerForNewAccount":
+                    response = handleRequestManagerForNewAccount(message);
+                    break;
+                case "saveManager":
+                    response = handleSaveManager(message);
+                    break;
+                case "deleteManager":
+                    response = handleDeleteManager(message);
+                    break;
+                case "requestManager":
+                    response = handleRequestManager(message);
+                    break;
+                default:
+                    return;
+            }
+        } catch (Exception e) {
+            System.err.println("Error processing message: " + e.getMessage());
+            throw new AmqpRejectAndDontRequeueException(e);
         }
 
         sendResponse(message, response);
@@ -78,6 +95,55 @@ public class Consumer {
         if (salvo != null) {
             GenericData<GerenteDTO> data = new GenericData<>();
             data.setDto(salvo);
+            response.setData(data);
+        } else {
+            response.setData(null);
+            response.setRequest("error");
+        }
+
+        return response;
+    }
+
+    private Message<GerenteDTO> handleSaveManager(Message<?> message) {
+        Message<GerenteDTO> response = new Message<>();
+        @SuppressWarnings("unchecked")
+        GenericData<GerenteDTO> novo = (GenericData<GerenteDTO>) message.getData();
+        GerenteDTO salvo = service.salvar(novo.getDto());
+        
+        if (salvo != null) {
+            GenericData<GerenteDTO> data = new GenericData<>();
+            data.setDto(Transformer.transform(salvo, GerenteDTO.class));
+            response.setData(data);
+        } else {
+            response.setData(null);
+            response.setRequest("error");
+        }
+        return response;
+    }
+
+    private Message<GerenteDTO> handleDeleteManager(Message<?> message) {
+        Message<GerenteDTO> response = new Message<>();
+        @SuppressWarnings("unchecked")
+        GenericData<GerenteDTO> gerente = (GenericData<GerenteDTO>) message.getData();
+
+        if (service.deletarPorId(gerente.getDto().getId())) {
+            response.setData(gerente);
+        } else {
+            response.setData(null);
+            response.setRequest("error");
+        }
+        return response;
+    }
+
+    private Message<GerenteDTO> handleRequestManager(Message<?> message) {
+        Message<GerenteDTO> response = new Message<>();
+        GenericData<String> gerente = (GenericData<String>) message.getData();
+
+        GerenteDTO buscado = service.buscarPorId(gerente.getDto());
+
+        if(buscado != null){
+            GenericData<GerenteDTO> data = new GenericData<>();
+            data.setDto(buscado);
             response.setData(data);
         } else {
             response.setData(null);

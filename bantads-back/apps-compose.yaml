@@ -1,0 +1,59 @@
+services:
+  auth:
+    image: auth
+    ports:
+      - "8080:8080"
+    networks:
+      - bantads
+    environment:
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_AMQP_DESERIALIZATION_TRUST_ALL: true
+
+  conta:
+    image: conta
+    ports:
+      - "8081:8081"
+    networks:
+      - bantads
+    environment:
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_AMQP_DESERIALIZATION_TRUST_ALL: true
+
+  gerente:
+    image: gerente
+    ports:
+      - "8082:8082"
+    networks:
+      - bantads
+    environment:
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_AMQP_DESERIALIZATION_TRUST_ALL: true
+
+  cliente:
+    image: cliente
+    ports:
+      - "8083:8083"
+    networks:
+      - bantads
+    environment:
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_AMQP_DESERIALIZATION_TRUST_ALL: true
+
+  saga:
+    image: saga
+    ports:
+      - "8084:8084"
+    networks:
+      - bantads
+    environment:
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_AMQP_DESERIALIZATION_TRUST_ALL: true
+
+networks:
+  bantads:
+    external: true

@@ -1,9 +1,9 @@
 package com.dac.user.rabbit;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.amqp.AmqpRejectAndDontRequeueException;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,6 @@ import com.dac.user.utils.Transformer;
 import shared.GenericData;
 import shared.Message;
 import shared.dtos.ClienteDTO;
-import shared.dtos.ContaDTO;
 
 @Component
 public class Consumer {
@@ -44,24 +43,30 @@ public class Consumer {
 
         Message<?> response = null;
 
-        switch (message.getRequest()) {
-            case "listAll":
-                response = handleListAll(message);
-                break;
-            case "saveClient":
-                response = handleSaveClient(message);
-                break;
-            case "updateClient":
-                response = handleUpdateClient(message);
-                break;
-            case "deleteClient":
-                response = handleDeleteClient(message);
-                break;
-            case "requestClient":
-                response = handleRequestClient(message);
-                break;
-            default:
-                return;
+        try {
+            switch (message.getRequest()) {
+                case "listAll":
+                    response = handleListAll(message);
+                    break;
+                case "saveClient":
+                    response = handleSaveClient(message);
+                    break;
+                case "updateClient":
+                    response = handleUpdateClient(message);
+                    break;
+                case "deleteClient":
+                    response = handleDeleteClient(message);
+                    break;
+                case "requestClient":
+                    response = handleRequestClient(message);
+                    break;
+                default:
+                    return;
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error processing message: " + e.getMessage());
+            throw new AmqpRejectAndDontRequeueException(e);
         }
 
         sendResponse(message, response);
@@ -92,7 +97,6 @@ public class Consumer {
         @SuppressWarnings("rawtypes")
         GenericData novo = message.getData();
         UserModel salvo = service.create(Transformer.transform(novo.getDto(), UserModel.class));
-
         if (salvo != null) {
             GenericData<ClienteDTO> data = new GenericData<>();
             data.setDto(Transformer.transform(salvo, ClienteDTO.class));
@@ -128,7 +132,7 @@ public class Consumer {
         @SuppressWarnings("unchecked")
         GenericData<ClienteDTO> cliente = (GenericData<ClienteDTO>) message.getData();
 
-        if (serviceImpl.deletarPorId(cliente.getDto().getId())) {
+        if (serviceImpl.deletarPorId(cliente.getDto().getUuid())) {
             response.setData(cliente);
         } else {
             response.setData(null);

@@ -11,14 +11,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 
 public class ClienteDTO implements Serializable{
-    private String id;
+    private String uuid;
     private String cpf;
     private String email;
     private String nome;
     private String telefone;
     private double salario;
     //Endereço
-    private String tipo;
     private String logradouro;
     private String numero;
     private String complemento;

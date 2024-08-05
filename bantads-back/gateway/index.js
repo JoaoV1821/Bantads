@@ -9,6 +9,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var logger = require("morgan");
 const helmet = require('helmet');
+const cors = require('cors');
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
@@ -17,6 +18,13 @@ app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
+app.use(cors());
+
+app.use(cors({
+    origin: 'http://localhost:4200',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type']
+  }));
 
 const invalidTokens = new Set(); // Lista de tokens inválidos
 
@@ -26,7 +34,6 @@ const sagaAutocadastroProxy = httpProxy("http://localhost:8084/autocadastro", {
         proxyReqOpts.method = 'POST';
         return proxyReqOpts;
     },
-
     proxyReqBodyDecorator: function(bodyContent, srcReq) {
         
         try {
@@ -38,8 +45,13 @@ const sagaAutocadastroProxy = httpProxy("http://localhost:8084/autocadastro", {
             retBody.nome = bodyContent.nome;
             retBody.salario = bodyContent.salario;
             retBody.telefone = bodyContent.telefone;
-            retBody.estado = bodyContent.estado;
-            retBody.endereco = bodyContent.endereco;
+            
+            retBody.logradouro = bodyContent.logradouro;
+            retBody.numero = bodyContent.numero;
+            retBody.complemento = bodyContent.complemento;
+            retBody.cep = bodyContent.cep;
+            retBody.cidade = bodyContent.cidade;
+            retBody.uf = bodyContent.uf;
 
             bodyContent = retBody;
 
@@ -49,13 +61,10 @@ const sagaAutocadastroProxy = httpProxy("http://localhost:8084/autocadastro", {
 
         return bodyContent;
     },
-
     userResDecorator: function(proxyRes, proxyResData, req, res) {
-        const data = JSON.parse(proxyResData.toString('utf8'));
-        return JSON.stringify(data);
+        return proxyResData;
     },
-
-    proxyReqPathResolver: () => {
+    proxyReqPathResolver: function(req) {
         return '/saga/autocadastro';
     }
 });
@@ -823,7 +832,6 @@ const authServiceProxy = httpProxy("http://localhost:8080/auth", {
     proxyReqBodyDecorator: function(bodyContent, srcReq) {
         try {
             let retBody = {};
-
             retBody.email = bodyContent.email;
             retBody.senha = bodyContent.senha;
             
@@ -922,7 +930,7 @@ app.get('/cliente/find/:uuid', (req, res, next) => {
 });
 
 
-app.get('/cliente/tela-inicial:uuid', verifyJWT, (req, res, next) => {
+app.get('/cliente/tela-inicial/:uuid', verifyJWT, (req, res, next) => {
     clientesServiceProxy(req, res, next);
 });
 
@@ -938,6 +946,9 @@ app.delete('/cliente/delete/:uuid', (req, res, next) => {
 app.get('/conta', verifyJWT, (req, res, next) => {
     contaServiceProxy(req, res, next);
 });
+
+app.put('/conta/rejeitar-cliente/:id', (req,res,next) => 
+    contasProxy(req,res,next));
 
 app.get('/saque/:uuid', verifyJWT, (req, res, next) => {
     contaServiceProxy(req, res, next);
@@ -977,11 +988,12 @@ app.delete('/:uuid', verifyJWT, (req, res, next) => {
 
 // ============ Autocadastro ===========
 
-app.get('/autocadastro', (req, res, next) => {
+app.post('/autocadastro', (req, res, next) => {
+    console.log(req)
     sagaAutocadastroProxy(req, res, next);
 });
 
 
 
 var server = http.createServer(app);
-server.listen(3000);
+server.listen(3000, () => {console.log("Gateway up")});

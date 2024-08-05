@@ -7,10 +7,6 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import ms.saga.Workflow;
-import ms.saga.WorkflowException;
-import ms.saga.WorkflowStep;
-import ms.saga.WorkflowStepStatus;
 import ms.saga.alteracaodeperfil.steps.UpdateAccountStep;
 import ms.saga.alteracaodeperfil.steps.UpdateClientStep;
 import ms.saga.dtos.UpdateProfileRequestDTO;
@@ -18,6 +14,10 @@ import ms.saga.dtos.UpdateProfileResponseDTO;
 import ms.saga.dtos.enums.SagaStatus;
 import ms.saga.rabbit.Producer;
 import ms.saga.util.Transformer;
+import ms.saga.workflow.Workflow;
+import ms.saga.workflow.WorkflowException;
+import ms.saga.workflow.WorkflowStep;
+import ms.saga.workflow.WorkflowStepStatus;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import shared.GenericData;
@@ -97,7 +97,7 @@ public class UpdateProfileService {
 
     private ClienteDTO getClientRequestDTO(UpdateProfileRequestDTO requestDTO){
         ClienteDTO clienteDTO = new ClienteDTO();
-        clienteDTO.setId(requestDTO.getId());
+        clienteDTO.setUuid(requestDTO.getId());
         clienteDTO.setNome(requestDTO.getNome());
         clienteDTO.setEmail(requestDTO.getEmail());
         clienteDTO.setCpf(requestDTO.getCpf());

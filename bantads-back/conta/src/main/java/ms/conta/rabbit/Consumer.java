@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.amqp.AmqpRejectAndDontRequeueException;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import shared.GenericData;
 import shared.Message;
 import shared.dtos.ClienteDTO;
 import shared.dtos.ContaDTO;
+import shared.dtos.TelaInicialDTO;
 
 @Component
 public class Consumer {
@@ -35,30 +37,56 @@ public class Consumer {
 
         Message<?> response = null;
 
-        switch (message.getRequest()) {
-            case "listAll":
-                response = handleListAll(message);
-                break;
-            case "updateAccount":
-                response = handleUpdateAccount(message);
-                break;
-            case "saveAccount":
-                response = handleSaveAccount(message);
-                break;
-            case "deleteAccount":
-                response = handleDeleteAccount(message);
-                break;
-            case "requestManagerWithLeastAccounts":
-                response = handleRequestManagerWithLeastAccounts(message);
-                break;
-            case "requestAccount":
-                response = handleRequestAccount(message);
-                break;  
-            case "updateLimit":
-                response = handleUpdateLimit(message);
-                break;    
-            default:
-                return;
+        try {
+            switch (message.getRequest()) {
+                case "listAll":
+                    response = handleListAll(message);
+                    break;
+                case "updateAccount":
+                    response = handleUpdateAccount(message);
+                    break;
+                case "saveAccount":
+                    response = handleSaveAccount(message);
+                    break;
+                case "deleteAccount":
+                    response = handleDeleteAccount(message);
+                    break;
+                case "requestManagerWithLeastAccounts":
+                    response = handleRequestManagerWithLeastAccounts(message);
+                    break;
+                case "requestAccount":
+                    response = handleRequestAccount(message);
+                    break;  
+                case "updateLimit":
+                    response = handleUpdateLimit(message);
+                    break;   
+                case "requestPending":
+                    response = handleRequestPending(message);
+                    break;  
+                case "requestAllFromManager":
+                    response = handleRequestAllFromManager(message);
+                    break;    
+                case "requestTop3":
+                    response = handleRequestTop3(message);
+                    break; 
+                case "requestAllAccountsByManager":
+                    response = handleRequestAllAccountsByManager(message);
+                    break; 
+                case "requestManagerWithMostAccounts":
+                    response = handleRequestManagerWithMostAccounts(message);
+                    break; 
+                case "updateAccountByManager":
+                    response = handleUpdateAccountByManager(message);
+                    break; 
+                case "updateManager":
+                    response = handleUpdateManager(message);
+                    break; 
+                default:
+                    return;
+            }
+        } catch (Exception e) {
+            System.err.println("Error processing message: " + e.getMessage());
+            throw new AmqpRejectAndDontRequeueException(e);
         }
         sendResponse(message, response);
     }
@@ -179,7 +207,7 @@ public class Consumer {
         @SuppressWarnings("unchecked")
         GenericData<ClienteDTO> cliente = (GenericData<ClienteDTO>) message.getData();
 
-        Optional<Conta> buscado = queryService.buscarPorId_cliente(cliente.getDto().getId());
+        Optional<Conta> buscado = queryService.buscarPorId_cliente(cliente.getDto().getUuid());
         if(buscado.isPresent()){
             GenericData<ContaDTO> data = new GenericData<>();
             data.setDto(Transformer.transform(buscado.get(), ContaDTO.class));
@@ -189,6 +217,124 @@ public class Consumer {
             response.setRequest("error");
         }
 
+        return response;
+    }
+
+    private Message<String> handleRequestManagerWithMostAccounts(Message<?> message) {
+        Message<String> response = new Message<>();
+
+        String buscado = queryService.buscarGerenteComMaisContas();
+        if(!buscado.isEmpty()){
+            GenericData<String> data = new GenericData<>();
+            data.setDto(buscado);
+            response.setData(data);
+        } else {
+            response.setData(null);
+            response.setRequest("error");
+        }
+
+        return response;
+    }
+
+    private Message<ContaDTO> handleRequestPending(Message<?> message) {
+        Message<ContaDTO> response = new Message<>();
+        GenericData<String> id_gerente = (GenericData<String>) message.getData();
+        List<ContaDTO> list = queryService.listarPendentes(id_gerente.getDto());
+
+        if (list != null) {
+            GenericData<ContaDTO> data = new GenericData<>();
+            data.setList(list);
+            response.setData(data);
+        } else {
+            response.setData(null);
+            response.setRequest("error");
+        }
+        
+        return response;
+    }
+
+    private Message<ContaDTO> handleRequestAllFromManager(Message<?> message) {
+        Message<ContaDTO> response = new Message<>();
+        GenericData<String> id_gerente = (GenericData<String>) message.getData();
+        List<ContaDTO> list = queryService.listarPorGerente(id_gerente.getDto());
+
+        if (list != null) {
+            GenericData<ContaDTO> data = new GenericData<>();
+            data.setList(list);
+            response.setData(data);
+        } else {
+            response.setData(null);
+            response.setRequest("error");
+        }
+        
+        return response;
+    }
+
+    private Message<ContaDTO> handleRequestTop3(Message<?> message) {
+        Message<ContaDTO> response = new Message<>();
+        GenericData<String> id_gerente = (GenericData<String>) message.getData();
+        List<ContaDTO> list = queryService.buscarTop3(id_gerente.getDto());
+
+        if (list != null) {
+            GenericData<ContaDTO> data = new GenericData<>();
+            data.setList(list);
+            response.setData(data);
+        } else {
+            response.setData(null);
+            response.setRequest("error");
+        }
+        
+        return response;
+    }
+
+    private Message<TelaInicialDTO> handleRequestAllAccountsByManager(Message<?> message) {
+        Message<TelaInicialDTO> response = new Message<>();
+        GenericData<String> id_gerente = (GenericData<String>) message.getData();
+        List<TelaInicialDTO> list = queryService.listarContasParaTelaInicial();
+
+        if (list != null) {
+            GenericData<TelaInicialDTO> data = new GenericData<>();
+            data.setList(list);
+            response.setData(data);
+        } else {
+            response.setData(null);
+            response.setRequest("error");
+        }
+        
+        return response;
+    }
+
+    private Message<ContaDTO> handleUpdateAccountByManager(Message<?> message) {
+        Message<ContaDTO> response = new Message<>();
+        @SuppressWarnings("unchecked")
+        GenericData<String> novo = (GenericData<String>) message.getData();
+        ContaDTO salvo = commandService.atualizarPorId_gerente(novo.getList());
+
+        if (salvo != null) {
+            GenericData<ContaDTO> data = new GenericData<>();
+            data.setDto(Transformer.transform(salvo, ContaDTO.class));
+            response.setData(data);
+        } else {
+            response.setData(null);
+            response.setRequest("error");
+        }
+        return response;
+    }
+
+    private Message<Integer> handleUpdateManager(Message<?> message) {
+        Message<Integer> response = new Message<>();
+        @SuppressWarnings("unchecked")
+        GenericData<String> novo = (GenericData<String>) message.getData();
+        Integer salvo = commandService.atualizarGerente(novo.getList());
+
+        if (salvo != -1) {
+            GenericData<Integer> data = new GenericData<>();
+            data.setDto(salvo);
+            response.setData(data);
+        } else {
+            response.setData(null);
+            response.setRequest("error");
+        }
         return response;
     }
 

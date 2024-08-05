@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -16,6 +16,9 @@ import com.dac.user.service.impl.UserServiceImpl;
 import com.dac.user.utils.Transformer;
 import shared.dtos.ClienteDTO;
 import shared.dtos.ContaDTO;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 
@@ -104,13 +107,45 @@ public class UserController {
     @GetMapping("/tela-inicial/{id}")
     public ResponseEntity<Pair<ClienteDTO, ContaDTO>> telaInicial(@PathVariable String id) {
         Pair<ClienteDTO, ContaDTO> pair = this.service.clienteComConta(id);
-        
-        if(pair != null){
-            return ResponseEntity.ok(pair);
-        }
 
         return pair != null ? ResponseEntity.ok(pair) : ResponseEntity.notFound().build();
     }
+
+    @GetMapping("/para-aprovar/{id}")
+    public ResponseEntity contasParaAprovar(@PathVariable String id) {
+        
+        List<ClienteDTO> list = service.listarPorEstado(0, id);
+        return list.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok().body(list);
+
+    }
+
+    @GetMapping("/listar-todos/{id}")
+    public ResponseEntity listarTodosPorGerente(@PathVariable String id) {
+        
+        List<Pair<ClienteDTO,ContaDTO>> list = this.service.listarTodosPorGerente(id);
+
+        return list.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok().body(list);
+
+    }
+
+    @GetMapping("/buscar-cpf/{cpf}")
+    public ResponseEntity buscarPorCpf(@PathVariable String cpf) {
+        
+        Pair<ClienteDTO,ContaDTO> pair = this.service.buscarPorCpf(cpf);
+
+        return pair != null ? ResponseEntity.ok(pair) : ResponseEntity.notFound().build();
+
+    }
+
+    @GetMapping("/buscar-top3/{id}")
+    public ResponseEntity buscarTop3(@PathVariable String id) {
+        
+        List<Pair<ClienteDTO,ContaDTO>> list = this.service.buscarTop3(id);
+
+        return list.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok().body(list);
+
+    }
+    
     
 
 }

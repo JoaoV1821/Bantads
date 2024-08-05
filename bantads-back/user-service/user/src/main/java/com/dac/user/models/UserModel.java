@@ -22,15 +22,14 @@ public class UserModel implements Serializable {
     private String nome;
     private double salario;
     private String telefone;
-    private int estado;
     
-    private String tipo;
     private String logradouro;
     private String numero;
     private String complemento;
     private String cep;
     private String cidade;
     private String uf;
-
+    
+    private int estado;
     
 }

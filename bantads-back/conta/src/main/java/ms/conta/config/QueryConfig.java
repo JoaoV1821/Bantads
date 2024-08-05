@@ -2,6 +2,7 @@ package ms.conta.config;
 
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
@@ -25,11 +26,15 @@ import jakarta.persistence.EntityManagerFactory;
 public class QueryConfig {
 
     @Bean(name = "queryDataSource")
-    public DataSource queryDataSource() {
+    public DataSource queryDataSource(
+        @Value("jdbc:postgresql://host.docker.internal:5432/query") String url,
+        @Value("postgres") String username,
+        @Value("postgres") String password)
+    {
         return DataSourceBuilder.create()
-                .url("jdbc:postgresql://localhost:5432/query")
-                .username("postgres")
-                .password("admin")
+                .url(url)
+                .username(username)
+                .password(password)
                 .driverClassName("org.postgresql.Driver")
                 .build();
     }
