@@ -3,6 +3,7 @@ package ms.conta.config;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
@@ -29,11 +30,15 @@ public class CommandConfig {
 
     @Primary
     @Bean(name = "commandDataSource")
-    public DataSource commandDataSource() {
+    public DataSource commandDataSource(
+        @Value("${command.datasource.url:jdbc:postgresql://localhost:5432/command}") String url,
+        @Value("${command.datasource.username:postgres}") String username,
+        @Value("${command.datasource.password:postgres}") String password)
+    {
         return DataSourceBuilder.create()
-                .url("jdbc:postgresql://localhost:5432/command")
-                .username("postgres")
-                .password("postgres")
+                .url(url)
+                .username(username)
+                .password(password)
                 .driverClassName("org.postgresql.Driver")
                 .build();
     }

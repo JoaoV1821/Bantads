@@ -18,6 +18,8 @@ services:
     environment:
       SPRING_RABBITMQ_HOST: rabbitmq
       SPRING_RABBITMQ_PORT: 5672
+      SPRING_DATASOURCE_COMMAND_URL: jdbc:postgresql://host.docker.internal:5432/command
+      SPRING_DATASOURCE_QUERY_URL: jdbc:postgresql://host.docker.internal:5432/query
 
   gerente:
     image: gerente
@@ -28,6 +30,7 @@ services:
     environment:
       SPRING_RABBITMQ_HOST: rabbitmq
       SPRING_RABBITMQ_PORT: 5672
+      SPRING_DATASOURCE_URL: jdbc:postgresql://host.docker.internal:5432/gerente
 
   cliente:
     image: cliente
@@ -38,6 +41,7 @@ services:
     environment:
       SPRING_RABBITMQ_HOST: rabbitmq
       SPRING_RABBITMQ_PORT: 5672
+      SPRING_DATASOURCE_URL: jdbc:postgresql://host.docker.internal:5432/user
 
   saga:
     image: saga
