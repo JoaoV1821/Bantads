@@ -30,6 +30,7 @@ const sagaAutocadastroProxy = httpProxy("http://localhost:5000/contas", {
     proxyReqBodyDecorator: function(bodyContent, srcReq) {
         
         try {
+
             let retBody = {};
             retBody.cpf = bodyContent.cpf;
             retBody.email = bodyContent.email;
@@ -53,6 +54,7 @@ const sagaAutocadastroProxy = httpProxy("http://localhost:5000/contas", {
         return JSON.stringify(data);
     }
 });
+
 
 const clientesServiceProxy = httpProxy('http://localhost:8083/clientes', {
     proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
@@ -195,7 +197,7 @@ const authAprovarProxy = httpProxy("http://localhost:8080/auth", {
 
            res.status(200);
 
-           return {message: "Login aprovado!", status: 200};
+           return {message: "Login aprovado!", status: 200, body: ""};
 
         } else if (proxyRes.statusCode === 404){
             res.status(404);
