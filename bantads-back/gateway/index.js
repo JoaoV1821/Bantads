@@ -32,6 +32,7 @@ const sagaAutocadastroProxy = httpProxy("http://localhost:8084/autocadastro", {
         try {
 
             let retBody = {};
+
             retBody.cpf = bodyContent.cpf;
             retBody.email = bodyContent.email;
             retBody.nome = bodyContent.nome;
@@ -52,6 +53,10 @@ const sagaAutocadastroProxy = httpProxy("http://localhost:8084/autocadastro", {
     userResDecorator: function(proxyRes, proxyResData, req, res) {
         const data = JSON.parse(proxyResData.toString('utf8'));
         return JSON.stringify(data);
+    },
+
+    proxyReqPathResolver: () => {
+        return '/saga/autocadastro';
     }
 });
 
@@ -77,6 +82,9 @@ const clientesServiceProxy = httpProxy('http://localhost:8083/clientes', {
         return proxyResData;
     }
 });
+
+
+
 
 
 const gerentesServiceProxy = httpProxy('http://localhost:5000/gerentes', {
@@ -131,8 +139,515 @@ const contaServiceProxy = httpProxy("http://localhost:5000/contas", {
 });
 
 
-const authUpdateProxy = httpProxy("http://localhost:8080/auth/update", {
 
+const contaRejeitarProxy = httpProxy("http://localhost:8081/contas/rejeitar-cliente/:id", {
+
+    proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
+        proxyReqOpts.headers['Content-Type'] = 'application/json';
+        proxyReqOpts.method = 'PUT';
+
+        return proxyReqOpts;
+
+    },
+
+    proxyReqBodyDecorator: (bodyContent, srcReq) => {
+        return bodyContent;
+    },
+
+    userResDecorator: (proxyRes, proxyResData, req, res) => {
+        const data = JSON.parse(proxyResData.toString('utf8'));
+        return JSON.stringify(data);
+    }
+});
+
+
+
+const contaTransferenciaProxy = httpProxy("http://localhost:8081/contas/transferencia/:id", {
+
+    proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
+        proxyReqOpts.headers['Content-Type'] = 'application/json';
+        proxyReqOpts.method = 'POST';
+        return proxyReqOpts;
+
+    },
+
+    proxyReqBodyDecorator: (bodyContent, srcReq) => {
+
+        const retBody = {};
+
+        retBody.data = bodyContent.data;
+        retBody.tipo = bodyContent.tipo;
+        retBody.origem = bodyContent.origem;
+        retBody.destino = bodyContent.destino;
+        retBody.valor = bodyContent.valor;
+
+        return bodyContent;
+    },
+
+    userResDecorator: (proxyRes, proxyResData, req, res) => {
+        const data = JSON.parse(proxyResData.toString('utf8'));
+        return JSON.stringify(data);
+    }
+});
+
+
+const contaSaqueProxy = httpProxy("http://localhost:8081/contas/saques/:id", {
+
+    proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
+        proxyReqOpts.headers['Content-Type'] = 'application/json';
+        proxyReqOpts.method = 'POST';
+
+        const retBody = {};
+
+        retBody.data = bodyContent.data;
+        retBody.tipo = bodyContent.tipo;
+        retBody.origem = bodyContent.origem;
+        retBody.destino = bodyContent.destino;
+        retBody.valor = bodyContent.valor;
+
+        return bodyContent;
+
+    },
+
+    userResDecorator: (proxyRes, proxyResData, req, res) => {
+        const data = JSON.parse(proxyResData.toString('utf8'));
+        return JSON.stringify(data);
+    }
+});
+
+
+
+const contaDepositoProxy = httpProxy("http://localhost:8081/contas/saques/:id", {
+
+    proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
+        proxyReqOpts.headers['Content-Type'] = 'application/json';
+        proxyReqOpts.method = 'POST';
+
+        const retBody = {};
+
+        retBody.data = bodyContent.data;
+        retBody.tipo = bodyContent.tipo;
+        retBody.origem = bodyContent.origem;
+        retBody.destino = bodyContent.destino;
+        retBody.valor = bodyContent.valor;
+
+        return retBody;
+
+    },
+
+    userResDecorator: (proxyRes, proxyResData, req, res) => {
+        const data = JSON.parse(proxyResData.toString('utf8'));
+        return JSON.stringify(data);
+    }
+});
+
+
+
+const contaExtratoProxy = httpProxy("http://localhost:8081/contas/extrato/:id", {
+
+    proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
+        proxyReqOpts.headers['Content-Type'] = 'application/json';
+        proxyReqOpts.method = 'GET';
+
+        const retBody = {};
+
+        retBody.dataInicio = bodyContent.dataInicio;
+        retBody.dataFim = bodyContent.dataFim;
+        
+
+        return retBody;
+
+    },
+
+    userResDecorator: (proxyRes, proxyResData, req, res) => {
+        const data = JSON.parse(proxyResData.toString('utf8'));
+        return JSON.stringify(data);
+    }
+});
+
+
+
+app.put('/conta/rejeitar-cliente/:id', (req, res, next) => {
+    
+    contaRejeitarProxy(req, res, next);
+});
+
+
+app.post('/conta/transferencia/:id', (req, res, next) => {
+    contaTransferenciaProxy(req, res, next);
+});
+
+
+app.post('/conta/saques/:id', (req, res, next) => {
+    contaSaqueProxy(req, res, next);
+});
+
+
+app.post('/conta/deposito/:id', (req, res, next) => {
+    contaDepositoProxy(req, res, next);
+});
+
+
+app.get('/conta/extrato/', (req, res, next) => {
+    contaExtratoProxy(req, res, next);
+})
+
+
+
+const gerenteGetProxy = httpProxy("http://localhost:8082/gerente", {
+
+    proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
+        proxyReqOpts.headers['Content-Type'] = 'application/json';
+        proxyReqOpts.method = 'POST';
+        return proxyReqOpts;
+    },
+
+    proxyReqBodyDecorator: function(bodyContent, srcReq) {
+        
+        return bodyContent;
+    },
+
+    userResDecorator: function(proxyRes, proxyResData, req, res) {
+        const data = JSON.parse(proxyResData.toString('utf8'));
+        return JSON.stringify(data);
+    }
+});
+
+
+
+const gerenteUpdateProxy = httpProxy("http://localhost:8082/gerente/:id", {
+    
+    proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
+        proxyReqOpts.headers['Content-Type'] = 'application/json';
+        proxyReqOpts.method = 'PUT';
+
+        
+        const retBody = {};
+
+        retBody.tipo = bodyContent.tipo;
+        retBody.email = bodyContent.email;
+        retBody.telefone = bodyContent.telefone;
+        
+        return retBody;
+
+    },
+
+    proxyReqBodyDecorator: function(bodyContent, srcReq) {
+        
+        return bodyContent;
+    },
+
+    userResDecorator: function(proxyRes, proxyResData, req, res) {
+        const data = JSON.parse(proxyResData.toString('utf8'));
+        return JSON.stringify(data);
+    }
+});
+
+
+
+
+
+const gerenteDeleteProxy = httpProxy("http://localhost:8082/gerente/:id", {
+    
+    proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
+        proxyReqOpts.headers['Content-Type'] = 'application/json';
+        proxyReqOpts.method = 'DELETE';
+
+        const retBody = {};
+
+        retBody.tipo = bodyContent.tipo;
+        retBody.email = bodyContent.email;
+        retBody.telefone = bodyContent.telefone;
+        
+        return retBody;
+
+    },
+
+    proxyReqBodyDecorator: function(bodyContent, srcReq) {
+        
+        return bodyContent;
+    },
+
+    userResDecorator: function(proxyRes, proxyResData, req, res) {
+        const data = JSON.parse(proxyResData.toString('utf8'));
+        return JSON.stringify(data);
+    }
+});
+
+
+
+const gerenteGetAllProxy = httpProxy("http://localhost:8082/gerente/", {
+    
+    proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
+        proxyReqOpts.headers['Content-Type'] = 'application/json';
+        proxyReqOpts.method = 'GET';
+    },
+
+    proxyReqBodyDecorator: function(bodyContent, srcReq) {
+        
+        return bodyContent;
+    },
+
+    userResDecorator: function(proxyRes, proxyResData, req, res) {
+        const data = JSON.parse(proxyResData.toString('utf8'));
+        return JSON.stringify(data);
+    }
+});
+
+
+
+const gerentePostProxy = httpProxy("http://localhost:8082/gerente/:id", {
+    
+    proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
+        proxyReqOpts.headers['Content-Type'] = 'application/json';
+        proxyReqOpts.method = 'POST';
+
+        const retBody = {};
+
+        retBody.tipo = bodyContent.tipo;
+        retBody.email = bodyContent.email;
+        retBody.telefone = bodyContent.telefone;
+        
+        return retBody;
+
+    },
+
+    proxyReqBodyDecorator: function(bodyContent, srcReq) {
+        
+        return bodyContent;
+    },
+
+    userResDecorator: function(proxyRes, proxyResData, req, res) {
+        const data = JSON.parse(proxyResData.toString('utf8'));
+        return JSON.stringify(data);
+    }
+});
+
+
+const gerenteTelaInicialProxy = httpProxy("http://localhost:8082/gerente/:id", {
+    
+    proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
+        proxyReqOpts.headers['Content-Type'] = 'application/json';
+        proxyReqOpts.method = 'GET';
+
+        
+        return retBody;
+
+    },
+
+    proxyReqBodyDecorator: function(bodyContent, srcReq) {
+        
+        return bodyContent;
+    },
+
+    userResDecorator: function(proxyRes, proxyResData, req, res) {
+        const data = JSON.parse(proxyResData.toString('utf8'));
+        return JSON.stringify(data);
+    }
+});
+
+
+const gerenteRelatorioProxy = httpProxy("http://localhost:8082/gerente/:id", {
+    
+    proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
+        proxyReqOpts.headers['Content-Type'] = 'application/json';
+        proxyReqOpts.method = 'GET';
+
+        
+        return retBody;
+
+    },
+
+    proxyReqBodyDecorator: function(bodyContent, srcReq) {
+        
+        return bodyContent;
+    },
+
+    userResDecorator: function(proxyRes, proxyResData, req, res) {
+        const data = JSON.parse(proxyResData.toString('utf8'));
+        return JSON.stringify(data);
+    }
+});
+
+
+app.get('/gerentes/consultar/:id', (req, res, next) => {
+    gerenteGetProxy(req, res, next);
+});
+
+
+app.put('/gerentes/update/:id', (req, res, next) => {
+    console.log(req.body)
+    gerenteUpdateProxy(req, res, next);
+});
+
+
+app.delete('/gerentes/delete/:id', (req, res, next) => {
+    gerenteDeleteProxy(req, res, next);
+});
+
+
+app.get('/gerentes/consultaAll/', (req, res, next) => {
+    gerenteGetAllProxy(req, res, next);
+});
+
+
+app.post('/gerentes/newGerente/', (req, res, next) => {
+    gerentePostProxy(req, res, next);
+
+});
+
+
+app.get('/gerentes/telaInicial/', (req, res, next) => {
+    gerenteTelaInicialProxy(req, res, next);
+});
+
+
+app.get('/gerentes/relatorio/', (req, res, next) => {
+    gerenteRelatorioProxy(req, res, next);
+});
+
+
+
+const sagaUpdatePerfil = httpProxy("http://localhost:8084/updatePerfil/:id", {
+    
+    proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
+        proxyReqOpts.headers['Content-Type'] = 'application/json';
+        proxyReqOpts.method = 'PUT';
+
+        const retBody = {};
+
+        retBody.cpf = bodyContent.cpf;
+        retBody.email = bodyContent.email;
+        retBody.nome = bodyContent.nome;
+        retBody.telefone = bodyContent.telefone;
+
+        retBody.salario = bodyContent.salario;
+        retBody.logradouro = bodyContent.logradouro;
+        retBody.numero = bodyContent.numero;
+        retBody.complemento = bodyContent.complemento;
+
+        retBody.cep = bodyContent.cep;
+        retBody.cidade = bodyContent.cidade;
+        retBody.uf = bodyContent.uf;
+
+        retBody.estado = bodyContent.estado;
+
+        
+        return retBody;
+
+    },
+
+    proxyReqBodyDecorator: function(bodyContent, srcReq) {
+        
+        return bodyContent;
+    },
+
+    userResDecorator: function(proxyRes, proxyResData, req, res) {
+        const data = JSON.parse(proxyResData.toString('utf8'));
+        return JSON.stringify(data);
+    }
+
+});
+
+
+
+
+const sagaInserirGerente = httpProxy("http://localhost:8084/inserirGerente/", {
+    
+    proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
+        proxyReqOpts.headers['Content-Type'] = 'application/json';
+        proxyReqOpts.method = 'POST';
+
+        const retBody = {};
+
+        retBody.cpf = bodyContent.cpf;
+        retBody.email = bodyContent.email;
+        retBody.telefone = bodyContent.telefone;
+        
+        return retBody;
+
+    },
+
+    proxyReqBodyDecorator: function(bodyContent, srcReq) {
+        
+        return bodyContent;
+    },
+
+    userResDecorator: function(proxyRes, proxyResData, req, res) {
+        const data = JSON.parse(proxyResData.toString('utf8'));
+        return JSON.stringify(data);
+    }
+
+});
+
+
+
+
+const sagaDeletarGerente = httpProxy("http://localhost:8084/deletarGerente/:id", {
+    
+    proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
+        proxyReqOpts.headers['Content-Type'] = 'application/json';
+        proxyReqOpts.method = 'PUT';
+
+    },
+
+    proxyReqBodyDecorator: function(bodyContent, srcReq) {
+        return bodyContent;
+    },
+
+    userResDecorator: function(proxyRes, proxyResData, req, res) {
+        const data = JSON.parse(proxyResData.toString('utf8'));
+        return JSON.stringify(data);
+    }
+
+});
+
+
+
+app.delete('/deletarGerente/:id', (req, res, next) => {
+    sagaDeletarGerente(req, res, next);
+});
+
+
+app.post("/inserirGerente/", (req, res, next) => {
+    sagaInserirGerente(req, res, next);
+})
+
+
+app.put('/atualizarPerfil/:id', (req, res, next) => {
+    console.log(req.body)
+    sagaUpdatePerfil(req, res, next);
+});
+
+
+app.delete('/gerentes/delete/:id', (req, res, next) => {
+    gerenteDeleteProxy(req, res, next);
+});
+
+
+app.get('/gerentes/consultaAll/', (req, res, next) => {
+    gerenteGetAllProxy(req, res, next);
+});
+
+
+app.post('/gerentes/newGerente/', (req, res, next) => {
+    gerentePostProxy(req, res, next);
+
+});
+
+
+app.get('/gerentes/telaInicial/', (req, res, next) => {
+    gerenteTelaInicialProxy(req, res, next);
+});
+
+
+app.get('/gerentes/relatorio/', (req, res, next) => {
+    gerenteRelatorioProxy(req, res, next);
+});
+
+
+
+const authUpdateProxy = httpProxy("http://localhost:8080/auth/update", {
 
     proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
         proxyReqOpts.headers['Content-Type'] = 'application/json';
